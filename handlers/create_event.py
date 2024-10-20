@@ -1,18 +1,20 @@
+from datetime import datetime
+
 from aiogram import Router, types,F
-from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import ReplyKeyboardRemove
-from 
+from db.database import get_db, Event
+
 
 create_event_router = Router()
 
 
 class Form(StatesGroup):
     name = State()
-    adress = State()
+    address = State()
     event_time = State()
-    desctiption = State()
+    description = State()
 
 
 @create_event_router.callback_query(F.data == "create_event")
@@ -24,36 +26,43 @@ async def command_start(message: types.Message, state: FSMContext) -> None:
 @create_event_router.message(Form.name)
 async def process_name(message: types.Message, state: FSMContext):
     await state.update_data(name=message.text)  # Сохранение имени
-    await state.set_state(Form.adress)  # Переход к следующему состоянию
+    await state.set_state(Form.address)  # Переход к следующему состоянию
     await message.reply("Добавьте адрес: ")
 
 
-@create_event_router.message(Form.adress)
+@create_event_router.message(Form.address)
 async def process_time(message: types.Message, state: FSMContext):
-    await state.update_data(adress=message.text)
-    await state.set_state(Form.event_time)
-    await message.answer("Когда и во сколько? Введи в формате дд/мм \n")
-    # user_data = await state.get_data()  # Получение всех данных
-    # await message.reply(f"Привет, {user_data['name']}! Тебе {user_data['age']} лет.")
+    try:
+        event_time = datetime.strptime(message.text, '%d/%m/%Y %H:%M')
+        await state.update_data(event_time=event_time)
+        await state.set_state(Form.description)
+        await message.reply("Введите описание события: ")
+    except ValueError:
+        await message.reply("Неверный формат даты. Попробуйте снова в формате ДД/ММ/ГГГГ ЧЧ:ММ.")
 
 
 @create_event_router.message(Form.event_time)
 async def process_desc(message: types.Message, state: FSMContext):
     await state.update_data(event_time=message.text)
-    await state.set_state(Form.desctiption)
+    await state.set_state(Form.description)
     await message.answer("Введите описание события или оставьте комментарий к событию ")
 
 
-@create_event_router.message(Form.desctiption)
+@create_event_router.message(Form.description)
 async def adding_to_db(message: types.Message, state: FSMContext):
-
     await state.update_data(description=message.text)
     event_data = await state.get_data()
+    async with next(get_db()) as db:  # Используем асинхронную сессию
+        new_event = Event(
+            name=event_data['name'],
+            description=event_data['description'],
+            address=event_data['address'],
+            event_time=event_data['event_time']
+        )
+        db.add(new_event)
+        await db.commit()  # Асинхронно фиксируем изменения
+        await db.refresh(new_event)  # Обновляем объект события из базы данных
 
-    await message.answer(f"Событие {event_data['name']}\n"
-                         f"Время: {event_data['event_time']}\n"
-                         f"Место: {event_data['adress']}\n"
-                         f"Место: {event_data['description']}")
+    await message.reply(f"Событие '{new_event.name}' успешно создано и сохранено в базе данных!")
     await state.clear()
-
-async def
+    await state.clear()
