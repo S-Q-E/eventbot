@@ -31,7 +31,7 @@ class Event(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     description = Column(String)
-    adress = Column(String)
+    address = Column(String)
     event_time = Column(DateTime)
 
 

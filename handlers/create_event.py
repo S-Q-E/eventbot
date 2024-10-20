@@ -3,6 +3,7 @@ from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import ReplyKeyboardRemove
+from 
 
 create_event_router = Router()
 
@@ -20,15 +21,15 @@ async def command_start(message: types.Message, state: FSMContext) -> None:
     await message.answer("Введите название события: ", reply_markup=ReplyKeyboardRemove())
 
 
-@create_event_router.message(F.state==Form.name)
+@create_event_router.message(Form.name)
 async def process_name(message: types.Message, state: FSMContext):
     await state.update_data(name=message.text)  # Сохранение имени
     await state.set_state(Form.adress)  # Переход к следующему состоянию
     await message.reply("Добавьте адрес: ")
 
 
-@create_event_router.message(F.state==Form.adress)
-async def process_age(message: types.Message, state: FSMContext):
+@create_event_router.message(Form.adress)
+async def process_time(message: types.Message, state: FSMContext):
     await state.update_data(adress=message.text)
     await state.set_state(Form.event_time)
     await message.answer("Когда и во сколько? Введи в формате дд/мм \n")
@@ -36,20 +37,23 @@ async def process_age(message: types.Message, state: FSMContext):
     # await message.reply(f"Привет, {user_data['name']}! Тебе {user_data['age']} лет.")
 
 
-@create_event_router.message(F.state==Form.event_time)
-async def process_age(message: types.Message, state: FSMContext):
+@create_event_router.message(Form.event_time)
+async def process_desc(message: types.Message, state: FSMContext):
     await state.update_data(event_time=message.text)
     await state.set_state(Form.desctiption)
     await message.answer("Введите описание события или оставьте комментарий к событию ")
 
 
-@create_event_router.message(F.state==Form.desctiption)
-async def process_age(message: types.Message, state: FSMContext):
+@create_event_router.message(Form.desctiption)
+async def adding_to_db(message: types.Message, state: FSMContext):
+
     await state.update_data(description=message.text)
     event_data = await state.get_data()
+
     await message.answer(f"Событие {event_data['name']}\n"
                          f"Время: {event_data['event_time']}\n"
                          f"Место: {event_data['adress']}\n"
                          f"Место: {event_data['description']}")
     await state.clear()
 
+async def

@@ -1,5 +1,8 @@
 import logging
 import asyncio
+
+from aiogram.types import BotCommand
+
 from config.config import load_config, Config
 from aiogram import Bot, Dispatcher
 from aiogram.client.bot import DefaultBotProperties
@@ -41,6 +44,11 @@ async def main():
     dp.include_router(reminder.reminder_router)
     dp.include_router(join_event.event_join_router)
 
+
+    commands = [
+        BotCommand(command="start", description="Запустить бота"),
+        BotCommand(command="my")
+    ]
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
