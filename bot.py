@@ -37,7 +37,7 @@ async def main():
     dp: Dispatcher = Dispatcher(storage=MemoryStorage())
 
     dp.include_router(start_command.start_router)
-    # dp.include_router(main_menu.main_menu_router)
+    dp.include_router(main_menu.main_menu_router)
     dp.include_router(events_list.event_list_router)
     dp.include_router(create_event.create_event_router)
     dp.include_router(my_events.my_event_router)
@@ -46,7 +46,7 @@ async def main():
 
     commands = [
         BotCommand(command="start", description="Запустить бота"),
-        BotCommand(command="my_command", description="My Command")
+        BotCommand(command="main_menu", description="Главное меню")
     ]
 
     await bot.set_my_commands(commands)
