@@ -28,7 +28,7 @@ class User(Base):
 # Пример модели события
 class Event(Base):
     __tablename__ = 'events'
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, index=True)
     description = Column(String)
     address = Column(String)
@@ -38,7 +38,7 @@ class Event(Base):
 # Пример модели регистрации на событие
 class Registration(Base):
     __tablename__ = 'registrations'
-    id = Column(Integer, primary_key=True, index=False)
+    id = Column(Integer, primary_key=True, index=False, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     event_id = Column(Integer, ForeignKey('events.id'))
     reminder_time = Column(DateTime)

@@ -44,11 +44,12 @@ async def main():
     dp.include_router(reminder.reminder_router)
     dp.include_router(join_event.event_join_router)
 
-
     commands = [
         BotCommand(command="start", description="Запустить бота"),
-        BotCommand(command="my")
+        BotCommand(command="my_command", description="My Command")
     ]
+
+    await bot.set_my_commands(commands)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 

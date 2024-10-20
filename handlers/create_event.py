@@ -32,6 +32,13 @@ async def process_name(message: types.Message, state: FSMContext):
 
 @create_event_router.message(Form.address)
 async def process_time(message: types.Message, state: FSMContext):
+    await state.update_data(address=message.text)
+    await state.set_state(Form.event_time)
+    await message.answer("Введите время создаваемого события")
+
+
+@create_event_router.message(Form.event_time)
+async def process_desc(message: types.Message, state: FSMContext):
     try:
         event_time = datetime.strptime(message.text, '%d/%m/%Y %H:%M')
         await state.update_data(event_time=event_time)
@@ -41,28 +48,20 @@ async def process_time(message: types.Message, state: FSMContext):
         await message.reply("Неверный формат даты. Попробуйте снова в формате ДД/ММ/ГГГГ ЧЧ:ММ.")
 
 
-@create_event_router.message(Form.event_time)
-async def process_desc(message: types.Message, state: FSMContext):
-    await state.update_data(event_time=message.text)
-    await state.set_state(Form.description)
-    await message.answer("Введите описание события или оставьте комментарий к событию ")
-
-
 @create_event_router.message(Form.description)
 async def adding_to_db(message: types.Message, state: FSMContext):
     await state.update_data(description=message.text)
     event_data = await state.get_data()
-    async with next(get_db()) as db:  # Используем асинхронную сессию
-        new_event = Event(
-            name=event_data['name'],
-            description=event_data['description'],
-            address=event_data['address'],
-            event_time=event_data['event_time']
-        )
-        db.add(new_event)
-        await db.commit()  # Асинхронно фиксируем изменения
-        await db.refresh(new_event)  # Обновляем объект события из базы данных
+    db = next(get_db())  # Используем асинхронную сессию
+    new_event = Event(
+        name=event_data['name'],
+        description=event_data['description'],
+        address=event_data['address'],
+        event_time=event_data['event_time']
+    )
+    db.add(new_event)
+    db.commit()  # Асинхронно фиксируем изменения
+    db.refresh(new_event)  # Обновляем объект события из базы данных
 
     await message.reply(f"Событие '{new_event.name}' успешно создано и сохранено в базе данных!")
-    await state.clear()
     await state.clear()
