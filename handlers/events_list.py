@@ -21,10 +21,10 @@ async def list_events(callback_query: types.CallbackQuery):
             )
             markup = InlineKeyboardMarkup(inline_keyboard=[[join_button]])
             await callback_query.message.answer(
-                f"{event.name} — "
-                f"Время: {event.event_time}"
-                f"Адрес: {event.address}"
-                f"{event.description}",
+                f"{event.name} \n"
+                f"Время: {event.event_time} \n"
+                f"Адрес: {event.address} \n"
+                f"{event.description} \n",
                 reply_markup=markup
             )
     else:
