@@ -41,7 +41,7 @@ class Registration(Base):
     id = Column(Integer, primary_key=True, index=False, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     event_id = Column(Integer, ForeignKey('events.id'))
-    reminder_time = Column(DateTime)
+    reminder_time = Column(String, nullable=True)
 
 
 # Создание таблиц

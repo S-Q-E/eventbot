@@ -17,16 +17,18 @@ async def list_events(callback_query: types.CallbackQuery):
         for event in events:
             join_button = InlineKeyboardButton(
                 text="Записаться",
-                callback_data='events_list'
+                callback_data=f"join_{event.id}"
             )
             markup = InlineKeyboardMarkup(inline_keyboard=[[join_button]])
             await callback_query.message.answer(
-                f"{event.name} \n"
-                f"Время: {event.event_time} \n"
-                f"Адрес: {event.address} \n"
-                f"{event.description} \n",
-                reply_markup=markup
+                f"🎉 <b>{event.name}</b>\n"
+                f"🕒 <b>Дата:</b> {event.event_time.strftime('%d %B')} \n"
+                f"📍 <b>Адрес:</b> <i>{event.address}</i> \n\n"
+                f"📝 <b>Описание:</b> {event.description}\n",
+                reply_markup=markup,
+                parse_mode="HTML"
             )
+
     else:
         await callback_query.message.answer("Нет доступных событий.")
 

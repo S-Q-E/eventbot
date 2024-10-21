@@ -7,6 +7,7 @@ my_event_router = Router()
 # Мои записи
 @my_event_router.callback_query(F.data == 'my_events')
 async def my_events(callback_query: types.CallbackQuery):
+    await callback_query.message.edit_reply_markup(reply_markup=None)
     user_id = callback_query.from_user.id
     db = next(get_db())
     registrations = db.query(Registration).filter_by(user_id=user_id).all()

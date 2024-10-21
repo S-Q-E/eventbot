@@ -1,16 +1,20 @@
-from aiogram import Router, types
+from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db.database import get_db, Registration
-from aiogram.filters.callback_data import CallbackData
 
 from handlers.reminder import ReminderCallback
 
 event_join_router = Router()
 
 
-@event_join_router.callback_query(CallbackData.filter())
-async def join_event(callback_query: types.CallbackQuery, callback_data: CallbackData.filter()):
-    event_id = callback_data.event_id
+@event_join_router.callback_query(F.data.startswith("join_"))
+async def join_event(callback_query : types.CallbackQuery):
+    await callback_query.message.edit_reply_markup(reply_markup=None)
+    try:
+        event_id = int(callback_query.data.split("join_")[1])
+    except (IndexError, ValueError):
+        await callback_query.message.answer("Ошибка: неверный формат данных события.")
+        return
     user_id = callback_query.from_user.id
     db = next(get_db())
 
@@ -26,7 +30,6 @@ async def join_event(callback_query: types.CallbackQuery, callback_data: Callbac
     db.commit()
 
     # После записи предлагается выбрать напоминание
-    markup = InlineKeyboardMarkup()
     reminder_1h = InlineKeyboardButton(
         text="За час",
         callback_data=ReminderCallback(time_before_event="1h", event_id=event_id).pack()
@@ -39,7 +42,8 @@ async def join_event(callback_query: types.CallbackQuery, callback_data: Callbac
         text="За день",
         callback_data=ReminderCallback(time_before_event="1d", event_id=event_id).pack()
     )
-    markup.add(reminder_1h, reminder_2h, reminder_1d)
+
+    markup = InlineKeyboardMarkup(inline_keyboard=[[reminder_1h], [reminder_2h], [reminder_1d]])
 
     await callback_query.message.answer("Вы записаны! Установите напоминание:", reply_markup=markup)
 
