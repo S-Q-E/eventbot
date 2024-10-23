@@ -22,6 +22,8 @@ class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
+    first_name = Column(String)  # Добавляем поле для имени
+    last_name = Column(String)
     is_admin = Column(Boolean, default=False)
 
 
@@ -33,6 +35,9 @@ class Event(Base):
     description = Column(String)
     address = Column(String)
     event_time = Column(DateTime)
+    price = Column(Integer, default=0)
+    max_participants = Column(Integer, default=10)
+    current_participants = Column(Integer, default=0)
 
 
 # Пример модели регистрации на событие

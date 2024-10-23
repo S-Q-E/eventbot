@@ -1,10 +1,12 @@
 from aiogram import Router, types, F
+from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db.database import get_db, Event, Registration
 
 my_event_router = Router()
 
 
+@my_event_router.message(Command("my_events"))
 # Мои записи
 @my_event_router.callback_query(F.data == 'my_events')
 async def my_events(callback_query: types.CallbackQuery):
@@ -41,9 +43,12 @@ async def cancel_registration(callback_query: types.CallbackQuery):
 
     # Удаляем регистрацию
     registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
+    event = db.query(Event).filter_by(id=event_id).first()
     if registration:
         db.delete(registration)
+        event.current_participants -= 1
         db.commit()
         await callback_query.message.answer("Вы успешно отменили регистрацию на это событие.")
+        await callback_query.message.answer(f"Освободилось 1 место на событие {event.name}")
     else:
         await callback_query.message.answer("Вы не были записаны на это событие.")

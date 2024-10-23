@@ -1,7 +1,6 @@
 from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from db.database import get_db, Registration
-
+from db.database import get_db, Registration, Event
 from handlers.reminder import ReminderCallback
 
 event_join_router = Router()
@@ -18,6 +17,14 @@ async def join_event(callback_query : types.CallbackQuery):
     user_id = callback_query.from_user.id
     db = next(get_db())
 
+    event = db.query(Event).filter_by(id=event_id).first()
+    if not event:
+        await callback_query.message.answer("Событие не найдено")
+
+    if event.current_participants >= event.max_participants:
+        await callback_query.message.answer("Все места заняты. Будем ждать вас в следующий раз!")
+        return
+
     # Проверка, что пользователь еще не записан на это событие
     existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
     if existing_registration:
@@ -27,6 +34,7 @@ async def join_event(callback_query : types.CallbackQuery):
     # Записываем пользователя на событие
     new_registration = Registration(user_id=user_id, event_id=event_id)
     db.add(new_registration)
+    event.current_participants += 1
     db.commit()
 
     # После записи предлагается выбрать напоминание
