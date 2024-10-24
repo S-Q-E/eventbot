@@ -21,6 +21,25 @@ from middlewares.registration_middleware import RegistrationMiddleware
 
 logger = logging.getLogger(__name__)
 
+import logging
+import asyncio
+from aiogram.types import BotCommand
+from middlewares.registration_middleware import RegistrationMiddleware
+from config.config import load_config, Config
+from aiogram import Bot, Dispatcher
+from aiogram.client.bot import DefaultBotProperties
+from aiogram.fsm.storage.memory import MemoryStorage
+from handlers import (
+    main_menu,
+    reminder,
+    my_events,
+    join_event,
+    events_list,
+    start_command,
+    create_event,
+    registration
+)
+
 
 async def main():
     logging.basicConfig(
@@ -38,7 +57,6 @@ async def main():
     bot: Bot = Bot(token=config.tg_bot.token, default=default_properties)
     dp: Dispatcher = Dispatcher(storage=MemoryStorage())
 
-    dp.message.middleware(RegistrationMiddleware())
 
     dp.include_router(start_command.start_router)
     dp.include_router(main_menu.main_menu_router)
@@ -48,14 +66,15 @@ async def main():
     dp.include_router(reminder.reminder_router)
     dp.include_router(join_event.event_join_router)
     dp.include_router(registration.registration_router)
+    dp.message.middleware(RegistrationMiddleware())
 
     commands = [
         BotCommand(command="start", description="Запустить бота"),
+        BotCommand(command="start_reg", description="Регистрация"),
         BotCommand(command="main_menu", description="Главное меню"),
         BotCommand(command="my_events", description="Мои записи"),
         BotCommand(command="events_list", description="Все события"),
-        BotCommand(command="create_event", description="Создать событие"),
-        BotCommand(command="start_reg", description="Регистрация")
+        BotCommand(command="create_event", description="Создать событие")
     ]
 
     await bot.set_my_commands(commands)
@@ -68,3 +87,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
         logger.info("Bot stopped")
+
