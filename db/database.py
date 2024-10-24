@@ -25,6 +25,7 @@ class User(Base):
     first_name = Column(String)  # Добавляем поле для имени
     last_name = Column(String)
     is_admin = Column(Boolean, default=False)
+    is_registered = Column(Boolean, default=False)
 
 
 # Пример модели события

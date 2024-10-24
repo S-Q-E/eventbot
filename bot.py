@@ -14,8 +14,10 @@ from handlers import (
     join_event,
     events_list,
     start_command,
-    create_event
+    create_event,
+    registration
 )
+from middlewares.registration_middleware import RegistrationMiddleware
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +38,8 @@ async def main():
     bot: Bot = Bot(token=config.tg_bot.token, default=default_properties)
     dp: Dispatcher = Dispatcher(storage=MemoryStorage())
 
+    dp.message.middleware(RegistrationMiddleware())
+
     dp.include_router(start_command.start_router)
     dp.include_router(main_menu.main_menu_router)
     dp.include_router(events_list.event_list_router)
@@ -43,13 +47,15 @@ async def main():
     dp.include_router(my_events.my_event_router)
     dp.include_router(reminder.reminder_router)
     dp.include_router(join_event.event_join_router)
+    dp.include_router(registration.registration_router)
 
     commands = [
         BotCommand(command="start", description="Запустить бота"),
         BotCommand(command="main_menu", description="Главное меню"),
         BotCommand(command="my_events", description="Мои записи"),
         BotCommand(command="events_list", description="Все события"),
-        BotCommand(command="create_event", description="Создать событие")
+        BotCommand(command="create_event", description="Создать событие"),
+        BotCommand(command="start_reg", description="Регистрация")
     ]
 
     await bot.set_my_commands(commands)

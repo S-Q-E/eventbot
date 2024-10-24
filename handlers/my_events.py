@@ -7,7 +7,6 @@ my_event_router = Router()
 
 
 @my_event_router.message(Command("my_events"))
-# Мои записи
 @my_event_router.callback_query(F.data == 'my_events')
 async def my_events(callback_query: types.CallbackQuery):
     await callback_query.message.edit_reply_markup(reply_markup=None)
