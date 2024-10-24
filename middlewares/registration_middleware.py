@@ -1,6 +1,5 @@
 import logging
 from aiogram import BaseMiddleware
-from aiogram.types import Message, CallbackQuery
 from db.database import get_db, User
 
 
@@ -18,7 +17,7 @@ class RegistrationMiddleware(BaseMiddleware):
 
             # Исключения для команд/событий, которые можно выполнять без регистрации
             allowed_commands = ['events_list', 'start', 'start_reg']
-            allowed_callbacks = ['events_list', 'start_reg']
+            allowed_callbacks = ['events_list', 'start_reg', 'start_reg']
 
             # Если это команда (например, текстовое сообщение, начинающееся с "/")
             if event.text and event.text.lstrip("/").split()[0] in allowed_commands:

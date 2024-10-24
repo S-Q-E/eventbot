@@ -9,6 +9,7 @@ admin_settings_router = Router()
 async def admin_set(message:Message, callback_query):
     pass
 
+
 @admin_settings_router.message(Command(commands="add_admin"))
 async def add_admin(message: Message):
     db = next(get_db())
