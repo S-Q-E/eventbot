@@ -3,13 +3,18 @@ from db.database import get_db, User
 from aiogram.filters import Command
 from aiogram.types import Message
 
+from utils.reg_required import registration_required
+
 admin_settings_router = Router()
 
+
+@registration_required
 @admin_settings_router.message(Command("admin_settings"))
 async def admin_set(message:Message, callback_query):
     pass
 
 
+@registration_required
 @admin_settings_router.message(Command(commands="add_admin"))
 async def add_admin(message: Message):
     db = next(get_db())

@@ -9,9 +9,8 @@ event_list_router = Router()
 # Отображение всех событий
 @event_list_router.message(Command("events_list"))
 @event_list_router.callback_query(F.data == 'events')
-async def list_events(callback_query: types.CallbackQuery):
-    await callback_query.message.edit_reply_markup(reply_markup=None)
-    await callback_query.message.answer("Список событий...")
+async def list_events(message: types.Message):
+    await message.answer("*****События*****")
     db = next(get_db())
     events = db.query(Event).all()
 
@@ -21,8 +20,9 @@ async def list_events(callback_query: types.CallbackQuery):
                 text="Записаться",
                 callback_data=f"join_{event.id}"
             )
+
             markup = InlineKeyboardMarkup(inline_keyboard=[[join_button]])
-            await callback_query.message.answer(
+            await message.answer(
                 f"🎉 <b>{event.name}</b>\n"
                 f"🕒 <b>Дата:</b> {event.event_time.strftime('%d %B')} \n\n"            
                 f"📝 <b>Описание:</b> {event.description}\n"
@@ -31,7 +31,6 @@ async def list_events(callback_query: types.CallbackQuery):
                 reply_markup=markup,
                 parse_mode="HTML"
             )
-
     else:
-        await callback_query.message.answer("Нет доступных событий.")
+        await message.answer("Нет доступных событий.")
 

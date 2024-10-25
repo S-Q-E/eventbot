@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import ReplyKeyboardRemove, CallbackQuery
 from db.database import get_db, Event
+from utils import reg_required
 
 create_event_router = Router()
 
