@@ -52,7 +52,7 @@ async def start_command(message: types.Message):
     else:
         if user.is_registered:
             markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [my_events_button], [create_event]])
-            await message.answer(f"Добро пожаловать, {user.first_name}! Вы зарегистрированы.", reply_markup=markup)
+            await message.answer(f"Добро пожаловать, <b>{user.first_name}!</b>", reply_markup=markup, parse_mode="HTML")
         else:
             markup = InlineKeyboardMarkup(inline_keyboard=[[registration_button], [events_button]])
-            await message.answer(f"Проидите регистрацию", reply_markup=markup)
+            await message.answer(f"Пройдите регистрацию, для получения всех возможностей\n EVENTBOT-а", reply_markup=markup)

@@ -1,67 +1,56 @@
 import logging
 from aiogram import BaseMiddleware
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, CallbackQuery
-
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from db.database import get_db, User
 
 
 class RegistrationMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
         try:
-            # Определяем пользователя из события
-            user_id = event.from_user.id if hasattr(event, 'from_user') else None
+            # Проверяем, что событие содержит пользователя
+            user_id = getattr(event.from_user, 'id', None)
             if not user_id:
-                logging.warning("Событие не имеет пользователя.")
+                logging.warning("Событие не содержит пользователя.")
                 return await handler(event, data)
 
+            # Получаем сессию базы данных и ищем пользователя
             db = next(get_db())
             user = db.query(User).filter_by(id=user_id).first()
 
-            # Если пользователь не найден в базе данных
             if not user:
+                # Если пользователя нет, создаем запись и отправляем сообщение о необходимости регистрации
+                new_user = User(id=user_id, is_registered=False)
+                db.add(new_user)
+                db.commit()
+
                 register_button = InlineKeyboardButton(text="Регистрация", callback_data="start_reg")
                 markup = InlineKeyboardMarkup(inline_keyboard=[[register_button]])
+                await event.answer("Вы не зарегистрированы", reply_markup=markup)
 
-                # Отправляем сообщение в зависимости от типа события (Message или CallbackQuery)
-                if isinstance(event, Message):
-                    await event.answer("Вы не зарегистрированы", reply_markup=markup)
-                elif isinstance(event, CallbackQuery):
-                    await event.message.answer("Вы не зарегистрированы", reply_markup=markup)
-
+                # Возвращаем после отправки сообщения о регистрации
                 return
 
-            # Исключения для команд/событий, которые можно выполнять без регистрации
+            # Проверка, если команда в разрешенных
             allowed_commands = ['events_list', 'start', 'start_reg']
             allowed_callbacks = ['events_list', 'start_reg']
 
-            # Если это команда (например, текстовое сообщение, начинающееся с "/")
-            if isinstance(event, Message) and event.text.lstrip("/").split()[0] in allowed_commands:
+            if hasattr(event, 'text') and event.text.lstrip("/").split()[0] in allowed_commands:
                 return await handler(event, data)
 
-            # Если это callback-запрос
-            if isinstance(event, CallbackQuery) and event.data in allowed_callbacks:
+            if hasattr(event, 'data') and event.data in allowed_callbacks:
                 return await handler(event, data)
 
-            # Проверка регистрации пользователя
-            if user.is_registered:  # Теперь эта проверка не будет выполнена, если user == None
-                return await handler(event, data)
-            else:
-                reg_button = InlineKeyboardButton(text="Регистрация", callback_data="start_reg")
-                markup = InlineKeyboardMarkup(inline_keyboard=[[reg_button]])
-
-                if isinstance(event, Message):
-                    await event.answer("Вы не зарегистрированы. Пожалуйста, пройдите регистрацию.", reply_markup=markup)
-                elif isinstance(event, CallbackQuery):
-                    await event.message.answer("Вы не зарегистрированы. Пожалуйста, пройдите регистрацию.",
-                                               reply_markup=markup)
-
+            # Если пользователь существует, но не зарегистрирован, отправляем только одно сообщение о регистрации
+            if not user.is_registered:
+                register_button = InlineKeyboardButton(text="Регистрация", callback_data="start_reg")
+                markup = InlineKeyboardMarkup(inline_keyboard=[[register_button]])
+                await event.answer("Вы не зарегистрированы. Пожалуйста, пройдите регистрацию.", reply_markup=markup)
                 return
+
+            # Если пользователь зарегистрирован, передаем управление обработчику
+            return await handler(event, data)
+
         except Exception as e:
             logging.error(f"Ошибка в Middleware: {e}")
-
-            if isinstance(event, Message):
-                await event.answer(f"Произошла ошибка. Попробуйте позже.\n{e}")
-            elif isinstance(event, CallbackQuery):
-                await event.message.answer(f"Произошла ошибка. Попробуйте позже.\n{e}")
-
+            await event.answer("Произошла ошибка. Попробуйте позже.")
             return

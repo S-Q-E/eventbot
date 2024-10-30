@@ -28,7 +28,7 @@ async def start_registration(message: types.Message, state: FSMContext):
     db = next(get_db())
     user = db.query(User).filter_by(id=user_id).first()
 
-    if user:
+    if user.is_registered:
         create_event = InlineKeyboardButton(text="Создать событие", callback_data="create_event")
         events_button = InlineKeyboardButton(text="События", callback_data="events")
         my_events_button = InlineKeyboardButton(text="Мои записи", callback_data="my_events")

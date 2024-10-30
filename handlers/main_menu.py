@@ -3,12 +3,12 @@ from aiogram.filters import Command
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from utils.reg_required import registration_required
+# from utils.reg_required import registration_required
 
 main_menu_router = Router()
 
 
-@registration_required
+# @registration_required
 @main_menu_router.message(Command("main_menu"))
 @main_menu_router.callback_query(F.data == "main_menu")
 async def main_menu(message: types.Message):
