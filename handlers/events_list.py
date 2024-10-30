@@ -6,11 +6,18 @@ from db.database import get_db, Event
 event_list_router = Router()
 
 
-# Отображение всех событий
 @event_list_router.message(Command("events_list"))
 @event_list_router.callback_query(F.data == 'events')
-async def list_events(message: types.Message):
-    await message.answer("*****События*****")
+async def list_events(message_or_callback: types.Message | types.CallbackQuery):
+    """
+    Функция отображает список всех событий.
+    Может быть вызвана как по команде /events_list, так и по нажатию на кнопку "События".
+    """
+
+    # Определяем, что было получено: сообщение или callback
+    is_callback = isinstance(message_or_callback, types.CallbackQuery)
+    message = message_or_callback.message if is_callback else message_or_callback
+
     db = next(get_db())
     events = db.query(Event).all()
 

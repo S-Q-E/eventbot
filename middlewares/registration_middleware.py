@@ -3,7 +3,6 @@ from aiogram import BaseMiddleware
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from db.database import get_db, User
 
-
 class RegistrationMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
         try:
@@ -30,13 +29,15 @@ class RegistrationMiddleware(BaseMiddleware):
                 # Возвращаем после отправки сообщения о регистрации
                 return
 
-            # Проверка, если команда в разрешенных
+            # Разрешенные команды и callback'и для незарегистрированных пользователей
             allowed_commands = ['events_list', 'start', 'start_reg']
             allowed_callbacks = ['events_list', 'start_reg']
 
+            # Если это команда, проверяем, что она разрешена для незарегистрированных пользователей
             if hasattr(event, 'text') and event.text.lstrip("/").split()[0] in allowed_commands:
                 return await handler(event, data)
 
+            # Если это callback-запрос, проверяем, что он разрешен для незарегистрированных пользователей
             if hasattr(event, 'data') and event.data in allowed_callbacks:
                 return await handler(event, data)
 
