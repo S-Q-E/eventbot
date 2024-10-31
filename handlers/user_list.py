@@ -1,10 +1,13 @@
-from aiogram import types, Router
+from aiogram import types, Router, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db.database import get_db, User
+from aiogram.filters import Command
 
 user_list_router = Router()
 
-@user_list_router.message(commands="user_list")
+
+@user_list_router.message(Command("user_list"))
+@user_list_router.callback_query(F.data == "user_list")
 async def list_registered_users(message: types.Message):
     db = next(get_db())
     try:

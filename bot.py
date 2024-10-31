@@ -18,7 +18,8 @@ from handlers import (
     events_list,
     start_command,
     create_event,
-    registration
+    registration,
+    user_list
 )
 
 
@@ -48,6 +49,7 @@ async def main():
     dp.include_router(reminder.reminder_router)
     dp.include_router(join_event.event_join_router)
     dp.include_router(registration.registration_router)
+    dp.include_router(user_list.user_list_router)
 
     commands = [
         BotCommand(command="events_list", description="Все события"),
@@ -55,7 +57,9 @@ async def main():
         BotCommand(command="start_reg", description="Регистрация"),
         BotCommand(command="main_menu", description="Главное меню"),
         BotCommand(command="create_event", description="Создать событие"),
-        BotCommand(command="my_events", description="Мои записи")
+        BotCommand(command="my_events", description="Мои записи"),
+        BotCommand(command="user_list", description="Список пользователей"),
+        BotCommand(command="set_admin", description="Назначить админа")
     ]
 
     await bot.set_my_commands(commands)

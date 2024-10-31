@@ -1,75 +1,61 @@
-from aiogram import Router, types
+from aiogram import Router, types, F
 from db.database import get_db, User
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 # from utils.reg_required import registration_required
 
-admin_settings_router = Router()
+set_admin_router = Router()
+
+# # @registration_required
+# @admin_settings_router.message(Command("admin_settings"))
+# async def admin_set(message:Message, callback_query):
+#     pass
 
 
-# @registration_required
-@admin_settings_router.message(Command("admin_settings"))
-async def admin_set(message:Message, callback_query):
-    pass
-
-
-# @registration_required
-@admin_settings_router.message(Command(commands="add_admin"))
-async def add_admin(message: Message):
+@set_admin_router.callback_query(F.data == "set_admin")
+@set_admin_router.message(Command("set_admin"))
+async def set_admin(callback: types.CallbackQuery):
     db = next(get_db())
-
-    # Проверяем, является ли вызывающий пользователь администратором
-    calling_user = db.query(User).filter_by(id=message.from_user.id).first()
-    if not calling_user or not calling_user.is_admin:
-        await message.answer("У вас нет прав для выполнения этой команды.")
-        return
-
-    # Получаем ID пользователя, которого нужно сделать администратором
     try:
-        user_id = int(message.get_args())  # Например, команда будет выглядеть как /add_admin 123456
-    except ValueError:
-        await message.answer("Пожалуйста, укажите корректный ID пользователя.")
-        return
+        users = db.query(User).filter(User.is_registered == True).all()
 
-    # Ищем пользователя в базе данных
-    user_to_promote = db.query(User).filter_by(id=user_id).first()
-
-    if user_to_promote:
-        # Делаем пользователя администратором
-        user_to_promote.is_admin = True
-        db.commit()
-
-        await message.answer(f"Пользователь {user_to_promote.username} теперь является администратором!")
-    else:
-        await message.answer("Пользователь с таким ID не найден.")
-
-
-@admin_settings_router.message(Command(commands="remove_admin"))
-async def remove_admin(message: Message):
-    db = next(get_db())
-
-    calling_user = db.query(User).filter_by(id=message.from_user.id).first()
-    if not calling_user or not calling_user.is_admin:
-        await message.answer("У вас нет прав для выполнения этой команды.")
-        return
-
-    try:
-        user_id = int(message.get_args())
-    except ValueError:
-        await message.answer("Пожалуйста, укажите корректный ID пользователя.")
-        return
-
-    user_to_demote = db.query(User).filter_by(id=user_id).first()
-
-    if user_to_demote:
-        if not user_to_demote.is_admin:
-            await message.answer(f"Пользователь {user_to_demote.username} не является администратором.")
+        if not users:
+            await callback.message.answer("Нет зарегистрированных пользователей.")
             return
 
-        user_to_demote.is_admin = False
-        db.commit()
+        # Формируем кнопки для каждого пользователя
+        for user in users:
+            make_admin_button = InlineKeyboardButton(
+                text="Сделать админом",
+                callback_data=f"make_admin_{user.id}"
+            )
+            markup = InlineKeyboardMarkup(inline_keyboard=[[make_admin_button]])
+            await callback.message.answer(
+                f"{user.first_name} {user.last_name} (@{user.username})",
+                reply_markup=markup
+            )
+    except Exception as e:
+        await callback.message.answer("Произошла ошибка при получении списка пользователей.")
+        print(f"Ошибка при запросе пользователей: {e}")
+    finally:
+        db.close()
 
-        await message.answer(f"Пользователь {user_to_demote.username} больше не является администратором.")
-    else:
-        await message.answer("Пользователь с таким ID не найден.")
+
+@set_admin_router.callback_query(F.data.startswith("make_admin_"))
+async def make_admin(callback: types.CallbackQuery):
+    user_id = int(callback.data.split("_")[-1])
+    db = next(get_db())
+    try:
+        user = db.query(User).filter(User.id == user_id).first()
+        if user and not user.is_admin:
+            user.is_admin = True
+            db.commit()
+            await callback.message.answer(f"{user.username} теперь админ.")
+        else:
+            await callback.message.answer("Пользователь уже админ или не найден.")
+    except Exception as e:
+        await callback.message.answer("Произошла ошибка при назначении администратора.")
+        print(f"Ошибка при назначении администратора: {e}")
+    finally:
+        db.close()
