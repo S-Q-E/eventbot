@@ -22,8 +22,9 @@ class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
-    first_name = Column(String)  # Добавляем поле для имени
+    first_name = Column(String)
     last_name = Column(String)
+    phone_number = Column(String, nullable=True)
     is_admin = Column(Boolean, default=False)
     is_registered = Column(Boolean, default=False)
 

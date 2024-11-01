@@ -35,7 +35,7 @@ async def my_events(callback_query: types.CallbackQuery):
 # Обработчик для кнопки "Я не пойду"
 @my_event_router.callback_query(F.data.startswith("cancel_registration_"))
 async def cancel_registration(callback_query: types.CallbackQuery):
-    await callback_query.edit_reply_markup(reply_markup=None)
+    # await callback_query.edit_reply_markup(reply_markup=None)
     event_id = int(callback_query.data.split("_")[-1])
     user_id = callback_query.from_user.id
     db = next(get_db())

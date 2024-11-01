@@ -25,10 +25,9 @@ async def start_command(message: types.Message):
     user_id = message.from_user.id
 
     # Кнопки
-    create_event = InlineKeyboardButton(text="Создать событие", callback_data="create_event")
-    events_button = InlineKeyboardButton(text="События", callback_data="events")
-    my_events_button = InlineKeyboardButton(text="Мои записи", callback_data="my_events")
-    registration_button = InlineKeyboardButton(text="Регистрация", callback_data="start_reg")
+    events_button = InlineKeyboardButton(text="💬 Доступные event-ы", callback_data="events")
+    my_events_button = InlineKeyboardButton(text="📆 Мои записи", callback_data="my_events")
+    registration_button = InlineKeyboardButton(text="➕ Регистрация", callback_data="start_reg")
 
     try:
         user = db.query(User).filter_by(id=user_id).first()
@@ -40,7 +39,7 @@ async def start_command(message: types.Message):
     if not user:
         markup = InlineKeyboardMarkup(inline_keyboard=[[registration_button], [events_button]])
         try:
-            new_user = User(id=user_id, username=message.from_user.username, is_registered=False)
+            new_user = User(id=user_id, username=message.from_user.username)
             db.add(new_user)
             db.commit()
             await message.answer("Пройдите регистрацию для получения всех возможностей бота.", reply_markup=markup)
@@ -50,9 +49,5 @@ async def start_command(message: types.Message):
         else:
             await message.answer("Вы не завершили регистрацию. Пожалуйста, пройдите её.", reply_markup=markup)
     else:
-        if user.is_registered:
-            markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [my_events_button], [create_event]])
-            await message.answer(f"Добро пожаловать, <b>{user.first_name}!</b>", reply_markup=markup, parse_mode="HTML")
-        else:
-            markup = InlineKeyboardMarkup(inline_keyboard=[[registration_button], [events_button]])
-            await message.answer(f"Пройдите регистрацию, для получения всех возможностей\n EVENTBOT-а", reply_markup=markup)
+        markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [my_events_button], [registration_button]])
+        await message.answer("Добро пожаловать в EVENTBOT\n\n", reply_markup=markup)

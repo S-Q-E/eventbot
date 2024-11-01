@@ -2,7 +2,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import logging
 import asyncio
 from aiogram.types import BotCommand
 # from middlewares.registration_middleware import RegistrationMiddleware
@@ -19,7 +18,8 @@ from handlers import (
     start_command,
     create_event,
     registration,
-    user_list
+    user_list,
+    set_admin
 )
 
 
@@ -50,16 +50,13 @@ async def main():
     dp.include_router(join_event.event_join_router)
     dp.include_router(registration.registration_router)
     dp.include_router(user_list.user_list_router)
+    dp.include_router(set_admin.set_admin_router)
 
     commands = [
-        BotCommand(command="events_list", description="Все события"),
-        BotCommand(command="start", description="Запустить бота"),
-        BotCommand(command="start_reg", description="Регистрация"),
         BotCommand(command="main_menu", description="Главное меню"),
-        BotCommand(command="create_event", description="Создать событие"),
+        BotCommand(command="events_list", description="Все события"),
         BotCommand(command="my_events", description="Мои записи"),
-        BotCommand(command="user_list", description="Список пользователей"),
-        BotCommand(command="set_admin", description="Назначить админа")
+        BotCommand(command="start", description="Запустить бота"),
     ]
 
     await bot.set_my_commands(commands)
