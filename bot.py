@@ -7,7 +7,7 @@ from aiogram.types import BotCommand
 # from middlewares.registration_middleware import RegistrationMiddleware
 from config.config import load_config, Config
 from aiogram import Bot, Dispatcher
-from aiogram.client.bot import DefaultBotProperties
+# from aiogram.client.bot import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 from handlers import (
     main_menu,
@@ -34,9 +34,9 @@ async def main():
 
     config: Config = load_config()
 
-    default_properties = DefaultBotProperties(parse_mode="HTML")
+    # default_properties = DefaultBotProperties(parse_mode="HTML")
 
-    bot: Bot = Bot(token=config.tg_bot.token, default=default_properties)
+    bot: Bot = Bot(token=config.tg_bot.token)
     dp: Dispatcher = Dispatcher(storage=MemoryStorage())
     # dp.message.middleware(RegistrationMiddleware())
     # dp.callback_query.middleware(RegistrationMiddleware())
