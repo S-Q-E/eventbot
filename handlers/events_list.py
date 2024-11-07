@@ -13,7 +13,7 @@ async def list_events(message_or_callback: types.Message | types.CallbackQuery):
     Функция отображает список всех событий.
     Может быть вызвана как по команде /events_list, так и по нажатию на кнопку "События".
     """
-
+    # await message_or_callback.edit_reply_markup()
     # Определяем, что было получено: сообщение или callback
     is_callback = isinstance(message_or_callback, types.CallbackQuery)
     message = message_or_callback.message if is_callback else message_or_callback
@@ -23,12 +23,16 @@ async def list_events(message_or_callback: types.Message | types.CallbackQuery):
 
     if events:
         for event in events:
+            show_on_map = InlineKeyboardButton(
+                text="Показать на карте",
+                callback_data=f"show_on_map_{event.id}"
+            )
             join_button = InlineKeyboardButton(
                 text="Записаться",
                 callback_data=f"join_{event.id}"
             )
 
-            markup = InlineKeyboardMarkup(inline_keyboard=[[join_button]])
+            markup = InlineKeyboardMarkup(inline_keyboard=[[join_button], [show_on_map]])
             await message.answer(
                 f"🎉 <b>{event.name}</b>\n"
                 f"🕒 <b>Дата:</b> {event.event_time.strftime('%d %B')} \n\n"            

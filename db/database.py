@@ -49,7 +49,7 @@ class Registration(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     event_id = Column(Integer, ForeignKey('events.id'))
     reminder_time = Column(String, nullable=True)
+    is_paid = Column(Boolean, default=False)
 
 
-# Создание таблиц
 Base.metadata.create_all(bind=engine)

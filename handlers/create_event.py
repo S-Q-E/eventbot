@@ -22,6 +22,7 @@ class Form(StatesGroup):
 @create_event_router.message(Command("create_event"))
 @create_event_router.callback_query(F.data == "create_event")
 async def command_start(callback_query: CallbackQuery, state: FSMContext) -> None:
+    await callback_query.message.edit_reply_markup()
     await state.set_state(Form.name)
     await callback_query.message.answer("📌 <b>Шаг 1 из 6: Создание нового события</b>\n\n"
                                         "📝 Пожалуйста, введите <b>название события</b>:\n"

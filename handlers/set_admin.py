@@ -16,6 +16,7 @@ set_admin_router = Router()
 @set_admin_router.callback_query(F.data == "set_admin")
 @set_admin_router.message(Command("set_admin"))
 async def set_admin(callback: types.CallbackQuery):
+    await callback.message.edit_reply_markup()
     db = next(get_db())
     try:
         users = db.query(User).filter(User.is_registered == True).all()
@@ -44,6 +45,7 @@ async def set_admin(callback: types.CallbackQuery):
 
 @set_admin_router.callback_query(F.data.startswith("make_admin_"))
 async def make_admin(callback: types.CallbackQuery):
+    await callback.message.edit_reply_markup()
     user_id = int(callback.data.split("_")[-1])
     db = next(get_db())
     try:

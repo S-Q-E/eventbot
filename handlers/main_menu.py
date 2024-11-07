@@ -1,6 +1,5 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command
-from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # from utils.reg_required import registration_required
@@ -9,7 +8,6 @@ from db.database import get_db, User
 main_menu_router = Router()
 
 
-# @registration_required
 @main_menu_router.message(Command("main_menu"))
 @main_menu_router.callback_query(F.data == "main_menu")
 async def main_menu(message: types.Message):
@@ -44,7 +42,7 @@ async def main_menu(message: types.Message):
                                  f"<b>Добро пожаловать! {message.from_user.username}</b>\n", reply_markup=admin_markup)
         else:
             await message.answer("*******EVENTBOT********\n\n"
-                                 f"<b>Добро пожаловать! {message.from_user.username}</b>\n", reply_markup=reg_user_markup)
+                                 f"<b>Добро пожаловать! {message.from_user.username}</b>\n", reply_markup=admin_markup)
     else:
         await message.answer("*******EVENTBOT********\n\n"
                              f"<b>Вы не прошли регистрацию\n"

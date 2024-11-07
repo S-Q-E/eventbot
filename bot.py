@@ -1,10 +1,6 @@
 import logging
-
-logger = logging.getLogger(__name__)
-
 import asyncio
 from aiogram.types import BotCommand
-# from middlewares.registration_middleware import RegistrationMiddleware
 from config.config import load_config, Config
 from aiogram import Bot, Dispatcher
 from aiogram.client.bot import DefaultBotProperties
@@ -19,8 +15,11 @@ from handlers import (
     create_event,
     registration,
     user_list,
-    set_admin
+    set_admin,
+    # send_event_loc
 )
+
+logger = logging.getLogger(__name__)
 
 
 async def main():
@@ -38,8 +37,6 @@ async def main():
 
     bot: Bot = Bot(token=config.tg_bot.token, default=default_properties)
     dp: Dispatcher = Dispatcher(storage=MemoryStorage())
-    # dp.message.middleware(RegistrationMiddleware())
-    # dp.callback_query.middleware(RegistrationMiddleware())
 
     dp.include_router(start_command.start_router)
     dp.include_router(main_menu.main_menu_router)
@@ -51,6 +48,7 @@ async def main():
     dp.include_router(registration.registration_router)
     dp.include_router(user_list.user_list_router)
     dp.include_router(set_admin.set_admin_router)
+    # dp.include_router(send_event_loc.send_loc_router)
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),
@@ -60,8 +58,8 @@ async def main():
     ]
 
     await bot.set_my_commands(commands)
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    await bot.delete_webhook(drop_pending_updates=False)
+    await dp.start_polling(bot, )
 
 
 if __name__ == "__main__":
