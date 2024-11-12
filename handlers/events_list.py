@@ -1,7 +1,7 @@
 from aiogram import Router, types,F
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from db.database import get_db, Event
+from db.database import get_db, Event, Registration, User
 
 event_list_router = Router()
 
@@ -23,6 +23,16 @@ async def list_events(message_or_callback: types.Message | types.CallbackQuery):
 
     if events:
         for event in events:
+            registrations = db.query(Registration).filter_by(event_id=event.id).all()
+            registered_users = []
+            for registration in registrations:
+                user = db.query(User).filter_by(id=registration.user_id).first()
+                if user:
+                    registered_users.append(f"{user.first_name} {user.last_name}")
+
+            # Формирование текста с информацией о пользователях
+            registered_users_text = "\n".join(
+                registered_users) if registered_users else "Нет зарегистрированных участников"
             show_on_map = InlineKeyboardButton(
                 text="Показать на карте",
                 callback_data=f"show_on_map_{event.id}"
@@ -35,10 +45,11 @@ async def list_events(message_or_callback: types.Message | types.CallbackQuery):
             markup = InlineKeyboardMarkup(inline_keyboard=[[join_button], [show_on_map]])
             await message.answer(
                 f"🎉 <b>{event.name}</b>\n"
-                f"🕒 <b>Дата:</b> {event.event_time.strftime('%d %B')} \n\n"            
+                f"🕒 <b>Дата:</b> {event.event_time.strftime('%d %B')} \n\n"
                 f"📝 <b>Описание:</b> {event.description}\n"
-                f"💰 <b>Цена</b>: {event.price}\n"
-                f"💡 <b>Осталось мест</b>: {event.max_participants - event.current_participants}",
+                f"💰 <b>Цена:</b> {event.price}\n"
+                f"💡 <b>Осталось мест:</b> {event.max_participants - event.current_participants}\n\n"
+                f"👥 <b>Зарегистрированные участники:</b>\n{registered_users_text}",
                 reply_markup=markup,
                 parse_mode="HTML"
             )

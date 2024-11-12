@@ -16,7 +16,7 @@ from handlers import (
     registration,
     user_list,
     set_admin,
-    # send_event_loc
+    send_event_loc
 )
 
 logger = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ async def main():
     dp.include_router(registration.registration_router)
     dp.include_router(user_list.user_list_router)
     dp.include_router(set_admin.set_admin_router)
-    # dp.include_router(send_event_loc.send_loc_router)
+    dp.include_router(send_event_loc.send_loc_router)
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),
