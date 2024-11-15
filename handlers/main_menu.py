@@ -25,7 +25,7 @@ async def main_menu(message: types.Message):
 
         return
 
-    events_button = InlineKeyboardButton(text="💬 Доступные event-ы", callback_data="events")
+    events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_page_1")
     my_events_button = InlineKeyboardButton(text="📆 Мои записи", callback_data="my_events")
     admin_panel = InlineKeyboardButton(text="😎 Панель админа", callback_data="admin_panel")
 
@@ -41,7 +41,7 @@ async def main_menu(message: types.Message):
         else:
             await message.answer("*******EVENTBOT********\n\n"
                                  f"<b>Добро пожаловать! {message.from_user.username}</b>\n",
-                                 reply_markup=admin_markup)
+                                 reply_markup=reg_user_markup)
     else:
         await message.answer("*******EVENTBOT********\n\n"
                              f"<b>Вы не прошли регистрацию\n"
@@ -64,7 +64,7 @@ async def main_menu(callback: types.CallbackQuery):
 
         return
 
-    events_button = InlineKeyboardButton(text="💬 Доступные event-ы", callback_data="events")
+    events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_page_1")
     my_events_button = InlineKeyboardButton(text="📆 Мои записи", callback_data="my_events")
     admin_panel = InlineKeyboardButton(text="😎 Панель админа", callback_data="admin_panel")
 

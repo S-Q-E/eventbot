@@ -82,7 +82,7 @@ async def join_event(callback_query: types.CallbackQuery):
             "test": True  # Указание на тестовый режим платежа
         }, id_key)
         check_btn = InlineKeyboardButton(text="Проверить оплату",
-                                         callback_data=f"check_{payment.id}_{event_id}")
+                                         callback_data=f"check_{payment.id}_{event.id}")
         markup = InlineKeyboardMarkup(inline_keyboard=[[check_btn]])
         confirmation_url = payment.confirmation.confirmation_url
         await callback_query.message.answer(
@@ -94,7 +94,7 @@ async def join_event(callback_query: types.CallbackQuery):
         logging.error(f"Ошибка при создании тестового платежа: {e}")
 
 
-@event_join_router.callback_query(F.data.startswith("check"))
+@event_join_router.callback_query(F.data.startswith("check_"))
 async def check_payment(callback_query: types.CallbackQuery):
     data = callback_query.data.split("_")
     payment_id, event_id = data[1], int(data[2])
@@ -107,12 +107,10 @@ async def check_payment(callback_query: types.CallbackQuery):
             # Регистрируем пользователя на событие
             db = next(get_db())
             event = db.query(Event).filter_by(id=event_id).first()
-            new_registration = Registration(user_id=user_id, event_id=event_id, is_paid=True)
+            new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
             db.add(new_registration)
             event.current_participants += 1
             db.commit()
-
-            # Уведомляем пользователя об успешной регистрации и предлагаем установить напоминание
             main_menu_btn = types.KeyboardButton(text="/main_menu")
             keyboard = types.ReplyKeyboardMarkup(keyboard=[[main_menu_btn]], resize_keyboard=True)
             await callback_query.message.answer("Оплата прошла успешно! Вы зарегистрированы на событие.",

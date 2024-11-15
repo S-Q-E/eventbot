@@ -43,10 +43,10 @@ async def main():
     dp.include_router(start_command.start_router)
     dp.include_router(main_menu.main_menu_router)
     dp.include_router(events_list.event_list_router)
+    dp.include_router(join_event.event_join_router)
     dp.include_router(create_event.create_event_router)
     dp.include_router(my_events.my_event_router)
     dp.include_router(reminder.reminder_router)
-    dp.include_router(join_event.event_join_router)
     dp.include_router(registration.registration_router)
     dp.include_router(user_list.user_list_router)
     dp.include_router(set_admin.set_admin_router)
@@ -57,7 +57,6 @@ async def main():
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),
         BotCommand(command="events_list", description="Все события"),
-        BotCommand(command="my_events", description="Мои записи"),
         BotCommand(command="start", description="Запустить бота"),
     ]
 

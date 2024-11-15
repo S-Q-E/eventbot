@@ -22,18 +22,21 @@ async def send_event_loc(callback: types.CallbackQuery):
         return
 
     # Получаем координаты по адресу события
-    coordinates = get_location_by_address(event.address)
-    if coordinates:
-        latitude, longitude = coordinates
-        # Отправляем геолокацию в Telegram
-        await callback.message.answer_location(latitude=latitude, longitude=longitude)
-    else:
-        # Отправляем ссылку на Google Maps, если координаты не найдены
-        google_maps_url = f"https://www.google.com/maps/search/?api=1&query={event.address.replace(' ', '+')}"
-        await callback.message.answer(
-            f"Не удалось найти точное местоположение.\n"
-            f"Попробуйте открыть адрес в Google Maps: [Открыть карту]({google_maps_url})",
-            disable_web_page_preview=True
-        )
-
-    await callback.answer()
+    try:
+        coordinates = get_location_by_address(event.address)
+        if coordinates:
+            latitude, longitude = coordinates
+            # Отправляем геолокацию в Telegram
+            await callback.message.answer_location(latitude=latitude, longitude=longitude)
+        else:
+            # Отправляем ссылку на Google Maps, если координаты не найдены
+            google_maps_url = f"https://www.google.com/maps/search/?api=1&query={event.address.replace(' ', '+')}"
+            await callback.message.answer(
+                f"Не удалось найти точное местоположение.\n"
+                f"Попробуйте открыть адрес в Google Maps: [Открыть карту]({google_maps_url})",
+                disable_web_page_preview=True
+            )
+    except Exception as e:
+        await callback.message.answer(f"Произошла ошибка при декодирований адреса {e}")
+    finally:
+        await callback.answer()
