@@ -61,6 +61,7 @@ async def process_last_name(message: types.Message, state: FSMContext):
     await message.answer("Пожалуйста, отправьте ваш номер телефона:", reply_markup=phone_keyboard)
 
 
+@registration_router.message(RegistrationStates.waiting_for_phone_number)
 @registration_router.message(RegistrationStates.waiting_for_phone_number, F.contact)
 async def process_phone_number(message: types.Message, state: FSMContext):
     """
