@@ -7,13 +7,13 @@ geolocator = Nominatim(user_agent="my_telegram_bot")  # user_agent должен 
 
 def get_location_by_address(address):
     """
-    Прямое геокодирование: получение координат по адресу
+    Прямое геокодирование: получение координат по адресу.
     """
     try:
         location = geolocator.geocode(address)
         if location:
             return location.latitude, location.longitude
         else:
-            return "Адрес не найден"
+            return None
     except (GeocoderTimedOut, GeocoderServiceError) as e:
-        return f"Ошибка геокодирования: {e}"
+        return None

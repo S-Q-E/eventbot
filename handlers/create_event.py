@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import ReplyKeyboardRemove, CallbackQuery
 from db.database import get_db, Event
+from utils.get_coordinates import get_location_by_address
 
 create_event_router = Router()
 
@@ -42,6 +43,11 @@ async def process_name(message: types.Message, state: FSMContext):
 
 @create_event_router.message(Form.address)
 async def process_time(message: types.Message, state: FSMContext):
+    address = message.text
+    coordinates = get_location_by_address(address)
+    if not coordinates:
+        await message.reply("Не удалось определить местоположение по введенному адресу\n Попробуйте еще раз")
+        return
     await state.update_data(address=message.text)
     await state.set_state(Form.event_time)
     await message.answer("📌 <b>Шаг 3 из 6: Введите время события</b>\n\n"
