@@ -56,8 +56,7 @@ async def main():
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),
-        BotCommand(command="events_list", description="Все события"),
-        BotCommand(command="start", description="Запустить бота"),
+        BotCommand(command="start", description="Запустить бота")
     ]
 
     await bot.set_my_commands(commands)
