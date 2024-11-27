@@ -14,6 +14,7 @@ async def admin_panel(callback: types.CallbackQuery):
         [InlineKeyboardButton(text="Удалить событие", callback_data="delete_event_button")],
         [InlineKeyboardButton(text="Настройки админа", callback_data="set_admin")],
         [InlineKeyboardButton(text="Подписчики бота", callback_data="user_list")],
+        [InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]
     ]
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)
     if is_admin:

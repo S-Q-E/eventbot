@@ -41,15 +41,19 @@ async def list_events(callback: types.CallbackQuery):
         registered_users_text = "\n".join(registered_users) if registered_users else "Нет участников"
 
         show_on_map = InlineKeyboardButton(
-            text="Показать на карте",
+            text="📍 Показать на карте",
             callback_data=f"show_on_map_{event.id}"
         )
+        event_details = InlineKeyboardButton(
+            text="📄 Подробнее",
+            callback_data=f"details_{event.id}"
+        )
         join_button = InlineKeyboardButton(
-            text="Записаться",
+            text="☑️ Записаться",
             callback_data=f"join_{event.id}"
         )
 
-        markup = InlineKeyboardMarkup(inline_keyboard=[[join_button], [show_on_map]])
+        markup = InlineKeyboardMarkup(inline_keyboard=[[event_details], [join_button], [show_on_map]])
         await callback.message.answer(
             f"🎉 <b>{event.name}</b>\n"
             f"🕒 <b>Дата:</b> {event.event_time.strftime('%d %B')} \n"

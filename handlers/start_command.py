@@ -50,4 +50,4 @@ async def start_command(message: types.Message):
             await message.answer("Вы не завершили регистрацию. Пожалуйста, пройдите её.", reply_markup=markup)
     else:
         markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [my_events_button], [registration_button]])
-        await message.answer("Добро пожаловать в EVENTBOT\n\n", reply_markup=markup)
+        await message.answer("Добро пожаловать в 🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉\n\n", reply_markup=markup)

@@ -18,7 +18,8 @@ from handlers import (
     set_admin,
     send_event_loc,
     delete_event,
-    admin_panel
+    admin_panel,
+    event_details
 )
 
 logger = logging.getLogger(__name__)
@@ -53,6 +54,7 @@ async def main():
     dp.include_router(send_event_loc.send_loc_router)
     dp.include_router(delete_event.delete_event_router)
     dp.include_router(admin_panel.admin_router)
+    dp.include_router(event_details.event_detail_router)
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),
