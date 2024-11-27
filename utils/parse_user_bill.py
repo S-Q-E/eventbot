@@ -4,7 +4,6 @@ from PIL import Image
 import re
 import io
 import asyncio
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 
 def clean_name(name):

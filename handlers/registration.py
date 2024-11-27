@@ -1,8 +1,8 @@
+import re
 from aiogram import types, Router, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-
 from bot import logger
 from db.database import get_db, User
 
@@ -67,10 +67,19 @@ async def process_phone_number(message: types.Message, state: FSMContext):
     """
     Обрабатываем номер телефона и завершаем регистрацию
     """
+
+    if message.contact:
+        phone_number = message.contact.phone_number
+    else:
+        # Проверка формата введенного номера
+        phone_number = message.text.strip()
+        if not re.match(r'^\+7\d{10}$', phone_number):
+            await message.answer("❗ Номер телефона должен начинаться с +7 и содержать 11 цифр. Попробуйте снова:")
+            return
+
     user_data = await state.get_data()
     first_name = user_data['first_name']
     last_name = user_data['last_name']
-    phone_number = message.contact.phone_number
 
     user_id = message.from_user.id
     db = next(get_db())

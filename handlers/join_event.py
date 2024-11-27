@@ -1,74 +1,140 @@
-import datetime
-import io
+import logging
+import os
 from aiogram import Router, types, F
-from aiogram.fsm.state import StatesGroup, State
-from aiogram.fsm.context import FSMContext
-from db.database import get_db, Registration, Event, User
-from utils.parse_user_bill import parse_receipt
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from db.database import get_db, Registration, Event
+from handlers.reminder import ReminderCallback
+from yookassa import Payment, Configuration
+from dotenv import load_dotenv
+import uuid
 
-NAME = "Василий Романович К."
+load_dotenv()
+YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID")
+YOOKASSA_API_KEY = os.getenv("YOOKASSA_API_KEY")
+
+Configuration.account_id = YOOKASSA_SHOP_ID
+Configuration.secret_key = YOOKASSA_API_KEY
 
 event_join_router = Router()
 
 
-class EventRegistration(StatesGroup):
-    waiting_for_check = State()
-
-
 @event_join_router.callback_query(F.data.startswith("join_"))
-async def handle_receipt_upload(callback_query: types.CallbackQuery, state: FSMContext):
+async def join_event(callback_query: types.CallbackQuery):
     await callback_query.message.edit_reply_markup(reply_markup=None)
     try:
         event_id = int(callback_query.data.split("join_")[1])
     except (IndexError, ValueError):
         await callback_query.message.answer("Ошибка: неверный формат данных события.")
         return
+
+    user_id = callback_query.from_user.id
     db = next(get_db())
     event = db.query(Event).filter_by(id=event_id).first()
-    await state.update_data(event_id=event.id)
-    await state.set_state(EventRegistration.waiting_for_check)
-    await callback_query.message.answer(f"Для записи нужно оплатить {event.price} P. \n"
-                                        f"Если у вас СБЕР: перевод на номер +77785856188\n"
-                                        f"Для клиентов других банков: 4444 4444 4444 4477")
-
-
-@event_join_router.message(EventRegistration.waiting_for_check)
-async def check_payment(message: types.Message, state: FSMContext):
-    # Получаем сохраненные данные (event_id)
-    data = await state.get_data()
-    event_id = data.get("event_id")
-
-    # Открываем изображение чека
-    photo = message.photo[-1]
-    photo_file = await message.bot.download(file=photo, destination=io.BytesIO())
-    photo_file.seek(0)
-
-    # Получаем доступ к базе данных и пользователю
-    db = next(get_db())
-    user_id = message.from_user.id
-    event = db.query(Event).filter_by(id=event_id).first()
-    user = db.query(User).filter_by(id=user_id).first()
-
-    if not event or not user:
-        await message.answer("Событие или пользователь не найдены.")
+    if not event:
+        await callback_query.message.answer("Событие не найдено")
         return
 
-    # Ожидаемые данные для проверки
-    expected_amount = event.price
+    # проверка количества мест
+    if event.current_participants >= event.max_participants:
+        await callback_query.message.answer("Все места заняты. Будем ждать вас в следующий раз!")
+        return
 
-    # Вызываем функцию парсинга и проверки
-    is_valid = await parse_receipt(photo_file.getvalue(), expected_amount, NAME)
+    # Проверка, что пользователь уже не записан на это событие
+    existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
+    if existing_registration and existing_registration.is_paid:
+        await callback_query.message.answer("Вы уже записаны на это событие.")
+        return
 
-    if is_valid:
-        # Записываем пользователя на событие
+    # Проверка на бесплатное событие
+    if event.price == 0:
         new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
-        db.add(new_registration)
         event.current_participants += 1
+        db.add(new_registration)
         db.commit()
 
-        # Завершаем состояние
-        await state.clear()
+        await callback_query.message.answer(
+            f"Вы успешно зарегистрированы на бесплатное событие: {event.name}."
+        )
+        return
 
-        await message.answer("Оплата подтверждена! Вы успешно записаны на событие.")
-    else:
-        await message.answer("Не удалось подтвердить чек. Проверьте данные и попробуйте снова.")
+    id_key = uuid.uuid4()
+
+    try:
+        payment = Payment.create({
+            "amount": {
+                "value": str(event.price),
+                "currency": "RUB"
+            },
+            "confirmation": {
+                "type": "redirect",
+                "return_url": "https://t.me/quanyshkz_bot/"  # Укажите URL возврата
+            },
+            "capture": True,
+            "description": f"Оплата участия в событии {event.name}",
+            "metadata": {
+                "user_id": user_id,
+                "event_id": event_id
+            },
+            "receipt": {
+                "customer": {
+                    "full_name": callback_query.from_user.full_name or "Имя не указано",
+                    "email": "example@example.com"  # Замените на реальный email пользователя
+                },
+                "items": [
+                    {
+                        "description": f"Участие в событии {event.name}",
+                        "quantity": "1.00",
+                        "amount": {
+                            "value": str(event.price),
+                            "currency": "RUB"
+                        },
+                        "vat_code": "1",  # Подтвердите правильность кода НДС у ЮKassa
+                        "payment_mode": "full_payment",
+                        "payment_subject": "service"
+                    }
+                ]
+            },
+            "refundable": False,
+            "test": True  # Указание на тестовый режим платежа
+        }, id_key)
+        check_btn = InlineKeyboardButton(text="Проверить оплату",
+                                         callback_data=f"check_{payment.id}_{event.id}")
+        markup = InlineKeyboardMarkup(inline_keyboard=[[check_btn]])
+        confirmation_url = payment.confirmation.confirmation_url
+        await callback_query.message.answer(
+            f"Для завершения тестовой оплаты перейдите по ссылке: {confirmation_url}", reply_markup=markup
+        )
+
+    except Exception as e:
+        await callback_query.message.answer("Произошла ошибка при создании платежа. Попробуйте позже.")
+        logging.error(f"Ошибка при создании тестового платежа: {e}")
+
+
+@event_join_router.callback_query(F.data.startswith("check_"))
+async def check_payment(callback_query: types.CallbackQuery):
+    data = callback_query.data.split("_")
+    payment_id, event_id = data[1], int(data[2])
+    user_id = callback_query.from_user.id
+
+    # Проверяем статус платежа
+    try:
+        payment = Payment.find_one(payment_id)
+        if payment.status == "succeeded":
+            # Регистрируем пользователя на событие
+            db = next(get_db())
+            event = db.query(Event).filter_by(id=event_id).first()
+            new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
+            db.add(new_registration)
+            event.current_participants += 1
+            db.commit()
+            main_menu_btn = types.KeyboardButton(text="/main_menu")
+            keyboard = types.ReplyKeyboardMarkup(keyboard=[[main_menu_btn]], resize_keyboard=True)
+            await callback_query.message.answer("Оплата прошла успешно! Вы зарегистрированы на событие.",
+                                                reply_markup=keyboard)
+        elif payment.status == "pending":
+            await callback_query.message.answer("Оплата еще не завершена. Пожалуйста, завершите платеж.")
+        else:
+            await callback_query.message.answer("Оплата не прошла. Попробуйте снова.")
+    except Exception as e:
+        await callback_query.message.answer("Ошибка при проверке платежа. Попробуйте позже.")
+        print(f"Ошибка при проверке платежа: {e}")
