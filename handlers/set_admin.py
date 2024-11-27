@@ -29,14 +29,17 @@ async def set_admin(callback: types.CallbackQuery):
                                               reply_markup=del_markup)
             else:
                 make_admin_button = InlineKeyboardButton(
-                text="Сделать админом",
-                callback_data=f"make_admin_{user.id}"
-            )
+                    text="Сделать админом",
+                    callback_data=f"make_admin_{user.id}"
+                )
                 markup = InlineKeyboardMarkup(inline_keyboard=[[make_admin_button]])
                 await callback.message.answer(
                     f"{user.first_name} {user.last_name} (@{user.username})",
                     reply_markup=markup
                 )
+            back_btn = InlineKeyboardButton(text="↩️", callback_data="admin_panel")
+            back_markup = InlineKeyboardMarkup(inline_keyboard=[[back_btn]])
+            await callback.message.answer("Вернуться назад", reply_markup=back_markup)
     except Exception as e:
         await callback.message.answer("Произошла ошибка при получении списка пользователей.")
         print(f"Ошибка при запросе пользователей: {e}")

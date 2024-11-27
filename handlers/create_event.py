@@ -1,10 +1,9 @@
 from datetime import datetime
-
 from aiogram import Router, types, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import ReplyKeyboardRemove, CallbackQuery
+from aiogram.types import ReplyKeyboardRemove, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from db.database import get_db, Event
 from utils.get_coordinates import get_location_by_address
 
@@ -107,6 +106,7 @@ async def adding_to_db(message: types.Message, state: FSMContext):
     db.add(new_event)
     db.commit()
     db.refresh(new_event)
-
-    await message.reply(f"Готово! Событие <b>{new_event.name}</b> успешно создано!")
+    all_events_btn = InlineKeyboardButton(text="Просмотреть все события", callback_data="events_page_1")
+    markup = InlineKeyboardMarkup(inline_keyboard=[[all_events_btn]])
+    await message.reply(f"☑️☑️☑️Готово! Событие <b>{new_event.name}</b> успешно создано!", reply_markup=markup)
     await state.clear()
