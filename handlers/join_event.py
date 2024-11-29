@@ -51,9 +51,10 @@ async def join_event(callback_query: types.CallbackQuery):
         event.current_participants += 1
         db.add(new_registration)
         db.commit()
-
+        back_btn = InlineKeyboardButton(text="Назад", callback_data="events_page_1")
+        markup = InlineKeyboardMarkup(inline_keyboard=[[back_btn]])
         await callback_query.message.answer(
-            f"Вы успешно зарегистрированы на бесплатное событие: {event.name}."
+            f"Вы успешно зарегистрированы на бесплатное событие: {event.name}.", reply_markup=markup
         )
         return
 
@@ -67,7 +68,7 @@ async def join_event(callback_query: types.CallbackQuery):
             },
             "confirmation": {
                 "type": "redirect",
-                "return_url": "https://t.me/quanyshkz_bot/"  # Укажите URL возврата
+                "return_url": "https://t.me/quanyshkz_bot/"
             },
             "capture": True,
             "description": f"Оплата участия в событии {event.name}",
@@ -102,7 +103,7 @@ async def join_event(callback_query: types.CallbackQuery):
         markup = InlineKeyboardMarkup(inline_keyboard=[[check_btn]])
         confirmation_url = payment.confirmation.confirmation_url
         await callback_query.message.answer(
-            f"Для завершения тестовой оплаты перейдите по ссылке: {confirmation_url}", reply_markup=markup
+            f"Оплатите участие по сбп перейдя по ссылке: {confirmation_url}", reply_markup=markup
         )
 
     except Exception as e:

@@ -26,13 +26,12 @@ async def main_menu(message: types.Message):
         return
 
     events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_page_1")
-    my_events_button = InlineKeyboardButton(text="📆 Мои записи", callback_data="my_events")
     admin_panel = InlineKeyboardButton(text="😎 Панель админа", callback_data="admin_panel")
 
-    admin_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [my_events_button],
+    admin_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button],
                                                          [admin_panel]])
 
-    reg_user_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [my_events_button]])
+    reg_user_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button]])
     if user:
         if user.is_admin:
             await message.answer("🎉🎉🎉🎉🎉 <b>EVENTBOT</b> 🎉🎉🎉🎉🎉\n\n"

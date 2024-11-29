@@ -8,7 +8,6 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from handlers import (
     main_menu,
     reminder,
-    my_events,
     join_event,
     events_list,
     start_command,
@@ -19,7 +18,8 @@ from handlers import (
     send_event_loc,
     delete_event,
     admin_panel,
-    event_details
+    event_details,
+    edit_event
 )
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ async def main():
     dp.include_router(events_list.event_list_router)
     dp.include_router(join_event.event_join_router)
     dp.include_router(create_event.create_event_router)
-    dp.include_router(my_events.my_event_router)
+    dp.include_router(edit_event.edit_event_router)
     dp.include_router(reminder.reminder_router)
     dp.include_router(registration.registration_router)
     dp.include_router(user_list.user_list_router)

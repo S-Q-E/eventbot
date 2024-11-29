@@ -1,7 +1,6 @@
 from aiogram import types, F, Router
-from db.database import get_db, Event
+from db.database import get_db, Event, Registration  # Добавим импорт модели Registration
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from datetime import datetime
 import logging
 
 event_detail_router = Router()
@@ -23,6 +22,22 @@ async def event_details(callback: types.CallbackQuery):
             await callback.answer("❗ Событие не найдено.", show_alert=True)
             return
 
+        # Проверка, зарегистрирован ли пользователь на событие
+        user_id = callback.from_user.id
+        registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
+
+        # Формирование текста кнопки в зависимости от статуса регистрации
+        if registration:
+            action_button = InlineKeyboardButton(
+                text="❌ Отменить запись",
+                callback_data=f"cancel_registration_{event_id}"
+            )
+        else:
+            action_button = InlineKeyboardButton(
+                text="📝 Записаться",
+                callback_data=f"join_{event_id}"
+            )
+
         # Форматирование времени события
         formatted_time = event.event_time.strftime("%d.%m.%Y %H:%M")
 
@@ -36,10 +51,9 @@ async def event_details(callback: types.CallbackQuery):
             f"👥 <b>Участников:</b> {event.current_participants}/{event.max_participants}"
         )
 
-        # Кнопка для записи на событие
-        register_button = InlineKeyboardButton(text="📝 Записаться", callback_data=f"join_{event_id}")
+        # Кнопки действия и возврата
         back_button = InlineKeyboardButton(text="🔙 Назад", callback_data="events_list")
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[[register_button], [back_button]])
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[[action_button], [back_button]])
 
         await callback.message.answer(event_info, reply_markup=keyboard, parse_mode="HTML")
 

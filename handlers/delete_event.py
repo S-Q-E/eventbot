@@ -9,6 +9,20 @@ main_menu_btn = InlineKeyboardButton(text="Назад",
 markup = InlineKeyboardMarkup(inline_keyboard=[[main_menu_btn]])
 
 
+async def event_action_markup(event_id):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="❌ Удалить", callback_data=f"delete_event_{event_id}"),
+                InlineKeyboardButton(text="✏️Редактировать", callback_data=f"edit_event_{event_id}")
+            ],
+            [
+                InlineKeyboardButton(text="↩️ Назад", callback_data="admin_panel")
+            ]
+        ]
+    )
+
+
 @delete_event_router.callback_query(F.data == "delete_event_button")
 async def delete_event(callback_query: types.CallbackQuery):
     db = next(get_db())
@@ -18,7 +32,7 @@ async def delete_event(callback_query: types.CallbackQuery):
             await callback_query.message.answer(
                 f"🎉 <b>{event.name}</b>\n"
                 f"🕒 Дата: {event.event_time.strftime('%d/%m/ %H:%M')}\n",
-                reply_markup=await event_deletion_markup(event.id),
+                reply_markup=await event_action_markup(event.id),
                 parse_mode="HTML"
             )
     else:
