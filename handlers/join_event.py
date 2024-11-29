@@ -8,6 +8,8 @@ from yookassa import Payment, Configuration
 from dotenv import load_dotenv
 import uuid
 
+from keyboards.notif_keyboard import get_notification_keyboard
+
 load_dotenv()
 YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID")
 YOOKASSA_API_KEY = os.getenv("YOOKASSA_API_KEY")
@@ -51,10 +53,8 @@ async def join_event(callback_query: types.CallbackQuery):
         event.current_participants += 1
         db.add(new_registration)
         db.commit()
-        back_btn = InlineKeyboardButton(text="Назад", callback_data="events_page_1")
-        markup = InlineKeyboardMarkup(inline_keyboard=[[back_btn]])
         await callback_query.message.answer(
-            f"Вы успешно зарегистрированы на бесплатное событие: {event.name}.", reply_markup=markup
+            f"Вы успешно зарегистрированы на бесплатное событие: {event.name}.", reply_markup=get_notification_keyboard(event_id)
         )
         return
 
@@ -128,10 +128,9 @@ async def check_payment(callback_query: types.CallbackQuery):
             db.add(new_registration)
             event.current_participants += 1
             db.commit()
-            main_menu_btn = types.KeyboardButton(text="/main_menu")
-            keyboard = types.ReplyKeyboardMarkup(keyboard=[[main_menu_btn]], resize_keyboard=True)
-            await callback_query.message.answer("Оплата прошла успешно! Вы зарегистрированы на событие.",
-                                                reply_markup=keyboard)
+            await callback_query.message.answer("Оплата прошла успешно! Вы зарегистрированы на событие.\n Выберите "
+                                                "время напоминания\n",
+                                                reply_markup=get_notification_keyboard(event_id))
         elif payment.status == "pending":
             await callback_query.message.answer("Оплата еще не завершена. Пожалуйста, завершите платеж.")
         else:

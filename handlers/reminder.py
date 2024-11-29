@@ -1,35 +1,28 @@
-from aiogram import Router, types
+from aiogram import Router, F, types
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
 from db.database import get_db, Registration
-from aiogram.filters.callback_data import CallbackData
 
-# Создаем Router для напоминаний
-reminder_router = Router()
+notify_router = Router()
 
 
-class ReminderCallback(CallbackData, prefix="set_reminder"):
-    time_before_event: str
-    event_id: int
-
-
-# Установка времени напоминания
-@reminder_router.callback_query(ReminderCallback.filter())
-async def set_reminder(callback_query: types.CallbackQuery, callback_data: ReminderCallback):
-    await callback_query.message.edit_reply_markup(reply_markup=None)
-
-    user_id = callback_query.from_user.id
-    event_id = callback_data.event_id  # Берем event_id напрямую из callback_data
-    time_before_event = callback_data.time_before_event  # Берем время напоминания напрямую из callback_data
+@notify_router.callback_query(F.data.startswith('notify_'))
+async def set_notification_preference(callback: types.CallbackQuery):
+    back_btn = InlineKeyboardButton(text="Назад", callback_data="events_page_1")
+    markup = InlineKeyboardMarkup(inline_keyboard=[[back_btn]])
+    user_id = callback.from_user.id
+    _, notify_time, event_id = callback.data.split('_')  # 'notify_24h_eventID'
 
     db = next(get_db())
+    registration = db.query(Registration).filter_by(user_id=user_id, event_id=int(event_id)).first()
 
-    # Поиск регистрации пользователя на событие
-    registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
+    if not registration:
+        await callback.answer("Ошибка: регистрация на событие не найдена.")
+        return
 
-    if registration:
-        # Устанавливаем время напоминания в зависимости от типа
-        registration.reminder_time = time_before_event
-        db.commit()
+    # Обновление предпочтения уведомления
+    registration.reminder_time = notify_time
+    db.commit()
 
-        await callback_query.message.answer(f"Напоминание установлено за {time_before_event} до события.")
-    else:
-        await callback_query.message.answer("Вы не записаны на это событие.")
+    reminder_text = "день" if notify_time == "24h" else "2 часа"
+    await callback.message.answer(f"Вы выбрали напоминание за {reminder_text} до события.", show_alert=True, reply_markup=markup)

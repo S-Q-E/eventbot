@@ -1,7 +1,7 @@
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from aiogram import Bot
 from db.database import get_db, Registration, Event
 from datetime import datetime, timedelta
+
 
 # Функция для отправки уведомлений
 async def send_notifications(bot: Bot):
@@ -24,7 +24,7 @@ async def send_notifications(bot: Bot):
             notify_time -= timedelta(hours=2)
 
         # Проверяем, нужно ли отправить уведомление сейчас
-        if now >= notify_time and now < (notify_time + timedelta(minutes=1)):  # Допуск 1 минута
+        if notify_time <= now < (notify_time + timedelta(minutes=1)):  # Допуск 1 минута
             await bot.send_message(
                 reg.user_id,
                 f"Напоминание! Событие '{event.name}' начнется {event.event_time.strftime('%d.%m.%Y %H:%M')}."
