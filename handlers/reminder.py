@@ -3,10 +3,10 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from db.database import get_db, Registration
 
-notify_router = Router()
+reminder_router = Router()
 
 
-@notify_router.callback_query(F.data.startswith('notify_'))
+@reminder_router.callback_query(F.data.startswith('notify_'))
 async def set_notification_preference(callback: types.CallbackQuery):
     back_btn = InlineKeyboardButton(text="Назад", callback_data="events_page_1")
     markup = InlineKeyboardMarkup(inline_keyboard=[[back_btn]])
