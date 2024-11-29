@@ -1,13 +1,11 @@
 import logging
 import os
+import uuid
 from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db.database import get_db, Registration, Event
-from handlers.reminder import ReminderCallback
 from yookassa import Payment, Configuration
 from dotenv import load_dotenv
-import uuid
-
 from keyboards.notif_keyboard import get_notification_keyboard
 
 load_dotenv()
