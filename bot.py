@@ -1,10 +1,12 @@
 import logging
 import asyncio
 from aiogram.types import BotCommand
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from config.config import load_config, Config
 from aiogram import Bot, Dispatcher
 from aiogram.client.bot import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
+from utils.notify_user import send_notifications
 from handlers import (
     main_menu,
     reminder,
@@ -19,7 +21,8 @@ from handlers import (
     delete_event,
     admin_panel,
     event_details,
-    edit_event
+    edit_event,
+    user_help
 )
 
 logger = logging.getLogger(__name__)
@@ -55,6 +58,7 @@ async def main():
     dp.include_router(delete_event.delete_event_router)
     dp.include_router(admin_panel.admin_router)
     dp.include_router(event_details.event_detail_router)
+    dp.include_router(user_help.help_router)
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),
@@ -63,8 +67,12 @@ async def main():
 
     await bot.set_my_commands(commands)
     await bot.delete_webhook(drop_pending_updates=False)
-    await dp.start_polling(bot, )
 
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(send_notifications, 'interval', minutes=1, args=[bot])
+    scheduler.start()
+
+    await dp.start_polling(bot)
 
 if __name__ == "__main__":
     try:
