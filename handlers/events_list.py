@@ -71,7 +71,7 @@ async def list_events(callback: types.CallbackQuery):
             f"🎉 <b>{event.name}</b>\n"
             f"🕒 <b>Дата:</b> {event.event_time.strftime('%d %B')} \n"
             f"💰 <b>Цена:</b> {event.price}\n"
-            f"💡 <b>Осталось мест:</b> {event.max_participants - event.current_participants}\n\n"
+            f"💡 <b>Осталось мест:</b> {event.max_participants - event.current_participants} / {event.max_participants}\n\n"
             f"👥 <b>Зарегистрированные участники:</b>\n{registered_users_text}",
             reply_markup=markup,
             parse_mode="HTML"

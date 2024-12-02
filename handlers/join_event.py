@@ -94,7 +94,7 @@ async def join_event(callback_query: types.CallbackQuery):
                 ]
             },
             "refundable": False,
-            "test": True  # Указание на тестовый режим платежа
+            "test": False  # Указание на тестовый режим платежа
         }, id_key)
         check_btn = InlineKeyboardButton(text="Проверить оплату",
                                          callback_data=f"check_{payment.id}_{event.id}")

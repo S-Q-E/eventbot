@@ -14,13 +14,13 @@ async def admin_panel(callback: types.CallbackQuery):
         [InlineKeyboardButton(text="Редактировать событие", callback_data="delete_event_button")],
         [InlineKeyboardButton(text="Настройки админа", callback_data="set_admin")],
         [InlineKeyboardButton(text="Подписчики бота", callback_data="user_list")],
-        [InlineKeyboardButton(text="Удалить подписчика(не работает, пока)", callback_data="delete_bot_user")],
+        [InlineKeyboardButton(text="Незарегистрированные пользователи", callback_data="all_users")],
+        [InlineKeyboardButton(text="Сгенерировать отчет", callback_data="report")],
         [InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]
     ]
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)
     if is_admin:
-        await callback.message.answer("Панель админа. Здесь вы можете создавать и удалять события\n"
-                                      "А также назначать админов и смотреть пользователей бота", reply_markup=markup)
+        await callback.message.answer("<b>Панель админа</b>\n", reply_markup=markup)
     else:
         await callback.message.answer("У вас нет доступа к этой панели.\n"
                                       "Обратитесь к админу бота для увеличения привилегий")

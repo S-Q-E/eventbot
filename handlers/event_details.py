@@ -19,7 +19,7 @@ async def event_details(callback: types.CallbackQuery):
 
         # Проверяем, существует ли событие
         if not event:
-            await callback.answer("❗ Событие не найдено.", show_alert=True)
+            await callback.message.answer("❗ Событие не найдено.", show_alert=True)
             return
 
         # Проверка, зарегистрирован ли пользователь на событие
@@ -55,7 +55,7 @@ async def event_details(callback: types.CallbackQuery):
         back_button = InlineKeyboardButton(text="🔙 Назад", callback_data="events_list")
         keyboard = InlineKeyboardMarkup(inline_keyboard=[[action_button], [back_button]])
 
-        await callback.message.answer(event_info, reply_markup=keyboard, parse_mode="HTML")
+        await callback.message.edit_text(event_info, reply_markup=keyboard, parse_mode="HTML")
 
     except Exception as e:
         logging.error(f"Ошибка в event_details.py: {e}")
