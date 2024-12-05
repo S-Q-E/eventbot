@@ -10,8 +10,8 @@ from keyboards.notif_keyboard import get_notification_keyboard
 
 load_dotenv()
 ADMIN = os.getenv("ADMIN_2")
-YOOKASSA_SHOP_ID = os.getenv("TEST_SHOP")
-YOOKASSA_API_KEY = os.getenv("TEST_KEY")
+YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID")
+YOOKASSA_API_KEY = os.getenv("YOOKASSA_API_KEY")
 
 if not YOOKASSA_SHOP_ID or not YOOKASSA_API_KEY:
     raise ValueError("Yookassa credentials are not set. Please check your .env file.")
