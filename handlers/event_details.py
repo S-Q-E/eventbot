@@ -1,5 +1,5 @@
 from aiogram import types, F, Router
-from db.database import get_db, Event, Registration  # Добавим импорт модели Registration
+from db.database import get_db, Event, Registration, User  # Добавим импорт модели Registration
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import logging
 
@@ -41,6 +41,12 @@ async def event_details(callback: types.CallbackQuery):
         # Форматирование времени события
         formatted_time = event.event_time.strftime("%d.%m.%Y %H:%M")
 
+        participants = db.query(User).join(Registration, User.id == Registration.user_id) \
+            .filter(Registration.event_id == event.id).all()
+        participants_list = "\n".join(
+            f"{user.first_name} {user.last_name}" for user in participants
+        ) or "Нет участников"
+
         # Формирование сообщения с информацией о событии
         event_info = (
             f"<b>📅 {event.name}</b>\n\n"
@@ -48,7 +54,8 @@ async def event_details(callback: types.CallbackQuery):
             f"📍 <b>Адрес:</b> {event.address}\n"
             f"🕒 <b>Время:</b> {formatted_time}\n"
             f"💰 <b>Цена:</b> {event.price} руб.\n"
-            f"👥 <b>Участников:</b> {event.current_participants}/{event.max_participants}"
+            f"👥 <b>Участников:</b> {event.current_participants}/{event.max_participants}\n"
+            f"📋 <b>Список участников:\n{participants_list} \n</b> "
         )
 
         # Кнопки

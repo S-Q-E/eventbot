@@ -1,5 +1,6 @@
 from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.exceptions import TelegramAPIError
 from db.database import get_db, Event, Registration, User
 from utils.get_week_day import get_week_day
 
@@ -66,21 +67,44 @@ async def list_events(callback: types.CallbackQuery):
 @event_list_router.callback_query(F.data.startswith("cancel_registration_"))
 async def cancel_registration(callback_query: types.CallbackQuery):
     """
-    Обрабатывает отмену регистрации на событие.
+    Обрабатывает отмену регистрации на событие и уведомляет других участников.
     """
     event_id = int(callback_query.data.split("_")[-1])
     user_id = callback_query.from_user.id
     db = next(get_db())
 
-    # Удаляем регистрацию
-    registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
-    event = db.query(Event).filter_by(id=event_id).first()
+    try:
+        # Проверка регистрации пользователя на событие
+        registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
+        event = db.query(Event).filter_by(id=event_id).first()
 
-    if registration:
-        db.delete(registration)
-        event.current_participants -= 1
-        db.commit()
-        await callback_query.message.answer("Вы успешно отменили регистрацию на это событие.")
-        await callback_query.message.answer(f"Освободилось 1 место на событие {event.name}.")
-    else:
-        await callback_query.answer("Вы не были записаны на это событие.")
+        if not event:
+            await callback_query.answer("Событие не найдено.")
+            return
+
+        if registration:
+            # Удаляем регистрацию и уменьшаем счетчик участников
+            db.delete(registration)
+            event.current_participants -= 1
+            db.commit()
+
+            await callback_query.message.answer("Вы успешно отменили регистрацию на это событие.")
+
+            # Уведомляем других участников
+            registrations = db.query(Registration).filter_by(event_id=event_id).all()
+            for reg in registrations:
+                try:
+                    await callback_query.bot.send_message(
+                        chat_id=reg.user_id,
+                        text=f"⚠️ Освободилось место на событие '{event.name}'! Спешите зарегистрироваться, пока оно не занято."
+                    )
+                except TelegramAPIError as e:
+                    print(f"Ошибка отправки уведомления пользователю {reg.user_id}: {e}")
+
+        else:
+            await callback_query.answer("Вы не были записаны на это событие.")
+    except Exception as e:
+        print(f"Ошибка при отмене регистрации: {e}")
+        await callback_query.message.answer("Произошла ошибка при отмене регистрации.")
+    finally:
+        db.close()

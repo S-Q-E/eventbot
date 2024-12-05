@@ -34,8 +34,8 @@ async def main_menu(message: types.Message):
     reg_user_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [user_help]])
     if user:
         if user.is_admin:
-            await message.answer("🎉🎉🎉🎉🎉 <b>EVENTBOT</b> 🎉🎉🎉🎉🎉\n\n"
-                                 f"<b>Добро пожаловать! {message.from_user.username}</b>\n",
+            await message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
+                                 f"<b>Добро пожаловать!</b> {message.from_user.username}\n",
                                  reply_markup=admin_markup)
         else:
             await message.answer("*******EVENTBOT********\n\n"
@@ -43,8 +43,8 @@ async def main_menu(message: types.Message):
                                  reply_markup=reg_user_markup)
     else:
         await message.answer("*******EVENTBOT********\n\n"
-                             f"<b>Вы не прошли регистрацию\n"
-                             f"Пожалуйста пройдите регистрацию</b?>")
+                             f"<b> Вы не прошли регистрацию </b>\n"
+                             f"<b> Пожалуйста пройдите регистрацию </b>")
 
 
 @main_menu_router.callback_query(F.data == "main_menu")
