@@ -77,7 +77,7 @@ async def join_event(callback_query: types.CallbackQuery):
     try:
         payment = Payment.create({
             "amount": {"value": str(event.price), "currency": "RUB"},
-            "confirmation": {"type": "redirect", "return_url": "https://t.me/your_bot/"},
+            "confirmation": {"type": "redirect", "return_url": "https://t.me/GuruEvent_bot/"},
             "capture": True,
             "description": f"Оплата участия в событии {event.name}",
             "metadata": {"user_id": user_id, "event_id": event_id},
