@@ -7,6 +7,12 @@ from aiogram.types import ReplyKeyboardRemove, CallbackQuery, InlineKeyboardButt
 from db.database import get_db, Event
 from utils.get_coordinates import get_location_by_address
 
+import locale
+locale.setlocale(
+    category=locale.LC_ALL,
+    locale="Russian"
+)
+
 create_event_router = Router()
 
 

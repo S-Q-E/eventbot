@@ -1,6 +1,7 @@
 from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db.database import get_db, Event, Registration, User
+from utils.get_week_day import get_week_day
 
 event_list_router = Router()
 EVENTS_PER_PAGE = 3
@@ -32,47 +33,18 @@ async def list_events(callback: types.CallbackQuery):
     events_to_show = events[(page - 1) * EVENTS_PER_PAGE:page * EVENTS_PER_PAGE]
 
     # Вывод событий на текущей странице
-    user_id = callback.from_user.id
     for event in events_to_show:
         # Проверка, зарегистрирован ли пользователь на событие
-        registration = db.query(Registration).filter_by(user_id=user_id, event_id=event.id).first()
-
-        # Динамическое определение кнопки регистрации
-        if registration:
-            join_button = InlineKeyboardButton(
-                text="❌ Отменить запись",
-                callback_data=f"cancel_registration_{event.id}"
-            )
-        else:
-            join_button = InlineKeyboardButton(
-                text="☑️ Записаться",
-                callback_data=f"join_{event.id}"
-            )
-
-        # Сбор информации о зарегистрированных пользователях
-        registrations = db.query(Registration).filter_by(event_id=event.id).all()
-        registered_users = [
-            f"{user.first_name} {user.last_name}" for reg in registrations
-            if (user := db.query(User).filter_by(id=reg.user_id).first())
-        ]
-        registered_users_text = "\n".join(registered_users) if registered_users else "Нет участников"
-
-        show_on_map = InlineKeyboardButton(
-            text="📍 Показать на карте",
-            callback_data=f"show_on_map_{event.id}"
-        )
         event_details = InlineKeyboardButton(
             text="📄 Подробнее",
             callback_data=f"details_{event.id}"
         )
-
-        markup = InlineKeyboardMarkup(inline_keyboard=[[event_details], [join_button], [show_on_map]])
+        date = event.event_time
+        weekday = get_week_day(date)
+        markup = InlineKeyboardMarkup(inline_keyboard=[[event_details]])
         await callback.message.answer(
             f"🎉 <b>{event.name}</b>\n"
-            f"🕒 <b>Дата:</b> {event.event_time.strftime('%d %B')} \n"
-            f"💰 <b>Цена:</b> {event.price}\n"
-            f"💡 <b>Осталось мест:</b> {event.max_participants - event.current_participants} / {event.max_participants}\n\n"
-            f"👥 <b>Зарегистрированные участники:</b>\n{registered_users_text}",
+            f"🕒 <b>Дата:</b> {weekday} {event.event_time.strftime('%d %B') } \n",
             reply_markup=markup,
             parse_mode="HTML"
         )

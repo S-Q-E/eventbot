@@ -52,7 +52,8 @@ async def join_event(callback_query: types.CallbackQuery):
         db.add(new_registration)
         db.commit()
         await callback_query.message.answer(
-            f"Вы успешно зарегистрированы на бесплатное событие: {event.name}.", reply_markup=get_notification_keyboard(event_id)
+            f"Вы успешно зарегистрированы на бесплатное событие:<b>{event.name}</b>.\n\n"
+            f"Пожалуйста, выберите время напоминания.", reply_markup=get_notification_keyboard(event_id)
         )
         return
 
@@ -126,8 +127,8 @@ async def check_payment(callback_query: types.CallbackQuery):
             db.add(new_registration)
             event.current_participants += 1
             db.commit()
-            await callback_query.message.answer("Оплата прошла успешно! Вы зарегистрированы на событие.\n Выберите "
-                                                "время напоминания\n",
+            await callback_query.message.answer(f"Оплата прошла успешно! Вы зарегистрированы на событие <b>{event.name}</b>\n"
+                                                f" Выберите время напоминания\n",
                                                 reply_markup=get_notification_keyboard(event_id))
         elif payment.status == "pending":
             await callback_query.message.answer("Оплата еще не завершена. Пожалуйста, завершите платеж.")

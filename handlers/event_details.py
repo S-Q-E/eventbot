@@ -51,9 +51,14 @@ async def event_details(callback: types.CallbackQuery):
             f"👥 <b>Участников:</b> {event.current_participants}/{event.max_participants}"
         )
 
-        # Кнопки действия и возврата
+        # Кнопки
+
+        show_on_map = InlineKeyboardButton(
+            text="📍 Показать на карте",
+            callback_data=f"show_on_map_{event.id}"
+        )
         back_button = InlineKeyboardButton(text="🔙 Назад", callback_data="events_list")
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[[action_button], [back_button]])
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[[action_button], [show_on_map], [back_button]])
 
         await callback.message.edit_text(event_info, reply_markup=keyboard, parse_mode="HTML")
 
