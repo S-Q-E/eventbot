@@ -72,7 +72,8 @@ async def cancel_registration(callback_query: types.CallbackQuery):
     event_id = int(callback_query.data.split("_")[-1])
     user_id = callback_query.from_user.id
     db = next(get_db())
-
+    go_to_event = InlineKeyboardButton(text="Перейти к событию ➡️", callback_data=f"details_{event_id}")
+    markup = InlineKeyboardMarkup(inline_keyboard=[[go_to_event]])
     try:
         # Проверка регистрации пользователя на событие
         registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
@@ -96,7 +97,8 @@ async def cancel_registration(callback_query: types.CallbackQuery):
                 try:
                     await callback_query.bot.send_message(
                         chat_id=reg.user_id,
-                        text=f"⚠️ Освободилось место на событие '{event.name}'! Спешите зарегистрироваться, пока оно не занято."
+                        text=f"⚠️ Освободилось место на событие '{event.name}'! Спешите зарегистрироваться, пока оно не занято.",
+                        reply_markup=markup
                     )
                 except TelegramAPIError as e:
                     print(f"Ошибка отправки уведомления пользователю {reg.user_id}: {e}")
