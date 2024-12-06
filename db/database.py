@@ -21,7 +21,7 @@ def get_db():
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=True)
     first_name = Column(String)
     last_name = Column(String)
     phone_number = Column(String, nullable=True)

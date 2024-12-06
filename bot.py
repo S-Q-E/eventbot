@@ -1,5 +1,7 @@
 import logging
 import asyncio
+import sys
+
 from aiogram.types import BotCommand
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from config.config import load_config, Config
@@ -7,6 +9,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.bot import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 from utils.notify_user import send_notifications
+from sqlalchemy.exc import TimeoutError
 from handlers import (
     main_menu,
     reminder,
@@ -75,8 +78,11 @@ async def main():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(send_notifications, 'interval', minutes=1, args=[bot])
     scheduler.start()
-
-    await dp.start_polling(bot)
+    try:
+        await dp.start_polling(bot)
+    except TimeoutError as e:
+        logger.info("Ошибка {e}. Перезапуск....")
+        sys.exit(1)
 
 if __name__ == "__main__":
     try:
