@@ -52,7 +52,7 @@ async def delete_user(callback: types.CallbackQuery):
         # Находим и удаляем пользователя
         user = db.query(User).filter(User.id == user_id).first()
         if not user:
-            await callback.answer("Пользователь не найден.")
+            await callback.message.answer("Пользователь не найден.")
             return
 
         db.delete(user)

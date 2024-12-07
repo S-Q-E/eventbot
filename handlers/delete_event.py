@@ -17,6 +17,10 @@ async def event_action_markup(event_id):
                 InlineKeyboardButton(text="✏️Редактировать", callback_data=f"edit_event_{event_id}")
             ],
             [
+                InlineKeyboardButton(text="➕ Добавить участника", callback_data=f"add_user_to_event_{event_id}"),
+                InlineKeyboardButton(text="➖ Удалить участника", callback_data=f"manual_deleting_{event_id}")
+            ],
+            [
                 InlineKeyboardButton(text="↩️ Назад", callback_data="admin_panel")
             ]
         ]

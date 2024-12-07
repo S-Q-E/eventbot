@@ -27,7 +27,11 @@ from handlers import (
     edit_event,
     user_help,
     delete_user,
-    report
+    report,
+    manual_user_add,
+    add_user_to_event,
+    delete_user_from_event,
+    admin_help
 )
 
 logger = logging.getLogger(__name__)
@@ -66,6 +70,10 @@ async def main():
     dp.include_router(user_help.help_router)
     dp.include_router(delete_user.delete_user_router)
     dp.include_router(report.report_router)
+    dp.include_router(manual_user_add.manual_add_user_router)
+    dp.include_router(add_user_to_event.manual_register_user_router)
+    dp.include_router(delete_user_from_event.delete_user_from_event_router)
+    dp.include_router(admin_help.admin_help_router)
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),

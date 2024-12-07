@@ -4,8 +4,10 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
 from db.database import get_db, User
+from utils.id_generator import generate_unique_id_with_uuid
 
 manual_add_user_router = Router()
+
 
 class AddManualUser(StatesGroup):
     wait_user_firstname = State()
@@ -39,22 +41,33 @@ async def get_user_phone(message: types.Message, state: FSMContext):
     first_name = data.get("first_name")
     last_name = data.get("last_name")
     phone = message.text
+    with next(get_db()) as db:
+        db = next(get_db())
 
-    id = get_new_id()
+        new_id = generate_unique_id_with_uuid(db)
+        if not phone.startswith("+7"):
+            await message.answer("Номер телефона должен начинаться с +7. Проверьте правильность данных")
+            return
 
-    db = next(get_db())
+        new_user = User(
+            id=new_id,
+            username=None,
+            first_name=first_name,
+            last_name=last_name,
+            phone_number=phone,
+            is_admin=False,
+            is_registered=True
+        )
 
-    new_user = User(id, "", first_name, last_name)
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        db.close()
 
-    if not phone.isdigit():
-        await message.answer("Номер телефона должен быть числом. Проверьте правильность данных")
-        return
-
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    await message.answer(f"✅ Пользователь {first_name} {last_name} добавлен в список зарегистрированных!")
+    back_btn = InlineKeyboardButton(text="Назад", callback_data="admin_panel")
+    markup = InlineKeyboardMarkup(inline_keyboard=[[back_btn]])
+    await message.answer(f"✅ Пользователь {first_name} {last_name} добавлен в список зарегистрированных!\n"
+                         f"Перейдите в редактирование события, чтобы добавить участника к событию", reply_markup=markup)
     await state.clear()
 
 
