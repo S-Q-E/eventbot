@@ -89,7 +89,7 @@ async def cancel_registration(callback_query: types.CallbackQuery):
             event.current_participants -= 1
             db.commit()
 
-            await callback_query.message.answer("Вы успешно отменили регистрацию на это событие.")
+            await callback_query.message.edit_text("Вы успешно отменили регистрацию на это событие.")
 
             # Уведомляем других участников
             registrations = db.query(Registration).filter_by(event_id=event_id).all()

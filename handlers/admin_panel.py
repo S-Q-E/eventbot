@@ -21,8 +21,12 @@ async def admin_panel(callback: types.CallbackQuery):
         [InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]
     ]
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)
+    sec_markup = InlineKeyboardMarkup(inline_keyboard=[[
+        InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
+    ]])
     if is_admin:
-        await callback.message.answer("<b>Панель админа</b>\n", reply_markup=markup)
+        await callback.message.edit_text(f"<b>Добро пожаловать {callback.message.from_user.username}</b>\n",
+                                         reply_markup=markup)
     else:
-        await callback.message.answer("У вас нет доступа к этой панели.\n"
-                                      "Обратитесь к админу бота для увеличения привилегий")
+        await callback.message.edit_text("У вас нет доступа к этой панели.\n"
+                                         "Обратитесь к админу бота для увеличения привилегий", reply_markup=sec_markup)

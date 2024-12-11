@@ -30,10 +30,10 @@ class Form(StatesGroup):
 async def command_start(callback_query: CallbackQuery, state: FSMContext) -> None:
     await callback_query.message.edit_reply_markup()
     await state.set_state(Form.name)
-    await callback_query.message.answer("📌 <b>Шаг 1 из 6: Создание нового события</b>\n\n"
+    await callback_query.message.edit_text("📌 <b>Шаг 1 из 6: Создание нового события</b>\n\n"
                                         "📝 Пожалуйста, введите <b>название события</b>:\n"
                                         "🔹 Пример: <i>Встреча в парке</i>\n\n",
-                                        reply_markup=ReplyKeyboardRemove(), parse_mode='HTML')
+                                        reply_markup=None, parse_mode='HTML')
 
 
 @create_event_router.message(Form.name)
@@ -55,7 +55,7 @@ async def process_time(message: types.Message, state: FSMContext):
         return
     await state.update_data(address=message.text)
     await state.set_state(Form.event_time)
-    await message.answer("📌 <b>Шаг 3 из 6: Введите время события</b>\n\n"
+    await message.edit_text("📌 <b>Шаг 3 из 6: Введите время события</b>\n\n"
                          "📝 Пожалуйста, введите <b>Время события</b>:\n"
                          "🔹 Пример: <i>21/10/2024 20:10</i>\n\n"
                          )
@@ -91,7 +91,7 @@ async def process_desc(message: types.Message, state: FSMContext):
 async def process_price(message: types.Message, state: FSMContext):
     await state.update_data(price=message.text)
     await state.set_state(Form.description)
-    await message.answer("📌 <b>Последний шаг: Описание</b>\n\n"
+    await message.edit_text("📌 <b>Последний шаг: Описание</b>\n\n"
                          "📝 Пожалуйста, введите <b>описание события или свои комментарии</b>:\n"
                          )
 

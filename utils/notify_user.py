@@ -27,7 +27,7 @@ async def send_notifications(bot: Bot):
             if notify_time <= now < (notify_time + timedelta(minutes=1)):  # Допуск 1 минута
                 await bot.send_message(
                     reg.user_id,
-                    f"Напоминание! Событие {event.name} начнется через {event.event_time.strftime('%d.%m.%Y %H:%M')}."
+                    f"Напоминание! Событие {event.name} начнется через  {event.event_time.strftime('%d.%m.%Y %H:%M')}."
                 )
                 # Удаляем напоминание после отправки (если оно одноразовое)
                 reg.reminder_time = None
