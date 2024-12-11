@@ -253,20 +253,4 @@ async def save_new_event_name(message: types.Message, state: FSMContext):
         await message.answer("Произошла ошибка при изменений времени. Проверьте правильность данных")
         logging.info(f"Ошибка в edit_event: {e}")
 
-#
-# @edit_event_router.callback_query(F.data.startswith == "back_to_delete_event_button_")
-# async def back_to_edit_list(callback: CallbackQuery):
-#     event_id = int(callback.data.split("_")[-1])
-#     db = next(get_db())
-#     event = db.query(Event).filter_by(id=event_id).first()
-#
-#     if not event:
-#         await callback.answer("Событие не найдено!", show_alert=True)
-#         return
-#
-#     await callback.message.edit_text(
-#             f"🔹 <b>{event.name}</b>\n"
-#             f"{event.event_time}\n",
-#             reply_markup=await event_action_markup(event_id=event.id),
-#             parse_mode="HTML"
-#     )
+
