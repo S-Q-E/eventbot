@@ -39,11 +39,11 @@ async def main_menu(message: types.Message):
                                  reply_markup=admin_markup)
         else:
             await message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
-                                 f"<b>Добро пожаловать!</b> {message.from_user.username}</b>\n",
+                                 f"<b>Добро пожаловать! {message.from_user.username}</b>\n",
                                  reply_markup=reg_user_markup)
     else:
         await message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
-                                 f"<b>Добро пожаловать!</b>\n\n"
+                             f"<b>Добро пожаловать!</b>\n\n"
                              f"<b> Вы не прошли регистрацию </b>\n"
                              f"<b> Пожалуйста пройдите регистрацию </b>")
 
