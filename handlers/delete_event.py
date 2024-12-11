@@ -29,18 +29,37 @@ async def event_action_markup(event_id):
 
 @delete_event_router.callback_query(F.data == "delete_event_button")
 async def delete_event(callback_query: types.CallbackQuery):
+    page = 1
     db = next(get_db())
-    events = db.query(Event).all()
-    if events:
-        for event in events:
-            await callback_query.message.answer(
-                f"🎉 <b>{event.name}</b>\n"
-                f"🕒 Дата: {event.event_time.strftime('%d/%m/ %H:%M')}\n",
-                reply_markup=await event_action_markup(event.id),
-                parse_mode="HTML"
-            )
-    else:
-        await callback_query.message.answer("Нет доступных событий для удаления.")
+    events = db.query(Event).order_by(Event.event_time.asc()).all()
+
+    if not events:
+        await callback_query.message.answer("Нет доступных событий.")
+        return
+
+    total_pages = (len(events) + 3 - 1) // 3
+    page = max(1, min(page, total_pages))
+    events_to_show = events[(page - 1) * 3:page * 3]
+
+    for event in events_to_show:
+        await callback_query.message.answer(
+            f"🔹 <b>{event.name}</b>\n"
+            f"{event.event_time}\n",
+            reply_markup=await event_action_markup(event_id=event.id),
+            parse_mode="HTML"
+        )
+
+    pagination_buttons = []
+    if page > 1:
+        pagination_buttons.append(
+            InlineKeyboardButton(text="⬅️ Предыдущая", callback_data=f"events_page_{page - 1}")
+        )
+    if page < total_pages:
+        pagination_buttons.append(
+            InlineKeyboardButton(text="Следующая ➡️", callback_data=f"events_page_{page + 1}")
+        )
+    pagination_markup = InlineKeyboardMarkup(inline_keyboard=[pagination_buttons])
+    await callback_query.message.answer(f"Страница {page}/{total_pages}", reply_markup=pagination_markup)
 
 
 @delete_event_router.callback_query(F.data.startswith("delete_event_"))
@@ -91,3 +110,4 @@ async def event_deletion_markup(event_id):
             ]
         ]
     )
+

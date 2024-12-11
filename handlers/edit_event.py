@@ -6,6 +6,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
 from db.database import get_db, Event
+from handlers.delete_event import event_action_markup
 from utils.get_coordinates import get_location_by_address
 
 edit_event_router = Router()
@@ -22,12 +23,12 @@ class EditEventStates(StatesGroup):
     editing_participants = State()
     editing_price = State()
     editing_address = State()
+    editing_max_participants = State()
 
 
 @edit_event_router.callback_query(F.data.startswith("edit_event_"))
 async def edit_event(callback_query: types.CallbackQuery):
     event_id = int(callback_query.data.split("_")[-1])
-    # Меню для выбора параметра редактирования
     edit_options_markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text="📝 Название", callback_data=f"edit_name_{event_id}")],
@@ -35,13 +36,33 @@ async def edit_event(callback_query: types.CallbackQuery):
             [InlineKeyboardButton(text="🕒 Время", callback_data=f"edit_time_{event_id}")],
             [InlineKeyboardButton(text="💰 Цена", callback_data=f"edit_price_{event_id}")],
             [InlineKeyboardButton(text="🗓 Описание", callback_data=f"edit_desc_{event_id}")],
-            [InlineKeyboardButton(text="🔙 Назад", callback_data="delete_event_button")]
+            [InlineKeyboardButton(text="↕️Количество участников", callback_data=f"edit_participants_{event_id}")],
+            [InlineKeyboardButton(text="🔙 Назад", callback_data=f"back_to_delete_event_button_{event_id}")]
         ]
     )
-    await callback_query.message.answer(
-        "Выберите, что хотите редактировать:",
+    await callback_query.message.edit_text(
+        "<b>Выберите, что хотите редактировать</b>:",
         reply_markup=edit_options_markup
     )
+
+
+@edit_event_router.callback_query(F.data.startswith("back_to_delete_event_button_"))
+async def back_to_edit_list(callback: CallbackQuery):
+    event_id = int(callback.data.split("_")[-1])
+    db = next(get_db())
+    event = db.query(Event).filter_by(id=event_id).first()
+
+    if not event:
+        await callback.message.answer("Событие не найдено!", show_alert=True)
+        return
+
+    await callback.message.edit_text(
+            f"🔹 <b>{event.name}</b>\n"
+            f"{event.event_time}\n",
+            reply_markup=await event_action_markup(event_id=event.id),
+            parse_mode="HTML"
+    )
+
 
 
 # Меняем название события
@@ -139,6 +160,34 @@ async def save_new_event_name(message: types.Message, state: FSMContext):
         logging.info(f"Ошибка в edit_event: {e}")
 
 
+@edit_event_router.callback_query(F.data.startswith("edit_participants_"))
+async def edit_max_participants(callback_query: CallbackQuery, state: FSMContext):
+    event_id = int(callback_query.data.split("_")[-1])
+    with next(get_db()) as db:
+        event = db.query(Event).filter(Event.id == event_id).first()
+        await callback_query.message.answer(f"✏️Введите количество участников события.\n Текущее количество {event.max_participants}")
+        db.close()
+    await state.update_data(event_id=event_id)
+    await state.set_state(EditEventStates.editing_max_participants)
+
+
+@edit_event_router.message(EditEventStates.editing_max_participants)
+async def edit_max_participants(message: Message, state: FSMContext):
+    with next(get_db()) as db:
+        data = await state.get_data()
+        event_id = int(data.get("event_id"))
+        try:
+            event = db.query(Event).filter(Event.id == event_id).first()
+            event.max_participants = message.text
+            db.commit()
+            await message.answer("✅ Изменения успешно сохранены! ", reply_markup=markup)
+        except Exception as e:
+            logging.info(f"Ошибка в хэндлере edit_max_participants\n Код ошибки: {e}")
+            await message.answer("⚠️Произошла ошибка. Повторите снова", reply_markup=markup)
+        finally:
+            db.close()
+
+
 # Меняем описание события
 @edit_event_router.callback_query(F.data.startswith("edit_desc_"))
 async def edit_event_name(callback_query: types.CallbackQuery, state: FSMContext):
@@ -204,4 +253,20 @@ async def save_new_event_name(message: types.Message, state: FSMContext):
         await message.answer("Произошла ошибка при изменений времени. Проверьте правильность данных")
         logging.info(f"Ошибка в edit_event: {e}")
 
-
+#
+# @edit_event_router.callback_query(F.data.startswith == "back_to_delete_event_button_")
+# async def back_to_edit_list(callback: CallbackQuery):
+#     event_id = int(callback.data.split("_")[-1])
+#     db = next(get_db())
+#     event = db.query(Event).filter_by(id=event_id).first()
+#
+#     if not event:
+#         await callback.answer("Событие не найдено!", show_alert=True)
+#         return
+#
+#     await callback.message.edit_text(
+#             f"🔹 <b>{event.name}</b>\n"
+#             f"{event.event_time}\n",
+#             reply_markup=await event_action_markup(event_id=event.id),
+#             parse_mode="HTML"
+#     )

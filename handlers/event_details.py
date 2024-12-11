@@ -71,4 +71,4 @@ async def event_details(callback: types.CallbackQuery):
 
     except Exception as e:
         logging.error(f"Ошибка в event_details.py: {e}")
-        await callback.answer("Произошла ошибка при загрузке события.", show_alert=True)
+        await callback.message.answer("Произошла ошибка при загрузке события.", show_alert=True)
