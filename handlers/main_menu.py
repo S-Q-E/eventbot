@@ -1,8 +1,6 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
-# from utils.reg_required import registration_required
 from db.database import get_db, User
 
 main_menu_router = Router()

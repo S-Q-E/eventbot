@@ -8,6 +8,7 @@ from db.database import get_db, Event
 from utils.get_coordinates import get_location_by_address
 
 import locale
+
 locale.setlocale(
     category=locale.LC_ALL,
     locale="Russian"
@@ -31,9 +32,9 @@ async def command_start(callback_query: CallbackQuery, state: FSMContext) -> Non
     await callback_query.message.edit_reply_markup()
     await state.set_state(Form.name)
     await callback_query.message.edit_text("📌 <b>Шаг 1 из 6: Создание нового события</b>\n\n"
-                                        "📝 Пожалуйста, введите <b>название события</b>:\n"
-                                        "🔹 Пример: <i>Встреча в парке</i>\n\n",
-                                        reply_markup=None, parse_mode='HTML')
+                                           "📝 Пожалуйста, введите <b>название события</b>:\n"
+                                           "🔹 Пример: <i>Встреча в парке</i>\n\n",
+                                           reply_markup=None, parse_mode='HTML')
 
 
 @create_event_router.message(Form.name)
@@ -55,10 +56,10 @@ async def process_time(message: types.Message, state: FSMContext):
         return
     await state.update_data(address=message.text)
     await state.set_state(Form.event_time)
-    await message.edit_text("📌 <b>Шаг 3 из 6: Введите время события</b>\n\n"
-                         "📝 Пожалуйста, введите <b>Время события</b>:\n"
-                         "🔹 Пример: <i>21/10/2024 20:10</i>\n\n"
-                         )
+    await message.reply("📌 <b>Шаг 3 из 6: Введите время события</b>\n\n"
+                        "📝 Пожалуйста, введите <b>Время события</b>:\n"
+                        "🔹 Пример: <i>21/10/2024 20:10</i>\n\n"
+                        )
 
 
 @create_event_router.message(Form.event_time)
@@ -91,9 +92,9 @@ async def process_desc(message: types.Message, state: FSMContext):
 async def process_price(message: types.Message, state: FSMContext):
     await state.update_data(price=message.text)
     await state.set_state(Form.description)
-    await message.edit_text("📌 <b>Последний шаг: Описание</b>\n\n"
-                         "📝 Пожалуйста, введите <b>описание события или свои комментарии</b>:\n"
-                         )
+    await message.reply("📌 <b>Последний шаг: Описание</b>\n\n"
+                        "📝 Пожалуйста, введите <b>описание события или свои комментарии</b>:\n"
+                        )
 
 
 @create_event_router.message(Form.description)
