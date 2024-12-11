@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.exceptions import TelegramAPIError
@@ -110,3 +112,29 @@ async def cancel_registration(callback_query: types.CallbackQuery):
         await callback_query.message.answer("Произошла ошибка при отмене регистрации.")
     finally:
         db.close()
+
+
+@event_list_router.callback_query(F.data.startswith("back_to_event_list"))
+async def back_to_event_list(callback: types.CallbackQuery):
+    event_id = int(callback.data.split("_")[-1])
+    db = next(get_db())
+    event = db.query(Event).filter_by(id=event_id).first()
+    date = event.event_time
+    weekday = get_week_day(date)
+    if not event:
+        await callback.answer("Событие не найдено!", show_alert=True)
+        return
+
+    markup = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="📄 Подробнее",
+                callback_data=f"details_{event.id}"
+            )
+        ]
+    ])
+    await callback.message.edit_text(
+        f"🎉 <b>{event.name}</b>\n"
+        f"🕒 <b>Дата:</b> {weekday} {event.event_time.strftime('%d %B')}\n",
+        reply_markup=markup
+    )

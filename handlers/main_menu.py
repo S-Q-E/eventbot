@@ -20,7 +20,7 @@ async def main_menu(message: types.Message):
     try:
         user = db.query(User).filter_by(id=user_id).first()
     except Exception as e:
-        await message.answer("Произошла ошибка при доступе к базе данных. Попробуйте позже.")
+        await message.answer(f"Произошла ошибка при доступе к базе данных. Попробуйте позже. {e}")
 
         return
 
@@ -74,14 +74,14 @@ async def main_menu(callback: types.CallbackQuery):
     reg_user_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [user_help]])
     if user:
         if user.is_admin:
-            await callback.message.answer("*******EVENTBOT********\n\n"
+            await callback.message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
                                           f"<b>Добро пожаловать! {callback.from_user.username}</b>\n",
                                           reply_markup=admin_markup)
         else:
-            await callback.message.answer("*******EVENTBOT********\n\n"
+            await callback.message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
                                           f"<b>Добро пожаловать! {callback.from_user.username}</b>\n",
                                           reply_markup=reg_user_markup)
     else:
-        await callback.message.answer("*******EVENTBOT********\n\n"
+        await callback.message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
                                       f"<b>Вы не прошли регистрацию\n"
                                       f"Пожалуйста пройдите регистрацию</b?>")

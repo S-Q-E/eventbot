@@ -25,7 +25,6 @@ async def start_command(message: types.Message):
 
     # Кнопки
     events_button = InlineKeyboardButton(text="💬 Доступные event-ы", callback_data="events_page_1")
-    my_events_button = InlineKeyboardButton(text="📆 Мои записи", callback_data="my_events")
     registration_button = InlineKeyboardButton(text="➕ Регистрация", callback_data="start_reg")
 
     try:
@@ -48,6 +47,6 @@ async def start_command(message: types.Message):
         else:
             await message.answer("Вы не завершили регистрацию. Пожалуйста, пройдите её.", reply_markup=markup)
     else:
-        markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [my_events_button], [registration_button]])
-        await message.answer("*******EVENTBOT********\n\n"
+        markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [registration_button]])
+        await message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
                              f"Добро пожаловать! <b>{message.from_user.username}</b>", reply_markup=markup)

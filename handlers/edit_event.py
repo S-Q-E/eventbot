@@ -1,5 +1,5 @@
 import logging
-
+from datetime import datetime
 from aiogram import types, F, Router
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.state import State, StatesGroup
@@ -192,7 +192,8 @@ async def save_new_event_name(message: types.Message, state: FSMContext):
     try:
         event = db.query(Event).filter_by(id=event_id).first()
         if event:
-            event.event_time = message.text
+            event.event_time = datetime.strptime(message.text, '%d/%m/%Y %H:%M')
+
             db.commit()
             await message.answer("✅ Время события обновлено!", reply_markup=markup)
         else:
