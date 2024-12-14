@@ -86,7 +86,6 @@ async def cancel_registration(callback_query: types.CallbackQuery):
             return
 
         if registration:
-            # Удаляем регистрацию и уменьшаем счетчик участников
             db.delete(registration)
             event.current_participants -= 1
             db.commit()

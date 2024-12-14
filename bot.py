@@ -88,7 +88,7 @@ async def main():
     await bot.delete_webhook(drop_pending_updates=False)
 
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(send_notifications, 'interval', minutes=5, args=[bot])
+    scheduler.add_job(send_notifications, 'interval', minutes=60, args=[bot])
     scheduler.add_job(delete_expired_events, 'interval', minutes=60, args=[bot])
     scheduler.start()
     try:
