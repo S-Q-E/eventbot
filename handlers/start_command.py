@@ -31,6 +31,7 @@ async def start_command(message: types.Message):
         user = db.query(User).filter_by(id=user_id).first()
     except Exception as e:
         await message.answer("Произошла ошибка при доступе к базе данных. Попробуйте позже.")
+        logging.info(f"Ошибка в start_command.py {e}")
 
         return
 
