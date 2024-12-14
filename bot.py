@@ -8,8 +8,11 @@ from config.config import load_config, Config
 from aiogram import Bot, Dispatcher
 from aiogram.client.bot import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
+
+from utils.delete_expire_events import delete_expired_events
 from utils.notify_user import send_notifications
 from sqlalchemy.exc import TimeoutError
+
 from handlers import (
     main_menu,
     reminder,
@@ -85,7 +88,8 @@ async def main():
     await bot.delete_webhook(drop_pending_updates=False)
 
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(send_notifications, 'interval', minutes=1, args=[bot])
+    scheduler.add_job(send_notifications, 'interval', minutes=5, args=[bot])
+    scheduler.add_job(delete_expired_events, 'interval', minutes=60, args=[bot])
     scheduler.start()
     try:
         await dp.start_polling(bot)

@@ -51,6 +51,8 @@ async def join_event(callback_query: types.CallbackQuery):
 
     existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
     if existing_registration:
+        logging.debug(
+            f"Пользователь {user_id} уже зарегистрирован на событие {event_id}. Оплачен: {existing_registration.is_paid}")
         if existing_registration.is_paid:
             await callback_query.message.answer(f"Вы уже записаны на это событие {event.name}")
             return
@@ -62,6 +64,7 @@ async def join_event(callback_query: types.CallbackQuery):
         try:
             new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
             event.current_participants += 1
+            logger.debug(f"Добавление новой регистрации для пользователя {user_id} на событие {event_id}.")
             db.add(new_registration)
             db.commit()
             await callback_query.message.answer(
@@ -109,6 +112,7 @@ async def check_payment(callback_query: types.CallbackQuery):
                 existing_registration.is_paid = True
             else:
                 new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
+                logger.debug(f"Добавление новой регистрации для пользователя {user_id} на событие {event_id}.")
                 db.add(new_registration)
                 event.current_participants += 1
                 db.commit()
