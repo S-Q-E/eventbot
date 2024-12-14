@@ -13,6 +13,7 @@ async def admin_panel(callback: types.CallbackQuery):
         [InlineKeyboardButton(text="Создать событие", callback_data="create_event")],
         [InlineKeyboardButton(text="Редактировать событие", callback_data="delete_event_button")],
         [InlineKeyboardButton(text="Добавить нового пользователя", callback_data="add_user")],
+        [InlineKeyboardButton(text="Редактировать пользователя", callback_data="edit_user")],
         [InlineKeyboardButton(text="Настройки админа", callback_data="set_admin")],
         [InlineKeyboardButton(text="Подписчики бота", callback_data="user_list")],
         [InlineKeyboardButton(text="Незарегистрированные пользователи", callback_data="all_users")],

@@ -31,7 +31,8 @@ from handlers import (
     manual_user_add,
     add_user_to_event,
     delete_user_from_event,
-    admin_help
+    admin_help,
+    edit_user
 )
 
 logger = logging.getLogger(__name__)
@@ -74,12 +75,12 @@ async def main():
     dp.include_router(add_user_to_event.manual_register_user_router)
     dp.include_router(delete_user_from_event.delete_user_from_event_router)
     dp.include_router(admin_help.admin_help_router)
+    dp.include_router(edit_user.edit_user_router)
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),
         BotCommand(command="start", description="Запустить бота")
     ]
-
     await bot.set_my_commands(commands)
     await bot.delete_webhook(drop_pending_updates=False)
 
