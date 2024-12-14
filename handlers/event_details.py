@@ -24,9 +24,21 @@ async def event_details(callback: types.CallbackQuery):
 
         # Проверка, зарегистрирован ли пользователь на событие
         user_id = callback.from_user.id
+        user = db.query(User).filter_by(id=user_id).first()
+
+        if not user.is_registered:
+            register_button = InlineKeyboardButton(
+                text="🔗 Завершить регистрацию",
+                callback_data="start_reg"
+            )
+            await callback.message.edit_text(
+                "❗ Только зарегистрированные пользователи могут записываться на события.",
+                reply_markup=InlineKeyboardMarkup(inline_keyboard=[[register_button]])
+            )
+            return
+
         registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
 
-        # Формирование текста кнопки в зависимости от статуса регистрации
         if registration:
             action_button = InlineKeyboardButton(
                 text="❌ Отменить запись",

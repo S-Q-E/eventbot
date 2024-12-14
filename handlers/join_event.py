@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 event_join_router = Router()
 
 
-# Helper function to fetch the event from the database
 async def fetch_event(event_id):
     db = next(get_db())
     event = db.query(Event).filter_by(id=event_id).first()
@@ -46,18 +45,19 @@ async def join_event(callback_query: types.CallbackQuery):
         await callback_query.message.answer("Событие не найдено.")
         return
 
-    # Check for available spots
-    if event.current_participants >= event.max_participants:
+    if event.current_participants == event.max_participants:
         await callback_query.message.answer("Все места заняты. Будем ждать вас в следующий раз!")
         return
 
-    # Prevent duplicate registration
     existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
-    if existing_registration and existing_registration.is_paid:
-        await callback_query.message.answer("Вы уже записаны на это событие.")
-        return
+    if existing_registration:
+        if existing_registration.is_paid:
+            await callback_query.message.answer(f"Вы уже записаны на это событие {event.name}")
+            return
+        else:
+            await callback_query.message.answer(f"Вы начали оплату, но не завершили ее. Проверьте статус платежа")
+            return
 
-    # Check if event is free
     if event.price == 0:
         try:
             new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
@@ -69,11 +69,10 @@ async def join_event(callback_query: types.CallbackQuery):
                 f"Пожалуйста, выберите время напоминания.", reply_markup=get_notification_keyboard(event_id)
             )
         except Exception as e:
-            logger.exception("Ошибка при регистрации на бесплатное событие.")
+            logger.exception(f"Ошибка при регистрации на бесплатное событие. {e}")
             await callback_query.message.answer("Произошла ошибка. Попробуйте снова.")
         return
 
-    # Handle paid event registration
     try:
         payment = Payment.create({
             "amount": {"value": str(event.price), "currency": "RUB"},
@@ -88,10 +87,10 @@ async def join_event(callback_query: types.CallbackQuery):
         markup = InlineKeyboardMarkup(inline_keyboard=[[check_btn]])
 
         await callback_query.message.answer(
-            f"Оплатите участие, перейдя по ссылке: {confirmation_url}", reply_markup=markup
+            f"Оплатите участие, перейдя по ссылке, выберите способ оплаты СБП:\n {confirmation_url}", reply_markup=markup
         )
     except Exception as e:
-        logger.exception("Ошибка при создании платежа.")
+        logger.exception(f"Ошибка при создании платежа. {e}")
         await callback_query.message.answer("Ошибка при создании платежа. Попробуйте позже.")
 
 
@@ -100,15 +99,20 @@ async def check_payment(callback_query: types.CallbackQuery):
     data = callback_query.data.split("_")
     payment_id, event_id = data[1], int(data[2])
     user_id = callback_query.from_user.id
-
+    db = next(get_db())
+    existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
     try:
         payment = Payment.find_one(payment_id)
         if payment.status == "succeeded":
             event, db = await fetch_event(event_id)
-            new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
-            event.current_participants += 1
-            db.add(new_registration)
-            db.commit()
+            if existing_registration:
+                existing_registration.is_paid = True
+            else:
+                new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
+                db.add(new_registration)
+                event.current_participants += 1
+                db.commit()
+
             user = db.query(User).filter(User.id == user_id).first()
 
             receipt_info = (
@@ -127,8 +131,12 @@ async def check_payment(callback_query: types.CallbackQuery):
             )
         elif payment.status == "pending":
             await callback_query.message.answer("Оплата еще не завершена. Пожалуйста, завершите платеж.")
+            existing_registration.is_paid = False
+            db.commit()
         else:
             await callback_query.message.answer("Оплата не прошла. Попробуйте снова.")
     except Exception as e:
         logger.exception(f"Ошибка при проверке статуса платежа. {e}")
         await callback_query.message.answer("Ошибка при проверке платежа. Попробуйте позже.")
+    finally:
+        db.close()

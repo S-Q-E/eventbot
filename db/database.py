@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime, UniqueConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -55,6 +55,8 @@ class Registration(Base):
     event_id = Column(Integer, ForeignKey('events.id'))
     reminder_time = Column(String, nullable=True)
     is_paid = Column(Boolean, default=False)
+
+    __table_args__ = (UniqueConstraint('user_id', 'event_id', name='_user_event_uc'),)
 
 
 Base.metadata.create_all(bind=engine)
