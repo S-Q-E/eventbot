@@ -84,13 +84,13 @@ async def join_event(callback_query: types.CallbackQuery):
             "description": f"Оплата участия в событии {event.name}",
             "metadata": {"user_id": user_id, "event_id": event_id},
         })
-
         confirmation_url = payment.confirmation.confirmation_url
         check_btn = InlineKeyboardButton(text="Проверить оплату", callback_data=f"check_{payment.id}_{event.id}")
-        markup = InlineKeyboardMarkup(inline_keyboard=[[check_btn]])
+        pay_btn = InlineKeyboardButton(text="Оплатить", url=confirmation_url)
+        markup = InlineKeyboardMarkup(inline_keyboard=[[pay_btn], [check_btn]])
 
         await callback_query.message.answer(
-            f"Оплатите участие, перейдя по ссылке, выберите способ оплаты СБП:\n {confirmation_url}", reply_markup=markup
+            f"Оплатите участие, перейдя по ссылке, <b>выберите способ оплаты СБП:</b>\n", reply_markup=markup
         )
     except Exception as e:
         logger.exception(f"Ошибка при создании платежа. {e}")

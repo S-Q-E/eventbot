@@ -64,12 +64,11 @@ async def back_to_edit_list(callback: CallbackQuery):
     )
 
 
-
 # Меняем название события
 @edit_event_router.callback_query(F.data.startswith("edit_name_"))
 async def edit_event_name(callback_query: types.CallbackQuery, state: FSMContext):
     event_id = int(callback_query.data.split("_")[-1])
-    await callback_query.message.answer(
+    await callback_query.message.reply(
         "✏️ Введите новое название события:"
     )
 
@@ -98,7 +97,7 @@ async def save_new_event_name(message: types.Message, state: FSMContext):
 @edit_event_router.callback_query(F.data.startswith("edit_address_"))
 async def edit_event_name(callback_query: types.CallbackQuery, state: FSMContext):
     event_id = int(callback_query.data.split("_")[-1])
-    await callback_query.message.answer(
+    await callback_query.message.reply(
         "✏️ Введите новый адрес события:"
     )
     await state.update_data(event_id=event_id)  # Сохраняем event_id для редактирования
