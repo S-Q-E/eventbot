@@ -52,18 +52,17 @@ async def process_first_name(message: types.Message, state: FSMContext):
                 "❗ Имя и фамилия должны содержать только буквы (допустимы дефисы). Попробуйте снова."
             )
             return
-        await state.update_data(first_name=first_name,
-                                last_name=last_name)
-    except ValueError as e:
-        logging.info(f"Пользователь ввел недостаточно данных ошибка {e}")
-        await message.answer("Вы ввели неполные данные,")
-    finally:
+
         request_phone_button = KeyboardButton(text="Отправить номер телефона", request_contact=True)
         phone_keyboard = ReplyKeyboardMarkup(keyboard=[[request_phone_button]], resize_keyboard=True,
                                              one_time_keyboard=True)
         await message.answer("Пожалуйста, отправьте ваш номер телефона:", reply_markup=phone_keyboard)
         await state.set_state(RegistrationStates.waiting_for_phone_number)
-
+        await state.update_data(first_name=first_name,
+                                last_name=last_name)
+    except ValueError as e:
+        logging.info(f"Пользователь ввел недостаточно данных ошибка {e}")
+        await message.answer("Вы ввели неполные данные,")
 
 @registration_router.message(RegistrationStates.waiting_for_phone_number)
 @registration_router.message(RegistrationStates.waiting_for_phone_number, F.contact)

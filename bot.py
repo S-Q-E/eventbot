@@ -1,7 +1,7 @@
 import logging
 import asyncio
 import sys
-
+from flask import Flask, request
 from aiogram.types import BotCommand
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from config.config import load_config, Config
@@ -48,6 +48,7 @@ async def main():
                "[%(asctime)s] - %(name)s - %(message)s",
     )
 
+    app = Flask(__name__)
     logger.info("Starting bot")
 
     config: Config = load_config()
@@ -79,6 +80,12 @@ async def main():
     dp.include_router(delete_user_from_event.delete_user_from_event_router)
     dp.include_router(admin_help.admin_help_router)
     dp.include_router(edit_user.edit_user_router)
+
+    @app.route('/webhook', methods=['POST'])
+    async def telegram_webhook():
+        update = request.json
+        await bot.process_update(update)
+        return "ok", 200
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),
