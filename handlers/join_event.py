@@ -2,7 +2,8 @@ import logging
 import os
 import uuid
 from aiogram import Router, types, F
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ContentType
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, LabeledPrice, PreCheckoutQuery, SuccessfulPayment
 from db.database import get_db, Registration, Event, User
 from yookassa import Payment, Configuration
 from dotenv import load_dotenv
@@ -11,7 +12,7 @@ from keyboards.notif_keyboard import get_notification_keyboard
 load_dotenv()
 ADMIN = os.getenv("ADMIN_2")
 YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID")
-YOOKASSA_API_KEY = os.getenv("YOOKASSA_API_KEY")
+YOOKASSA_API_KEY = os.getenv("TEST_API_KEY")
 
 if not YOOKASSA_SHOP_ID or not YOOKASSA_API_KEY:
     raise ValueError("Yookassa credentials are not set. Please check your .env file.")
@@ -77,24 +78,44 @@ async def join_event(callback_query: types.CallbackQuery):
         return
 
     try:
-        payment = Payment.create({
-            "amount": {"value": str(event.price), "currency": "RUB"},
-            "confirmation": {"type": "redirect", "return_url": "https://t.me/GuruEvent_bot/"},
-            "capture": True,
-            "description": f"Оплата участия в событии {event.name}",
-            "metadata": {"user_id": user_id, "event_id": event_id},
-        })
-        confirmation_url = payment.confirmation.confirmation_url
-        check_btn = InlineKeyboardButton(text="Проверить оплату", callback_data=f"check_{payment.id}_{event.id}")
-        pay_btn = InlineKeyboardButton(text="Оплатить", url=confirmation_url)
-        markup = InlineKeyboardMarkup(inline_keyboard=[[pay_btn], [check_btn]])
-
-        await callback_query.message.answer(
-            f"Оплатите участие, перейдя по ссылке, <b>выберите способ оплаты СБП:</b>\n", reply_markup=markup
-        )
+        price = LabeledPrice(label=f"Оплата участия {event.name}", amount=int(event.price * 100))
+        await callback_query.bot.send_invoice(chat_id=callback_query.from_user.id,
+                                              title=event.name,
+                                              description=event.description,
+                                              payload=f"event_{event.id}_user_{callback_query.from_user.id}",
+                                              provider_token=YOOKASSA_API_KEY,
+                                              currency="RUB",
+                                              prices=[price],
+                                              )
+        await callback_query.answer()
     except Exception as e:
         logger.exception(f"Ошибка при создании платежа. {e}")
         await callback_query.message.answer("Ошибка при создании платежа. Попробуйте позже.")
+
+
+@event_join_router.pre_checkout_query()
+async def process_pre_checkout_query(pre_checkout_query: PreCheckoutQuery):
+    await pre_checkout_query.answer(ok=True)
+
+
+@event_join_router.message(ContentType.SUCCESSFUL_PAYMENT)
+async def process_successful_payment(message: types.Message):
+    payment_info = message.successful_payment
+    payload = payment_info.invoice_payload
+
+    event_id, user_id = map(int, payload.replace("event_", "").replace("_user_", "").split("_"))
+    db = next(get_db())
+    registration = db.query(Registration).filter_by(event_id=event_id, user_id=user_id).first()
+
+    if not registration:
+        await message.answer("Такой записи не существует")
+        logging.info("Нет регистрации")
+    else:
+        registration.is_paid = True
+        event = db.query(Event).filter_by(id=event_id).first()
+        await message.answer(f"Оплата успешно выполнена! Вы записаны на событие {event.name}")
+        db.commit()
+        db.close()
 
 
 @event_join_router.callback_query(F.data.startswith("check_"))
@@ -144,3 +165,22 @@ async def check_payment(callback_query: types.CallbackQuery):
         await callback_query.message.answer("Ошибка при проверке платежа. Попробуйте позже.")
     finally:
         db.close()
+
+
+
+        # @event_join_router.pre_checkout_query()
+        # payment = Payment.create({
+        #     "amount": {"value": str(event.price), "currency": "RUB"},
+        #     "confirmation": {"type": "redirect", "return_url": "https://t.me/GuruEvent_bot/"},
+        #     "capture": True,
+        #     "description": f"Оплата участия в событии {event.name}",
+        #     "metadata": {"user_id": user_id, "event_id": event_id},
+        # })
+        # confirmation_url = payment.confirmation.confirmation_url
+        # check_btn = InlineKeyboardButton(text="Проверить оплату", callback_data=f"check_{payment.id}_{event.id}")
+        # pay_btn = InlineKeyboardButton(text="Оплатить", url=confirmation_url)
+        # markup = InlineKeyboardMarkup(inline_keyboard=[[pay_btn], [check_btn]])
+        #
+        # await callback_query.message.answer(
+        #     f"Оплатите участие, перейдя по ссылке, <b>выберите способ оплаты СБП:</b>\n", reply_markup=markup
+        # )

@@ -1,3 +1,4 @@
+import logging
 import re
 from aiogram import types, Router, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
@@ -39,15 +40,29 @@ async def process_first_name(message: types.Message, state: FSMContext):
     """
     Обрабатываем имя пользователя и запрашиваем фамилию
     """
-    first_name, last_name = message.text.split(" ")
-    await state.update_data(first_name=message.text,
-                            last_name=last_name)
-    request_phone_button = KeyboardButton(text="Отправить номер телефона", request_contact=True)
-    phone_keyboard = ReplyKeyboardMarkup(keyboard=[[request_phone_button]], resize_keyboard=True,
-                                         one_time_keyboard=True)
+    try:
+        name_parts = message.text.strip().split()
+        if len(name_parts) != 2:
+            await message.answer("❗ Пожалуйста, введите имя и фамилию через пробел. Пример: Иван Иванов")
+            return
 
-    await message.answer("Пожалуйста, отправьте ваш номер телефона:", reply_markup=phone_keyboard)
-    await state.set_state(RegistrationStates.waiting_for_phone_number)
+        first_name, last_name = name_parts
+        if not all(re.match(r"^[А-Яа-яA-Za-z-]+$", name) for name in [first_name, last_name]):
+            await message.answer(
+                "❗ Имя и фамилия должны содержать только буквы (допустимы дефисы). Попробуйте снова."
+            )
+            return
+        await state.update_data(first_name=first_name,
+                                last_name=last_name)
+    except ValueError as e:
+        logging.info(f"Пользователь ввел недостаточно данных ошибка {e}")
+        await message.answer("Вы ввели неполные данные,")
+    finally:
+        request_phone_button = KeyboardButton(text="Отправить номер телефона", request_contact=True)
+        phone_keyboard = ReplyKeyboardMarkup(keyboard=[[request_phone_button]], resize_keyboard=True,
+                                             one_time_keyboard=True)
+        await message.answer("Пожалуйста, отправьте ваш номер телефона:", reply_markup=phone_keyboard)
+        await state.set_state(RegistrationStates.waiting_for_phone_number)
 
 
 @registration_router.message(RegistrationStates.waiting_for_phone_number)
@@ -62,7 +77,7 @@ async def process_phone_number(message: types.Message, state: FSMContext):
     else:
         # Проверка формата введенного номера
         phone_number = message.text.strip()
-        if not re.match(r'^\+7\d{10}$', phone_number):
+        if not re.match(r'^\+7\d', phone_number):
             await message.answer("❗ Номер телефона должен начинаться с +7 и содержать 11 цифр. Попробуйте снова:")
             return
 
@@ -81,7 +96,8 @@ async def process_phone_number(message: types.Message, state: FSMContext):
             user.is_registered = True
             user.phone_number = phone_number
             db.commit()
-            markup = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]])
+            markup = InlineKeyboardMarkup(
+                inline_keyboard=[[InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]])
             await message.answer(f"<b>Регистрация завершена, {first_name} {last_name}!\n"
                                  f"Все функции доступны!</b>", reply_markup=markup)
         else:
