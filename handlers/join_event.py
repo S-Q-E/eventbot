@@ -1,9 +1,9 @@
+import asyncio
 import logging
 import os
 import uuid
-from aiogram import Router, types, F
-from aiogram.types import ContentType
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, LabeledPrice, PreCheckoutQuery, SuccessfulPayment
+from aiogram import Router, types, F, Bot
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db.database import get_db, Registration, Event, User
 from yookassa import Payment, Configuration
 from dotenv import load_dotenv
@@ -12,8 +12,8 @@ from keyboards.notif_keyboard import get_notification_keyboard
 load_dotenv()
 ADMIN = os.getenv("ADMIN_2")
 ADMIN_2 = os.getenv("ADMIN_3")
-YOOKASSA_SHOP_ID = os.getenv("TEST_SHOP")
-YOOKASSA_API_KEY = os.getenv("TEST_KEY")
+YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID")
+YOOKASSA_API_KEY = os.getenv("YOOKASSA_API_KEY")
 
 if not YOOKASSA_SHOP_ID or not YOOKASSA_API_KEY:
     raise ValueError("Yookassa credentials are not set. Please check your .env file.")
@@ -87,107 +87,57 @@ async def join_event(callback_query: types.CallbackQuery):
             "metadata": {"user_id": user_id, "event_id": event_id},
         })
         confirmation_url = payment.confirmation.confirmation_url
-        check_btn = InlineKeyboardButton(text="Проверить оплату", callback_data=f"check_{payment.id}_{event.id}")
-        pay_btn = InlineKeyboardButton(text="Оплатить", url=confirmation_url)
-        markup = InlineKeyboardMarkup(inline_keyboard=[[pay_btn], [check_btn]])
-
+        pay_btn = InlineKeyboardButton(text="💳 Оплатить", url=confirmation_url)
+        markup = InlineKeyboardMarkup(inline_keyboard=[[pay_btn]])
         await callback_query.message.answer(
-            f"Оплатите участие, перейдя по ссылке, <b>выберите способ оплаты СБП:</b>\n", reply_markup=markup
+            f"Оплатите участие, нажав на кнопку <code>Оплатить</code>, <b>выберите способ оплаты СБП:</b>\n", reply_markup=markup
         )
+        await check_payment(payment.id, event_id, user_id, callback_query)
     except Exception as e:
         logger.exception(f"Ошибка при создании платежа. {e}")
         await callback_query.message.answer("Ошибка при создании платежа. Попробуйте позже.")
 
 
-# @event_join_router.pre_checkout_query()
-# async def process_pre_checkout_query(pre_checkout_query: PreCheckoutQuery):
-#     await pre_checkout_query.answer(ok=True)
-#
-#
-# @event_join_router.message(ContentType.SUCCESSFUL_PAYMENT)
-# async def process_successful_payment(message: types.Message):
-#     payment_info = message.successful_payment
-#     payload = payment_info.invoice_payload
-#
-#     event_id, user_id = map(int, payload.replace("event_", "").replace("_user_", "").split("_"))
-#     db = next(get_db())
-#     registration = db.query(Registration).filter_by(event_id=event_id, user_id=user_id).first()
-#
-#     if not registration:
-#         await message.answer("Такой записи не существует")
-#         logging.info("Нет регистрации")
-#     else:
-#         registration.is_paid = True
-#         event = db.query(Event).filter_by(id=event_id).first()
-#         await message.answer(f"Оплата успешно выполнена! Вы записаны на событие {event.name}")
-#         db.commit()
-#         db.close()
-#
-
-@event_join_router.callback_query(F.data.startswith("check_"))
-async def check_payment(callback_query: types.CallbackQuery):
-    data = callback_query.data.split("_")
-    payment_id, event_id = data[1], int(data[2])
-    user_id = callback_query.from_user.id
+async def check_payment(payment_id, event_id, user_id, callback:types.CallbackQuery):
     db = next(get_db())
-    existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
     try:
-        payment = Payment.find_one(payment_id)
-        if payment.status == "succeeded":
-            event, db = await fetch_event(event_id)
-            if existing_registration:
-                existing_registration.is_paid = True
-            else:
-                new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
-                logger.debug(f"Добавление новой регистрации для пользователя {user_id} на событие {event_id}.")
-                db.add(new_registration)
-                event.current_participants += 1
+        for _ in range(10):  # Попробовать 10 раз
+            payment = Payment.find_one(payment_id)
+            if payment.status == "succeeded":
+                event, db = await fetch_event(event_id)
+                existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
+                if existing_registration:
+                    existing_registration.is_paid = True
+                else:
+                    new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
+                    db.add(new_registration)
+                    event.current_participants += 1
                 db.commit()
 
-            user = db.query(User).filter(User.id == user_id).first()
-
-            receipt_info = (
-                f"📄 Чек об оплате:\n"
-                f"🎊 Событие: {event.name}"
-                f"🆔 Оплатил: {user.first_name}, {user.last_name}\n"
-                f"💰 Сумма: {event.price}\n"
-                f"🛠 Способ оплаты: {payment.payment_method.type}\n"
-                f"👤 Номер плательщика: {user.phone_number}\n"
-                f"🕒 Дата создания: {payment.created_at}\n"
-            )
-            await callback_query.bot.send_message(ADMIN, receipt_info)
-            await callback_query.bot.send_message(ADMIN_2, receipt_info)
-            await callback_query.message.answer(
-                f"Оплата прошла успешно! Вы зарегистрированы на событие <b>{event.name}</b>.\n"
-                f"Выберите время напоминания.", reply_markup=get_notification_keyboard(event_id)
-            )
-        elif payment.status == "pending":
-            await callback_query.message.answer("Оплата еще не завершена. Пожалуйста, завершите платеж.")
-            existing_registration.is_paid = False
-            db.commit()
-        else:
-            await callback_query.message.answer("Оплата не прошла. Попробуйте снова.")
+                # Уведомление админа и пользователя
+                user = db.query(User).filter(User.id == user_id).first()
+                receipt_info = (
+                    f"📄 Чек об оплате:\n"
+                    f"🎊 Событие: {event.name}\n"
+                    f"🆔 Оплатил: {user.first_name}, {user.last_name}\n"
+                    f"💰 Сумма: {event.price}\n"
+                    f"🛠 Способ оплаты: {payment.payment_method.type}\n"
+                    f"👤 Номер плательщика: {user.phone_number}\n"
+                    f"🕒 Дата создания: {payment.created_at}\n"
+                )
+                await callback.bot.send_message(ADMIN, receipt_info)
+                await callback.bot.send_message(ADMIN_2, receipt_info)
+                await callback.message.answer(f"Оплата прошла успешно! Вы зарегистрированы на событие <b>{event.name}</b>.\n"
+                                              f"Выберите время напоминания.", reply_markup=get_notification_keyboard(event_id)
+                )
+                return  # Завершаем проверку
+            elif payment.status == "pending":
+                await asyncio.sleep(10)  # Подождать 10 секунд и повторить проверку
+            else:
+                break  # Завершаем проверку, если статус "canceled" или другой
+        await callback.message.answer("Оплата не завершена. Попробуйте снова.")
     except Exception as e:
         logger.exception(f"Ошибка при проверке статуса платежа. {e}")
-        await callback_query.message.answer("Ошибка при проверке платежа. Попробуйте позже.")
+        await callback.message.answer("Ошибка при проверке платежа. Попробуйте позже.")
     finally:
         db.close()
-
-
-    #
-    # @event_join_router.pre_checkout_query()
-    # payment = Payment.create({
-    #     "amount": {"value": str(event.price), "currency": "RUB"},
-    #     "confirmation": {"type": "redirect", "return_url": "https://t.me/GuruEvent_bot/"},
-    #     "capture": True,
-    #     "description": f"Оплата участия в событии {event.name}",
-    #     "metadata": {"user_id": user_id, "event_id": event_id},
-    # })
-    # confirmation_url = payment.confirmation.confirmation_url
-    # check_btn = InlineKeyboardButton(text="Проверить оплату", callback_data=f"check_{payment.id}_{event.id}")
-    # pay_btn = InlineKeyboardButton(text="Оплатить", url=confirmation_url)
-    # markup = InlineKeyboardMarkup(inline_keyboard=[[pay_btn], [check_btn]])
-    #
-    # await callback_query.message.answer(
-    #     f"Оплатите участие, перейдя по ссылке, <b>выберите способ оплаты СБП:</b>\n", reply_markup=markup
-    # )
