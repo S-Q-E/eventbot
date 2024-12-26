@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram import Router, types, F
-from db.database import get_db, Event
+from db.database import get_db, Event, Registration
 
 delete_event_router = Router()
 
@@ -87,6 +87,7 @@ async def delete_event(callback_query: types.CallbackQuery):
     db = next(get_db())
     event = db.query(Event).filter_by(id=event_id).first()
     if event:
+        db.query(Registration).filter_by(event_id=event_id).delete()
         db.delete(event)
         db.commit()
         await callback_query.message.answer("Событие успешно удалено.", reply_markup=markup)

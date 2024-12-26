@@ -54,7 +54,6 @@ async def delete_expired_events(bot: Bot):
         )
         await bot.send_message(int(ADMIN), deleted_events_list)
 
-        # Удаление регистраций и событий
         for event in expired_events:
             db.query(Registration).filter(Registration.event_id == event.id).delete()
             db.delete(event)

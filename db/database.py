@@ -47,7 +47,6 @@ class Event(Base):
     current_participants = Column(Integer, default=0)
 
 
-# Пример модели регистрации на событие
 class Registration(Base):
     __tablename__ = 'registrations'
     id = Column(Integer, primary_key=True, index=False, autoincrement=True)
