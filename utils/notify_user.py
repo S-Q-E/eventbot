@@ -5,7 +5,6 @@ from db.database import get_db, Registration, Event
 from datetime import datetime, timedelta
 
 
-# Функция для отправки уведомлений
 async def send_notifications(bot: Bot):
     db = next(get_db())
     try:

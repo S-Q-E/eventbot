@@ -2,9 +2,11 @@ import os
 from dotenv import load_dotenv
 from aiogram import Bot
 from db.database import get_db, Event, Registration, User
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 import pandas as pd
+
+from utils.feedback_request import send_feedback_request
 
 load_dotenv()
 ADMIN = os.getenv("ADMIN_2")
@@ -17,17 +19,17 @@ async def delete_expired_events(bot: Bot):
     try:
         db = next(get_db())
         now = datetime.now()
-        expired_events = db.query(Event).filter(Event.event_time < now).all()
+        expired_events = db.query(Event).filter(Event.event_time + timedelta(minutes=12) < now).all()
 
         if not expired_events:
             logging.info("Нет истекших событий для удаления.")
             return
 
-        # Подготовка данных для экспорта
         export_data = []
         for event in expired_events:
             registrations = db.query(Registration).filter(Registration.event_id == event.id).all()
             for reg in registrations:
+                await send_feedback_request(bot=bot, event_id=event.id,event_name=event.name)
                 user = db.query(User).filter(User.id == reg.user_id).first()
                 export_data.append({
                     "Event Name": event.name,
@@ -47,7 +49,6 @@ async def delete_expired_events(bot: Bot):
             df.to_excel(filepath, index=False)
             await bot.send_message(int(ADMIN), f"Данные об истекших событиях сохранены в файл: {filename}")
 
-        # Уведомление об удалении событий
         deleted_events_list = "\n".join(
             f"⚠️ Событие <b>{event.name}</b> (ID: {event.id}) завершилось и будет удалено."
             for event in expired_events

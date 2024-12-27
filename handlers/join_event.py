@@ -98,10 +98,11 @@ async def join_event(callback_query: types.CallbackQuery):
         await callback_query.message.answer("Ошибка при создании платежа. Попробуйте позже.")
 
 
-async def check_payment(payment_id, event_id, user_id, callback:types.CallbackQuery):
+async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQuery):
     db = next(get_db())
     try:
-        for _ in range(10):  # Попробовать 10 раз
+        intervals = [60, 600, 1800]
+        for delay in intervals:
             payment = Payment.find_one(payment_id)
             if payment.status == "succeeded":
                 event, db = await fetch_event(event_id)
@@ -114,7 +115,6 @@ async def check_payment(payment_id, event_id, user_id, callback:types.CallbackQu
                     event.current_participants += 1
                 db.commit()
 
-                # Уведомление админа и пользователя
                 user = db.query(User).filter(User.id == user_id).first()
                 receipt_info = (
                     f"📄 Чек об оплате:\n"
@@ -127,14 +127,17 @@ async def check_payment(payment_id, event_id, user_id, callback:types.CallbackQu
                 )
                 await callback.bot.send_message(ADMIN, receipt_info)
                 await callback.bot.send_message(ADMIN_2, receipt_info)
+                logging.info(
+                    f"Оплата {payment_id} на событие {event.name} - оплатил {user.first_name} {user.last_name}\n")
                 await callback.message.answer(f"Оплата прошла успешно! Вы зарегистрированы на событие <b>{event.name}</b>.\n"
                                               f"Выберите время напоминания.", reply_markup=get_notification_keyboard(event_id)
                 )
-                return  # Завершаем проверку
+                return
             elif payment.status == "pending":
-                await asyncio.sleep(10)  # Подождать 10 секунд и повторить проверку
+                await asyncio.sleep(delay)
             else:
-                break  # Завершаем проверку, если статус "canceled" или другой
+                await callback.message.answer("Вы не оплатили событие. Регистрация отменена")
+                break
         await callback.message.answer("Оплата не завершена. Попробуйте снова.")
     except Exception as e:
         logger.exception(f"Ошибка при проверке статуса платежа. {e}")

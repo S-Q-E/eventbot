@@ -11,7 +11,7 @@ async def set_notification_preference(callback: types.CallbackQuery):
     back_btn = InlineKeyboardButton(text="Назад", callback_data="events_page_1")
     markup = InlineKeyboardMarkup(inline_keyboard=[[back_btn]])
     user_id = callback.from_user.id
-    _, notify_time, event_id = callback.data.split('_')  # 'notify_24h_eventID'
+    _, notify_time, event_id = callback.data.split('_')
 
     db = next(get_db())
     registration = db.query(Registration).filter_by(user_id=user_id, event_id=int(event_id)).first()
@@ -20,7 +20,6 @@ async def set_notification_preference(callback: types.CallbackQuery):
         await callback.answer("Ошибка: регистрация на событие не найдена.")
         return
 
-    # Обновление предпочтения уведомления
     registration.reminder_time = notify_time
     db.commit()
 

@@ -33,7 +33,9 @@ from handlers import (
     add_user_to_event,
     delete_user_from_event,
     admin_help,
-    edit_user
+    edit_user,
+    feedback,
+    show_feedbacks
 )
 
 logger = logging.getLogger(__name__)
@@ -77,6 +79,8 @@ async def main():
     dp.include_router(delete_user_from_event.delete_user_from_event_router)
     dp.include_router(admin_help.admin_help_router)
     dp.include_router(edit_user.edit_user_router)
+    dp.include_router(feedback.feedback_router)
+    dp.include_router(show_feedbacks.show_feedback_router)
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),
@@ -86,8 +90,8 @@ async def main():
     await bot.delete_webhook(drop_pending_updates=False)
 
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(send_notifications, 'interval', minutes=10, args=[bot])
-    scheduler.add_job(delete_expired_events, 'interval', minutes=60, args=[bot])
+    scheduler.add_job(send_notifications, 'interval', minutes=1, args=[bot])
+    scheduler.add_job(delete_expired_events, 'interval', minutes=5, args=[bot])
     scheduler.start()
     try:
         await dp.start_polling(bot)

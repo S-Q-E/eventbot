@@ -1,14 +1,16 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime, UniqueConstraint
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime, UniqueConstraint, Text
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 
 DATABASE_URL = "sqlite:///events.db"
 
-engine = create_engine(DATABASE_URL,
-                       pool_size=10,
-                       max_overflow=20,
-                       pool_timeout=30,
-                       pool_recycle=1800)
+engine = create_engine(
+    DATABASE_URL,
+    pool_size=10,
+    max_overflow=20,
+    pool_timeout=30,
+    pool_recycle=1800
+)
 
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
@@ -22,7 +24,7 @@ def get_db():
         db.close()
 
 
-# Пример модели пользователя
+# Модель пользователя
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
@@ -33,20 +35,29 @@ class User(Base):
     is_admin = Column(Boolean, default=False)
     is_registered = Column(Boolean, default=False)
 
+    # Связь с регистрациями
+    registrations = relationship("Registration", back_populates="user", cascade="all, delete-orphan")
+    feedbacks = relationship("Feedback", back_populates="user", cascade="all, delete-orphan")
 
-# Пример модели события
+
 class Event(Base):
     __tablename__ = 'events'
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, index=True)
     description = Column(String)
     address = Column(String)
-    event_time = Column(DateTime)
+    event_time = Column(DateTime, index=True)
     price = Column(Integer, default=0)
     max_participants = Column(Integer, default=10)
     current_participants = Column(Integer, default=0)
 
+    # Связь с регистрациями
+    registrations = relationship("Registration", back_populates="event", cascade="all, delete-orphan")
+    feedbacks = relationship("Feedback", back_populates="event", cascade="all, delete-orphan")
 
+
+
+# Модель регистрации
 class Registration(Base):
     __tablename__ = 'registrations'
     id = Column(Integer, primary_key=True, index=False, autoincrement=True)
@@ -56,6 +67,21 @@ class Registration(Base):
     is_paid = Column(Boolean, default=False)
 
     __table_args__ = (UniqueConstraint('user_id', 'event_id', name='_user_event_uc'),)
+
+    user = relationship("User", back_populates="registrations")
+    event = relationship("Event", back_populates="registrations")
+
+
+class Feedback(Base):
+    __tablename__ = 'feedbacks'
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    event_id = Column(Integer, ForeignKey('events.id', ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"))
+    review = Column(Text, nullable=True)
+    rating = Column(Integer, nullable=True)
+
+    user = relationship("User", back_populates="feedbacks", cascade="all")
+    event = relationship("Event", back_populates="feedbacks",cascade="all")
 
 
 Base.metadata.create_all(bind=engine)
