@@ -56,8 +56,6 @@ class Event(Base):
     feedbacks = relationship("Feedback", back_populates="event", cascade="all, delete-orphan")
 
 
-
-# Модель регистрации
 class Registration(Base):
     __tablename__ = 'registrations'
     id = Column(Integer, primary_key=True, index=False, autoincrement=True)
