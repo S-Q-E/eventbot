@@ -50,19 +50,31 @@ async def handle_feedback_rating(callback_query: types.CallbackQuery, state: FSM
     callback_data = callback_query.data.split("_")
     rating = int(callback_data[1])
     event_id = int(callback_data[2])
+
+    # Извлечение данных из состояния
     data = await state.get_data()
     user_id = data.get("user_id")
     feedback_text = data.get("feedback_text")
 
-    try:
-        with next(get_db()) as db: # Используем менеджер контекста
-            feedback = db.query(Feedback).filter_by(user_id=user_id, event_id=event_id).first()
+    # Проверяем, есть ли все необходимые данные
+    if not user_id or feedback_text is None:
+        await callback_query.message.answer("Ошибка: отсутствуют данные для сохранения отзыва.")
+        logging.error("Отсутствуют данные для обработки отзыва.")
+        return
 
+    try:
+        with next(get_db()) as db:
+            feedback = db.query(Feedback).filter_by(user_id=user_id, event_id=event_id).first()
             if feedback:
                 feedback.rating = rating
             else:
                 new_feedback = Feedback(event_id=event_id, user_id=user_id, review=feedback_text, rating=rating)
                 db.add(new_feedback)
+
+            registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
+            if registration:
+                registration.has_given_feedback = True
+
             db.commit()
 
         await callback_query.message.edit_text(
@@ -83,27 +95,30 @@ async def decline_feedback(callback_query: types.CallbackQuery):
     """
     Обрабатывает отказ пользователя от оставления отзыва.
     """
-
-    db = next(get_db())
-    event_id = int(callback_query.data.split("_")[2])
+    event_id = int(callback_query.data.split("_")[-1])
     user_id = callback_query.from_user.id
 
     try:
-        registration = (
-            db.query(Registration)
-            .filter(
-                Registration.event_id == event_id,
-                Registration.user_id == user_id
+        with next(get_db()) as db:
+            registration = (
+                db.query(Registration)
+                .filter(
+                    Registration.event_id == event_id,
+                    Registration.user_id == user_id
+                )
+                .first()
             )
-            .first()
-        )
 
-        if registration:
-            registration.has_given_feedback = True
-            db.commit()
+            if registration:
+                registration.has_given_feedback = True
+                db.commit()
+                logging.info(f"Пользователь {user_id} отказался от отзыва по событию {event_id}.")
+            else:
+                logging.warning(f"Регистрация для пользователя {user_id} и события {event_id} не найдена.")
+                await callback_query.message.answer("Вы не зарегистрированы на это событие.")
+                return
 
         await callback_query.message.edit_text("Спасибо, мы учли ваш ответ!")
     except Exception as e:
-        print(f"Ошибка при обработке отказа: {e}")
-    finally:
-        db.close()
+        logging.exception(f"Ошибка при обработке отказа: {e}")
+        await callback_query.message.answer("Произошла ошибка. Пожалуйста, попробуйте позже.")

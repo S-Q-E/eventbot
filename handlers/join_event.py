@@ -8,9 +8,7 @@ from db.database import get_db, Registration, Event, User
 from yookassa import Payment, Configuration
 from dotenv import load_dotenv
 from keyboards.notif_keyboard import get_notification_keyboard
-from utils.feedback_request import send_feedback_request
-from utils.scheduler_instance import scheduler
-from datetime import timedelta
+
 
 load_dotenv()
 ADMIN = os.getenv("ADMIN_2")

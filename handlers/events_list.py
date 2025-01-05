@@ -1,9 +1,15 @@
+import os
 from datetime import datetime
 from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.exceptions import TelegramAPIError
 from db.database import get_db, Event, Registration, User
 from utils.get_week_day import get_week_day
+from dotenv import load_dotenv
+
+load_dotenv()
+
+ADMIN = os.getenv("ADMIN")
 
 event_list_router = Router()
 EVENTS_PER_PAGE = 3
@@ -81,19 +87,20 @@ async def cancel_registration(callback_query: types.CallbackQuery):
             return
 
         if registration:
+            await callback_query.bot.send_message(ADMIN, f"Пользователь {registration.user.first_name} "
+                                                         f"{registration.user.last_name} отменил запись на событие "
+                                                         f"{registration.event.name}")
             db.delete(registration)
             event.current_participants -= 1
             db.commit()
-
             await callback_query.message.edit_text("Вы успешно отменили регистрацию на это событие.")
 
-            # Уведомляем других участников
             registrations = db.query(Registration).filter_by(event_id=event_id).all()
             for reg in registrations:
                 try:
                     await callback_query.bot.send_message(
                         chat_id=reg.user_id,
-                        text=f"⚠️ Освободилось место на событие '{event.name}'! Спешите зарегистрироваться, пока оно не занято.",
+                        text=f"⚠️ Освободилось место на событие {event.name}! Спешите зарегистрироваться, пока оно не занято!",
                         reply_markup=markup
                     )
                 except TelegramAPIError as e:

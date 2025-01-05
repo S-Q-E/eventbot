@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
+from datetime import datetime
+from sqlalchemy.orm import Session, joinedload
 from db.database import Registration, User, Event
 
 
@@ -28,7 +28,7 @@ def get_users_for_feedback(db: Session, event_id: int):
 
 def get_started_events(db: Session):
     """
-    Проверяет, есть ли начавшиеся события.
+    Получает начавшиеся события с пользователями, которым нужно отправить уведомление о предоставлении отзыва.
 
     Args:
         db: Объект сессии базы данных SQLAlchemy.
@@ -36,8 +36,20 @@ def get_started_events(db: Session):
     Returns:
         Список словарей с id и именем начавшихся событий.
     """
-    request_time = datetime.now() + timedelta(minutes=1)
-    events = db.query(Event).filter(Event.event_time <= request_time).all()
+    current_time = datetime.now()
+
+    events = (
+        db.query(Event)
+        .join(Registration, Event.id == Registration.event_id)  # Присоединяем регистрации
+        .filter(
+            Event.event_time <= current_time,                 # Событие уже началось
+            Registration.has_given_feedback == False          # Пользователь ещё не оставил отзыв
+        )
+        .options(joinedload(Event.registrations))             # Подгружаем регистрации
+        .distinct()                                           # Убираем дубли
+        .all()
+    )
+
     started_events = [{"id": event.id, "name": event.name} for event in events]
     return started_events
 
