@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 
 async def send_notifications(bot: Bot):
+    reminder_time = ""
     db = next(get_db())
     try:
         now = datetime.now()
@@ -21,17 +22,18 @@ async def send_notifications(bot: Bot):
             # Вычисляем время уведомления
             notify_time = event.event_time
             if reg.reminder_time == '24h':
+                reminder_time = "сутки"
                 notify_time -= timedelta(hours=24)
             elif reg.reminder_time == '2h':
+                reminder_time = "2 часа"
                 notify_time -= timedelta(hours=2)
 
             # Проверяем, нужно ли отправить уведомление сейчас
-            if notify_time <= now < (notify_time + timedelta(minutes=5)):  # Допуск 1 минута
+            if notify_time <= now < (notify_time + timedelta(minutes=5)):
                 await bot.send_message(
                     reg.user_id,
-                    f"Напоминание! Событие {event.name} начнется через  {event.event_time.strftime('%d.%m.%Y %H:%M')}."
+                    f"Напоминание! Событие {event.name} начнется через {reminder_time}."
                 )
-                # Удаляем напоминание после отправки (если оно одноразовое)
                 reg.reminder_time = None
                 db.commit()
     except Exception as e:

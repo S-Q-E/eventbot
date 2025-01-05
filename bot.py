@@ -2,12 +2,11 @@ import logging
 import asyncio
 import sys
 from aiogram.types import BotCommand
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from config.config import load_config, Config
 from aiogram import Bot, Dispatcher
 from aiogram.client.bot import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
-from utils.notify_user import send_notifications
+from utils.scheduler_instance import start_scheduler
 from sqlalchemy.exc import TimeoutError
 
 from handlers import (
@@ -36,7 +35,6 @@ from handlers import (
     feedback,
     show_feedbacks
 )
-
 logger = logging.getLogger(__name__)
 
 
@@ -87,10 +85,8 @@ async def main():
     ]
     await bot.set_my_commands(commands)
     await bot.delete_webhook(drop_pending_updates=False)
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(send_notifications, 'interval', minutes=1, args=[bot])
-    scheduler.start()
     try:
+        start_scheduler(bot)
         await dp.start_polling(bot)
     except TimeoutError as e:
         logger.info("Ошибка {e}. Перезапуск....")

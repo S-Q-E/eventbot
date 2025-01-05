@@ -63,6 +63,7 @@ class Registration(Base):
     event_id = Column(Integer, ForeignKey('events.id'))
     reminder_time = Column(String, nullable=True)
     is_paid = Column(Boolean, default=False)
+    has_given_feedback = Column(Boolean, default=False)
 
     __table_args__ = (UniqueConstraint('user_id', 'event_id', name='_user_event_uc'),)
 

@@ -8,6 +8,9 @@ from db.database import get_db, Registration, Event, User
 from yookassa import Payment, Configuration
 from dotenv import load_dotenv
 from keyboards.notif_keyboard import get_notification_keyboard
+from utils.feedback_request import send_feedback_request
+from utils.scheduler_instance import scheduler
+from datetime import timedelta
 
 load_dotenv()
 ADMIN = os.getenv("ADMIN_2")
@@ -32,7 +35,7 @@ async def fetch_event(event_id):
 
 
 @event_join_router.callback_query(F.data.startswith("join_"))
-async def join_event(callback_query: types.CallbackQuery):
+async def join_event(callback_query: types.CallbackQuery, bot: Bot):
     await callback_query.message.edit_reply_markup(reply_markup=None)
     try:
         event_id = int(callback_query.data.split("join_")[1])
@@ -92,16 +95,16 @@ async def join_event(callback_query: types.CallbackQuery):
         await callback_query.message.answer(
             f"Оплатите участие, нажав на кнопку <code>Оплатить</code>, <b>выберите способ оплаты СБП:</b>\n", reply_markup=markup
         )
-        await check_payment(payment.id, event_id, user_id, callback_query)
+        await check_payment(payment.id, event_id, user_id, callback_query, bot)
     except Exception as e:
         logger.exception(f"Ошибка при создании платежа. {e}")
         await callback_query.message.answer("Ошибка при создании платежа. Попробуйте позже.")
 
 
-async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQuery):
+async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQuery, bot: Bot):
     db = next(get_db())
     try:
-        intervals = [60, 600, 1800]
+        intervals = [30, 60, 600, 1800]
         for delay in intervals:
             payment = Payment.find_one(payment_id)
             if payment.status == "succeeded":
@@ -119,8 +122,9 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                 receipt_info = (
                     f"📄 Чек об оплате:\n"
                     f"🎊 Событие: {event.name}\n"
+                    f"📆 Дата события: {event.event_time}\n"
                     f"🆔 Оплатил: {user.first_name}, {user.last_name}\n"
-                    f"💰 Сумма: {event.price}\n"
+                    f"💰 Сумма: {event.price} руб.\n"
                     f"🛠 Способ оплаты: {payment.payment_method.type}\n"
                     f"👤 Номер плательщика: {user.phone_number}\n"
                     f"🕒 Дата создания: {payment.created_at}\n"

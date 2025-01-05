@@ -1,5 +1,4 @@
-import logging
-
+from datetime import datetime
 from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.exceptions import TelegramAPIError
@@ -23,21 +22,19 @@ async def list_events(callback: types.CallbackQuery):
         page = 1
 
     db = next(get_db())
-    events = db.query(Event).order_by(Event.event_time.asc()).all()
+    current_time = datetime.now()
 
-    # Проверка наличия событий
+    events = db.query(Event).filter(Event.event_time > current_time).order_by(Event.event_time.asc()).all()
+
     if not events:
         await callback.message.answer("Нет доступных событий.")
         return
 
-    # Расчет страниц и событий на текущей странице
-    total_pages = (len(events) + EVENTS_PER_PAGE - 1) // EVENTS_PER_PAGE  # Округление вверх
-    page = max(1, min(page, total_pages))  # Ограничение страницы в рамках допустимого
+    total_pages = (len(events) + EVENTS_PER_PAGE - 1) // EVENTS_PER_PAGE
+    page = max(1, min(page, total_pages))
     events_to_show = events[(page - 1) * EVENTS_PER_PAGE:page * EVENTS_PER_PAGE]
 
-    # Вывод событий на текущей странице
     for event in events_to_show:
-        # Проверка, зарегистрирован ли пользователь на событие
         event_details = InlineKeyboardButton(
             text="📄 Подробнее",
             callback_data=f"details_{event.id}"
@@ -52,7 +49,6 @@ async def list_events(callback: types.CallbackQuery):
             parse_mode="HTML"
         )
 
-    # Пагинация
     pagination_buttons = []
     if page > 1:
         pagination_buttons.append(
@@ -77,7 +73,6 @@ async def cancel_registration(callback_query: types.CallbackQuery):
     go_to_event = InlineKeyboardButton(text="Перейти к событию ➡️", callback_data=f"details_{event_id}")
     markup = InlineKeyboardMarkup(inline_keyboard=[[go_to_event]])
     try:
-        # Проверка регистрации пользователя на событие
         registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
         event = db.query(Event).filter_by(id=event_id).first()
 

@@ -70,8 +70,6 @@ async def event_details(callback: types.CallbackQuery):
             f"📋 <b>Список участников:\n{participants_list} \n</b> "
         )
 
-        # Кнопки
-
         show_on_map = InlineKeyboardButton(
             text="📍 Показать на карте",
             callback_data=f"show_on_map_{event.id}"
@@ -80,7 +78,6 @@ async def event_details(callback: types.CallbackQuery):
         keyboard = InlineKeyboardMarkup(inline_keyboard=[[action_button], [show_on_map], [back_button]])
 
         await callback.message.edit_text(event_info, reply_markup=keyboard, parse_mode="HTML")
-
     except Exception as e:
         logging.error(f"Ошибка в event_details.py: {e}")
         await callback.message.answer("Произошла ошибка при загрузке события.", show_alert=True)

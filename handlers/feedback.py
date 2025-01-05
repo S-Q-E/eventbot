@@ -3,7 +3,7 @@ from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
-from db.database import get_db, Feedback, Event
+from db.database import get_db, Feedback, Event, Registration
 
 feedback_router = Router()
 
@@ -17,7 +17,7 @@ async def handle_feedback_text(callback: types.CallbackQuery, state: FSMContext)
     db = next(get_db())
     try:
         event_id = int(callback.data.split("_")[-1])
-        event = db.query(Event).filter_by(id == event_id)
+        event = db.query(Event).filter(Event.id == event_id).first()
         if not event:
             await callback.message.answer("Событие не найдено")
             logging.info(f"Событие с ID {event.id} не найдено")
@@ -76,3 +76,34 @@ async def handle_feedback_rating(callback_query: types.CallbackQuery, state: FSM
         await callback_query.message.answer("Произошла ошибка при обработке вашего отзыва. Пожалуйста, попробуйте позже.")
     finally:
         await state.clear()
+
+
+@feedback_router.callback_query(F.data.startswith("feedback_decline_"))
+async def decline_feedback(callback_query: types.CallbackQuery):
+    """
+    Обрабатывает отказ пользователя от оставления отзыва.
+    """
+
+    db = next(get_db())
+    event_id = int(callback_query.data.split("_")[2])
+    user_id = callback_query.from_user.id
+
+    try:
+        registration = (
+            db.query(Registration)
+            .filter(
+                Registration.event_id == event_id,
+                Registration.user_id == user_id
+            )
+            .first()
+        )
+
+        if registration:
+            registration.has_given_feedback = True
+            db.commit()
+
+        await callback_query.message.edit_text("Спасибо, мы учли ваш ответ!")
+    except Exception as e:
+        print(f"Ошибка при обработке отказа: {e}")
+    finally:
+        db.close()
