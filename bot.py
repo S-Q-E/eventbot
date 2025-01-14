@@ -32,7 +32,6 @@ from handlers import (
     delete_user_from_event,
     admin_help,
     edit_user,
-    feedback,
     show_feedbacks
 )
 logger = logging.getLogger(__name__)
@@ -76,7 +75,6 @@ async def main():
     dp.include_router(delete_user_from_event.delete_user_from_event_router)
     dp.include_router(admin_help.admin_help_router)
     dp.include_router(edit_user.edit_user_router)
-    dp.include_router(feedback.feedback_router)
     dp.include_router(show_feedbacks.show_feedback_router)
 
     commands = [

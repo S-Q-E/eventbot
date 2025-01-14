@@ -102,7 +102,7 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
 async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQuery, bot: Bot):
     db = next(get_db())
     try:
-        intervals = [30, 60, 600, 1800]
+        intervals = [30, 60, 180, 600, 1800, 3600]
         for delay in intervals:
             payment = Payment.find_one(payment_id)
             if payment.status == "succeeded":
@@ -135,7 +135,8 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                                               f"Выберите время напоминания.", reply_markup=get_notification_keyboard(event_id)
                 )
                 return
-            elif payment.status == "pending":
+            elif payment.status in ["pending", "waiting_for_capture"]:
+                await callback.message.answer("Платеж обрабатывается. Пожалуйста подождите")
                 await asyncio.sleep(delay)
             else:
                 await callback.message.answer("Вы не оплатили событие. Регистрация отменена")
