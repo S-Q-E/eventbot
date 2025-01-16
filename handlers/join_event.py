@@ -70,10 +70,12 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
             logger.debug(f"Добавление новой регистрации для пользователя {user_id} на событие {event_id}.")
             db.add(new_registration)
             db.commit()
+
             await callback_query.message.answer(
                 f"Вы успешно зарегистрированы на бесплатное событие: <b>{event.name}</b>.\n\n"
                 f"Пожалуйста, выберите время напоминания.", reply_markup=get_notification_keyboard(event_id)
             )
+            await notify_all_users_event_full(bot, event)
         except Exception as e:
             logger.exception(f"Ошибка при регистрации на бесплатное событие. {e}")
             await callback_query.message.answer("Произошла ошибка. Попробуйте снова.")
