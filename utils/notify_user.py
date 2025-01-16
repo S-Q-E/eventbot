@@ -1,7 +1,6 @@
 import logging
-
 from aiogram import Bot
-from db.database import get_db, Registration, Event
+from db.database import get_db, Registration, Event, User
 from datetime import datetime, timedelta
 
 
@@ -40,4 +39,17 @@ async def send_notifications(bot: Bot):
         logging.info(f"Ошибка в {__name__} {e}")
     finally:
         db.close()
+
+
+async def notify_all_users_event_full(bot: Bot, event: Event):
+    db = next(get_db())
+    all_users = db.query(User).all()
+    text = (
+        f"Событие <b>{event.name}</b> ({event.event_time}) теперь полностью укомплектовано! Мест больше нет!"
+    )
+    for user in all_users:
+        try:
+            await bot.send_message(chat_id=user.id, text=text)
+        except Exception as e:
+            logging.error(f"Ошибка при оповещении пользователя {user.id}: {e}")
 

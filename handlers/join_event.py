@@ -8,7 +8,7 @@ from db.database import get_db, Registration, Event, User
 from yookassa import Payment, Configuration
 from dotenv import load_dotenv
 from keyboards.notif_keyboard import get_notification_keyboard
-
+from utils.notify_user import notify_all_users_event_full
 
 load_dotenv()
 ADMIN = os.getenv("ADMIN_2")
@@ -116,6 +116,8 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                     event.current_participants += 1
                 db.commit()
 
+                if event.current_participants == event.max_participants:
+                    await notify_all_users_event_full(bot, event)
                 user = db.query(User).filter(User.id == user_id).first()
                 receipt_info = (
                     f"📄 Чек об оплате:\n"
