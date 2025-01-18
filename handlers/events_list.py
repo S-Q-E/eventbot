@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-ADMIN = os.getenv("ADMIN")
+ADMIN = os.getenv("ADMIN_2")
 
 event_list_router = Router()
 EVENTS_PER_PAGE = 3
