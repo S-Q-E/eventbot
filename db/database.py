@@ -6,8 +6,8 @@ DATABASE_URL = "sqlite:///events.db"
 
 engine = create_engine(
     DATABASE_URL,
-    pool_size=10,
-    max_overflow=20,
+    pool_size=20,  # Увеличить базовый размер пула
+    max_overflow=40,  # Увеличить количество дополнительных соединений
     pool_timeout=30,
     pool_recycle=1800
 )
@@ -33,6 +33,9 @@ class User(Base):
     last_name = Column(String)
     phone_number = Column(String, nullable=True)
     is_admin = Column(Boolean, default=False)
+    user_games = Column(Integer, default=0)
+    photo_file_id = Column(Integer, nullable=True)
+    user_level = Column(String, nullable=True)
     is_registered = Column(Boolean, default=False)
 
     # Связь с регистрациями

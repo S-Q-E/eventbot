@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import Router, types, F
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -59,17 +61,18 @@ async def main_menu(callback: types.CallbackQuery):
         user = db.query(User).filter_by(id=user_id).first()
     except Exception as e:
         await callback.message.answer("Произошла ошибка при доступе к базе данных. Попробуйте позже.")
-
+        logging.info(f"Ошибка в main_menu: {e}")
         return
 
     events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_page_1")
     admin_panel = InlineKeyboardButton(text="😎 Панель админа", callback_data="admin_panel")
+    user_profile = InlineKeyboardButton(text="👤 Мой профиль", callback_data="user_profile")
     user_help = InlineKeyboardButton(text="🆘 Помощь", callback_data="user_help")
 
     admin_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button],
                                                          [admin_panel], [user_help]])
 
-    reg_user_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [user_help]])
+    reg_user_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [user_profile], [user_help]])
     if user:
         if user.is_admin:
             await callback.message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"

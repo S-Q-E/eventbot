@@ -107,18 +107,21 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
 async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQuery, bot: Bot):
     db = next(get_db())
     try:
+        user = db.query(User).filter_by(user_id=user_id).first()
         intervals = [30, 60, 180, 600, 1800, 3600]
         for delay in intervals:
             payment = Payment.find_one(payment_id)
             if payment.status == "succeeded":
                 event, db = await fetch_event(event_id)
-                existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
+                existing_registration: Registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
                 if existing_registration:
                     existing_registration.is_paid = True
+                    user.user_games += 1
                 else:
                     new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
                     db.add(new_registration)
                     event.current_participants += 1
+                    user.user_games += 1
                 db.commit()
 
                 if event.current_participants == event.max_participants:
