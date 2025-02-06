@@ -18,6 +18,7 @@ async def user_profile_menu(callback: types.CallbackQuery):
         user_menu_markup = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="✏ Изменить имя и фамилию", callback_data=f"change_username_{user_id}")],
         [InlineKeyboardButton(text="📷 Изменить аватар", callback_data="download_avatar")],
+        [InlineKeyboardButton(text="📷 Показать мой аватар", callback_data="show_avatar")],
         [InlineKeyboardButton(text="🔙 Назад", callback_data="main_menu")]
     ])
 
@@ -31,6 +32,7 @@ async def user_profile_menu(callback: types.CallbackQuery):
 class EditProfileStates(StatesGroup):
     waiting_for_username = State()
     waiting_for_photo = State()
+
 
 @user_profile_router.callback_query(F.data.startswith("change_username"))
 async def set_new_username(callback: types.CallbackQuery, state: FSMContext):
@@ -89,3 +91,20 @@ async def get_photo(message: types.Message):
         await message.answer("Ошибка при обработке фото")
     finally:
         db.close()
+
+
+@user_profile_router.callback_query(F.data == "show_avatar")
+async def show_avatar(callback: types.CallbackQuery):
+    user_id = callback.from_user.id
+    markup = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Назад", callback_data="user_profile")]])
+    db = next(get_db())
+    try:
+        user = db.query(User).filter_by(id=user_id).first()
+        photo_id = user.photo_file_id
+        await callback.message.answer_photo(photo_id, reply_markup=markup)
+    except Exception as e:
+        logging.info(f"Ошибка в функции show_avatar в файле {__name__} {e}")
+        await callback.message.answer("Ошибка при загрузке фото")
+    finally:
+        db.close()
+
