@@ -2,9 +2,10 @@ import logging
 
 from aiogram import types, Router, F
 from aiogram.fsm.context import FSMContext
+from aiogram.utils.media_group import MediaGroupBuilder
 
 from db.database import User, get_db
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputFile, InputMediaPhoto
 from aiogram.fsm.state import State, StatesGroup
 user_profile_router = Router()
 
@@ -105,6 +106,27 @@ async def show_avatar(callback: types.CallbackQuery):
     except Exception as e:
         logging.info(f"Ошибка в функции show_avatar в файле {__name__} {e}")
         await callback.message.answer("Ошибка при загрузке фото")
+    finally:
+        db.close()
+
+
+@user_profile_router.callback_query(F.data == "show_users_avatar")
+async def show_users_avatar(callback: types.CallbackQuery):
+    db = next(get_db())
+    try:
+        users = db.query(User).all()
+        users_groups = [users[i:i+10] for i in range(0, len(users), 10)]
+        for users_group in users_groups:
+            media = MediaGroupBuilder()
+            for user in users_group:
+                logging.info(f"file id = {user.photo_file_id}")
+                media.add_photo(media=user.photo_file_id)
+                logging.info(user.photo_file_id)
+            await callback.message.bot.send_media_group(chat_id=callback.message.chat.id, media=media.build())
+    except TimeoutError as e:
+        logging.info(f"Ошибка в функции show_users_avatar. {__name__}, {e}")
+    except Exception as ex:
+        logging.info(f"Ошибка {ex}")
     finally:
         db.close()
 

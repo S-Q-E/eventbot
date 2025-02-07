@@ -67,6 +67,8 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
         try:
             new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
             event.current_participants += 1
+            user = db.query(User).filter_by(id=user_id).first()
+            user.user_games += 1
             logger.debug(f"Добавление новой регистрации для пользователя {user_id} на событие {event_id}.")
             db.add(new_registration)
             db.commit()
