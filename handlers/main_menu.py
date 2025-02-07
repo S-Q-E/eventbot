@@ -71,7 +71,7 @@ async def main_menu(callback: types.CallbackQuery):
     user_help = InlineKeyboardButton(text="🆘 Помощь", callback_data="user_help")
 
     admin_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button],
-                                                         [admin_panel], [user_help]])
+                                                         [admin_panel], [user_profile], [user_help]])
 
     reg_user_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [user_profile], [user_help]])
     if user:
