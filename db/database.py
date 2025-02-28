@@ -1,4 +1,7 @@
+import logging
+
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime, UniqueConstraint, Text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
@@ -20,6 +23,9 @@ def get_db():
     db = Session()
     try:
         yield db
+    except SQLAlchemyError as e:
+        logging.info(f"Ошибка при доступе к базе данных {e}")
+        db.rollback()
     finally:
         db.close()
 
