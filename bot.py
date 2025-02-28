@@ -35,16 +35,19 @@ from handlers import (
     show_feedbacks,
     user_profile
 )
+
 logger = logging.getLogger(__name__)
 
 
 async def main():
     logging.basicConfig(
         level=logging.INFO,
-        format="%(filename)s:%(lineno)d #%(levelname)-8s "
-               "[%(asctime)s] - %(name)s - %(message)s",
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.FileHandler("bot.log"),  # Запись в файл
+            logging.StreamHandler()  # Вывод в консоль
+        ]
     )
-
     logger.info("Starting bot")
 
     config: Config = load_config()

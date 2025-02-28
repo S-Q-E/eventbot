@@ -1,3 +1,6 @@
 events.db
 .env
 /exports
+/alembic.ini
+/alembic
+/exports
