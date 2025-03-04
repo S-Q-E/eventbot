@@ -59,6 +59,7 @@ class Event(Base):
     price = Column(Integer, default=0)
     max_participants = Column(Integer, default=10)
     current_participants = Column(Integer, default=0)
+    is_mvp_sent = Column(Boolean, default=False)
 
     # Связь с регистрациями
     registrations = relationship("Registration", back_populates="event", cascade="all, delete-orphan")
