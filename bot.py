@@ -33,7 +33,8 @@ from handlers import (
     admin_help,
     edit_user,
     show_feedbacks,
-    user_profile
+    user_profile,
+    mvp_pool
 )
 
 logger = logging.getLogger(__name__)
@@ -79,8 +80,9 @@ async def main():
     dp.include_router(delete_user_from_event.delete_user_from_event_router)
     dp.include_router(admin_help.admin_help_router)
     dp.include_router(edit_user.edit_user_router)
-    dp.include_router(show_feedbacks.show_feedback_router)
+    # dp.include_router(show_feedbacks.show_feedback_router)
     dp.include_router(user_profile.user_profile_router)
+    dp.include_router(mvp_pool.mvp_pool_router)
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),

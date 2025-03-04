@@ -20,6 +20,7 @@ async def admin_panel(callback: types.CallbackQuery):
         [InlineKeyboardButton(text="Сгенерировать отчет", callback_data="report")],
         [InlineKeyboardButton(text="Просмотреть аватары пользователей(в разработке)", callback_data="show_users_avatar")],
         [InlineKeyboardButton(text="Справка", callback_data="admin_help")],
+        [InlineKeyboardButton(text="Вывести всех участников", callback_data="parse_users")],
         [InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]
     ]
     markup = InlineKeyboardMarkup(inline_keyboard=buttons)

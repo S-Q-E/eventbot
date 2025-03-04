@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Голосование за MVP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Подключаем официальный скрипт Telegram Web Apps -->
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: var(--tg-theme-bg-color, #fff);
+      color: var(--tg-theme-text-color, #000);
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      background-color: var(--tg-theme-bg-color, #fff);
+    }
+    .card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 10px;
+    }
+    .vote-button, .cancel-button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    .vote-button {
+      background-color: var(--tg-theme-button-color, #0088cc);
+      color: var(--tg-theme-button-text-color, #fff);
+    }
+    .cancel-button {
+      background-color: #ccc;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Голосование за MVP</h2>
+    <div id="cards-container">
+      <!-- Здесь будут динамически созданы карточки -->
+    </div>
+    <button class="cancel-button" id="cancel-button">Отмена</button>
+  </div>
+  <script src="https://telegram.org/js/telegram-web-app.js?56" defer></script>
+  <script>
+    window.addEventListener('load', function() {
+      // Инициализация Telegram Web Apps
+      const tg = window.Telegram.WebApp;
+      tg.ready();
+      tg.expand();
+
+      // Функция для получения переданных данных из URL-параметра "data"
+      function getPassedData() {
+        const params = new URLSearchParams(window.location.search);
+        const dataParam = params.get('data');
+        if (dataParam) {
+          try {
+            return JSON.parse(decodeURIComponent(dataParam));
+          } catch (e) {
+            console.error("Ошибка парсинга данных:", e);
+          }
+        }
+        return null;
+      }
+
+      // Функция отрисовки карточек для каждого пользователя
+      function renderCards(data) {
+        const container = document.getElementById('cards-container');
+        container.innerHTML = '';
+        if (data && Array.isArray(data.users)) {
+          data.users.forEach(user => {
+            // Создаем контейнер карточки
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            // Изображение пользователя
+            const img = document.createElement('img');
+            if (user.photo_file_id) {
+              img.src = `https://api.telegram.org/file/bot<YOUR_BOT_TOKEN>/${user.photo_file_id}`;
+            } else {
+              img.src = 'avtar.png.webp';
+            }
+            card.appendChild(img);
+
+            // Имя пользователя
+            const name = document.createElement('h3');
+            name.textContent = `${user.first_name} ${user.last_name}`;
+            card.appendChild(name);
+
+            // Кнопка "Проголосовать"
+            const voteBtn = document.createElement('button');
+            voteBtn.className = 'vote-button';
+            voteBtn.textContent = 'Проголосовать';
+            voteBtn.addEventListener('click', function() {
+              console.log("Отправляем данные")
+              setTimeout(() => {
+                tg.sendData(JSON.stringify(user));
+                tg.close();
+                  }, 150);
+              // Отправляем данные выбранного пользователя обратно боту
+              // const dataToSend = JSON.stringify(user);
+              // tg.sendData(dataToSend);
+              // Опционально: закрываем мини-приложение
+              // tg.close();
+            });
+            card.appendChild(voteBtn);
+
+            container.appendChild(card);
+          });
+        } else {
+          container.textContent = "Данные не получены.";
+        }
+      }
+
+      // Инициализация приложения: получаем данные и отрисовываем карточки
+      const passedData = getPassedData();
+      renderCards(passedData);
+
+      // Обработка кнопки "Отмена"
+      const cancelButton = document.getElementById('cancel-button');
+      cancelButton.addEventListener('click', () => {
+        tg.close();
+      });
+    });
+  </script>
+</body>
+</html>
