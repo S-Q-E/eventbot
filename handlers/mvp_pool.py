@@ -10,6 +10,8 @@ from db.database import get_db, User, Event, Registration
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
+from utils.get_random_users import get_three_random_users
+
 load_dotenv()
 
 NG_ROCK_URL = os.getenv("NG_ROCK_URL")
@@ -17,42 +19,10 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 mvp_pool_router = Router()
 
-#
-# @mvp_pool_router.callback_query(F.data == "choose_random")
-# async def choose_random_user(callback: types.CallbackQuery, bot: Bot, event_id: int):
-#     db = next(get_db())
-#     try:
-#         event = db.query(Event).filter_by(id=event_id).first()
-#         if not event:
-#             logging.error(f"Событие с ID {event_id} не существует")
-#             return
-#
-#         registrations = db.query(Registration).filter(Registration.event_id==event_id).all()
-#
-#         if len(registrations) < 3:
-#             logging.warning("Недостаточно участников для определения MVP матча")
-#             return
-#
-#         selected_registrations = random.sample(registrations, 3)
-#         options = [f"{reg.user.first_name} {reg.user.last_name}" for reg in selected_registrations]
-#
-#     except Exception as e:
-#         print("{e}")
-
 
 @mvp_pool_router.callback_query(F.data == "parse_users")
 async def show_users_mini_app(callback: types.CallbackQuery):
-    # Получаем всех пользователей из БД
-    db = next(get_db())
-    users = db.query(User).all()
-    db.close()
-
-    users_data = [{
-        "id": user.id,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "photo_file_id": user.photo_file_id
-    } for user in users]
+    users_data = get_three_random_users()
 
     data_json = json.dumps({"users": users_data})
     encoded_data = urllib.parse.quote(data_json)
@@ -72,10 +42,8 @@ async def show_users_mini_app(callback: types.CallbackQuery):
 @mvp_pool_router.message(lambda message: message.content_type == "web_app_data")
 async def handle_webapp_data(message: types.Message):
     data_str = message.web_app_data.data
-    print(type(data_str))
     try:
         data = json.loads(data_str)
-        print(type(data))
-        await message.answer(f"Вы проголосовали за {data['first_name'], data['last_name']} ")
+        await message.answer(f"Вы проголосовали за {data['first_name']} {data['last_name']}")
     except Exception as e:
         await message.answer(f"Ошибка при разборе данных: {e}")
