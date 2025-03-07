@@ -11,4 +11,5 @@ def start_scheduler(bot: Bot):
     Запускает планировщик задач.
     """
     scheduler.add_job(send_notifications, 'interval', minutes=1, args=[bot])
+    scheduler.add_job(send_mvp_links, 'interval', minutes=1, args=[bot])
     scheduler.start()
