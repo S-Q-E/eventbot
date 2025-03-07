@@ -9,27 +9,26 @@ delete_user_from_event_router = Router()
 
 
 class DeleteUser(StatesGroup):
-    wait_user_phone = State()
+    wait_user_id = State()
 
 
 @delete_user_from_event_router.callback_query(F.data.startswith("manual_deleting"))
-async def get_user_phone(callback: types.CallbackQuery, state: FSMContext):
+async def get_user_id(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.answer("Введите ID пользователя которого нужно удалить.\n")
     event_id = int(callback.data.split("_")[-1])
     with next(get_db()) as db:
-        participants = db.query(User).join(Registration, User.id == Registration.user_id) \
-            .filter(Registration.event_id == event_id).all()
+        registrations = db.query(Registration).filter_by(event_id=event_id).all()
         participants_list = "\n".join(
-            f"Список пользователей: \n"
-            f"▪️{user.first_name} {user.last_name} ID: {user.id}" for user in participants
+            f"▪️{reg.user.first_name} {reg.user.last_name} ID: {reg.user.id}"
+            for reg in registrations
         ) or "Нет участников"
         await callback.message.answer(participants_list)
         db.close()
     await state.update_data(event_id=event_id)
-    await state.set_state(DeleteUser.wait_user_phone)
+    await state.set_state(DeleteUser.wait_user_id)
 
 
-@delete_user_from_event_router.message(DeleteUser.wait_user_phone)
+@delete_user_from_event_router.message(DeleteUser.wait_user_id)
 async def delete_user_from_event(message: types.Message, state: FSMContext):
     data = await state.get_data()
     user_id = message.text
@@ -55,6 +54,9 @@ async def delete_user_from_event(message: types.Message, state: FSMContext):
                 return
 
             event.current_participants -= 1
+            if event.current_participants < 0:
+                event.current_participants = 0
+
             db.delete(existing_registration)
             db.commit()
             back_btn = InlineKeyboardButton(text="Назад", callback_data="delete_event_button")
