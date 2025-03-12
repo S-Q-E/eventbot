@@ -40,6 +40,7 @@ class User(Base):
     phone_number = Column(String, nullable=True)
     is_admin = Column(Boolean, default=False)
     user_games = Column(Integer, default=0)
+    photo_file_path = Column(String, nullable=True)
     photo_file_id = Column(String, nullable=True)
     user_level = Column(String, nullable=True)
     is_registered = Column(Boolean, default=False)

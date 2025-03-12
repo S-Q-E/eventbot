@@ -1,11 +1,13 @@
 import logging
-
+import os
+import time
+import io
 from aiogram import types, Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.media_group import MediaGroupBuilder
 
 from db.database import User, get_db
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputFile, InputMediaPhoto
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputFile, InputMediaPhoto, FSInputFile
 from aiogram.fsm.state import State, StatesGroup
 user_profile_router = Router()
 
@@ -71,43 +73,74 @@ async def save_new_username(message: types.Message, state: FSMContext):
 
 @user_profile_router.callback_query(F.data == "download_avatar")
 async def ask_photo(callback: types.CallbackQuery):
-    await callback.message.answer("Пожалуйста отправьте фото, которое вы хотите установить")
+    await callback.message.answer("Пожалуйста, отправьте фото, которое вы хотите установить.")
 
 
 @user_profile_router.message(F.photo)
 async def get_photo(message: types.Message):
+    # Берем самое большое фото
     photo = message.photo[-1]
     file_id = photo.file_id
     user_id = message.from_user.id
-    db = next(get_db())
-    markup = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Назад", callback_data="user_profile")]])
+    bot = message.bot
 
     try:
-        user = db.query(User).filter_by(id=user_id).first()
-        user.photo_file_id = file_id
-        db.commit()
-        await message.answer("Фото добавлено!", reply_markup=markup)
+        file_info = await bot.get_file(file_id)
+        file_path = file_info.file_path
+
+
+        file_bytes = await bot.download_file(file_path)
+        file_data = io.BytesIO(file_bytes.read())
+
+
+        output_dir = "user_avatars"
+        os.makedirs(output_dir, exist_ok=True)
+        filename = f"{user_id}_{int(time.time())}.jpeg"
+        output_path = os.path.join(output_dir, filename)
+
+        with open(output_path, "wb") as f:
+            f.write(file_data.getvalue())
+
+        db = next(get_db())
+        try:
+            user = db.query(User).filter_by(id=user_id).first()
+            user.photo_file_path = output_path
+            user.photo_file_id = file_id
+            db.commit()
+            markup = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="Назад", callback_data="user_profile")]
+            ])
+            await message.answer("Фото добавлено!", reply_markup=markup)
+        except Exception as e:
+            logging.error(f"Ошибка при сохранении фото в БД: {e}")
+            await message.answer("Ошибка при сохранении фото в базе данных.")
+        finally:
+            db.close()
     except Exception as e:
-        logging.info(f"Ошибка в базе данных. {e}")
-        await message.answer("Ошибка при обработке фото")
-    finally:
-        db.close()
+        logging.error(f"Ошибка при скачивании фото: {e}")
+        await message.answer("Ошибка при скачивании фото.")
 
 
 @user_profile_router.callback_query(F.data == "show_avatar")
 async def show_avatar(callback: types.CallbackQuery):
     user_id = callback.from_user.id
-    markup = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Назад", callback_data="user_profile")]])
     db = next(get_db())
+
     try:
         user = db.query(User).filter_by(id=user_id).first()
-        photo_id = user.photo_file_id
-        await callback.message.answer_photo(photo_id, reply_markup=markup)
+
+        if user and user.photo_file_path and os.path.exists(user.photo_file_path):
+
+            photo = FSInputFile(user.photo_file_path)
+            await callback.message.answer_photo(photo=photo)
+        else:
+
+            await callback.message.answer("У вас нет установленного аватара.")
     except Exception as e:
-        logging.info(f"Ошибка в функции show_avatar в файле {__name__} {e}")
-        await callback.message.answer("Ошибка при загрузке фото")
+        logging.error(f"Ошибка при попытке показать аватар: {e}")
+        await callback.message.answer("Произошла ошибка при попытке показать ваш аватар.")
     finally:
-        db.close()
+        db.close()  # Закрываем сессию базы данных
 
 
 @user_profile_router.callback_query(F.data == "show_users_avatar")
@@ -116,17 +149,17 @@ async def show_users_avatar(callback: types.CallbackQuery):
     try:
         users = db.query(User).all()
         users_groups = [users[i:i+10] for i in range(0, len(users), 10)]
-        for users_group in users_groups:
-            media = MediaGroupBuilder()
-            for user in users_group:
-                logging.info(f"file id = {user.photo_file_id}")
-                media.add_photo(media=user.photo_file_id)
-                logging.info(user.photo_file_id)
-            await callback.message.bot.send_media_group(chat_id=callback.message.chat.id, media=media.build())
-    except TimeoutError as e:
-        logging.info(f"Ошибка в функции show_users_avatar. {__name__}, {e}")
-    except Exception as ex:
-        logging.info(f"Ошибка {ex}")
+        for group in users_groups:
+            media = []
+            for user in group:
+                if user.photo_file_path and os.path.exists(user.photo_file_path):
+                    media.append(
+                        InputMediaPhoto(media=user.photo_file_id, caption=f"{user.first_name} {user.last_name}"))
+            if media:
+                await callback.message.bot.send_media_group(chat_id=callback.message.chat.id, media=media)
+    except Exception as e:
+        logging.error(f"Ошибка при отправке аватарок: {e}")
+        await callback.message.answer("Ошибка при загрузке аватарок.")
     finally:
         db.close()
 
