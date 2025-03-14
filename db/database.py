@@ -91,7 +91,19 @@ class Feedback(Base):
     rating = Column(Integer, nullable=True)
 
     user = relationship("User", back_populates="feedbacks", cascade="all")
-    event = relationship("Event", back_populates="feedbacks",cascade="all")
+    event = relationship("Event", back_populates="feedbacks", cascade="all")
+
+
+class MVPCandidate(Base):
+    __tablename__ = 'mvp_candidates'
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    event_id = Column(Integer, ForeignKey('events.id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
+    is_selected = Column(Boolean, default=False)
+    votes = Column(Integer, default=0)
+
+    event = relationship("Event", backref="mvp_candidates")
+    user = relationship("User", backref="mvp_nominations")
 
 
 Base.metadata.create_all(bind=engine)
