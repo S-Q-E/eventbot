@@ -18,10 +18,9 @@ async def send_mvp_poll(bot: Bot):
     """Отправляет MediaGroup с фото 3 последних кандидатов и создаёт опрос."""
     db = next(get_db())
     try:
-        # 1. Получаем 3 последних MVP-кандидатов (без привязки к event_id)
         candidates = (
             db.query(MVPCandidate)
-            .options(joinedload(MVPCandidate.user))  # Оптимизация запроса
+            .options(joinedload(MVPCandidate.user))
             .filter(MVPCandidate.is_selected == True)
             .order_by(MVPCandidate.id.desc())  # Берем последних по времени
             .limit(3)
@@ -74,5 +73,53 @@ async def send_mvp_poll(bot: Bot):
     except Exception as e:
         logging.error(f"Непредвиденная ошибка при отправке опроса MVP: {e}")
         return None, None
+    finally:
+        db.close()
+
+
+async def finish_mvp_poll(bot: Bot):
+    """Завершает голосование, определяет победителя и отправляет его фото."""
+    db = next(get_db())
+    try:
+        # Получаем 3 последних кандидатов
+        candidates = (
+            db.query(MVPCandidate)
+            .filter(MVPCandidate.is_selected == True)
+            .order_by(MVPCandidate.id.desc())
+            .limit(3)
+            .all()
+        )
+
+        if not candidates:
+            logging.warning("Нет кандидатов для завершения голосования.")
+            return
+
+        # Определяем победителя (кандидат с наибольшим числом голосов)
+        winner = max(candidates, key=lambda c: c.votes, default=None)
+
+        if not winner or winner.votes == 0:
+            await bot.send_message(GROUP_CHAT_ID, "Голосование завершено, но победитель не определён.")
+            return
+
+        # Получаем данные пользователя-победителя
+        user = db.query(User).filter_by(id=winner.user_id).first()
+
+        if user and user.photo_file_id:
+            media = InputMediaPhoto(media=user.photo_file_id, caption=f"🏆 MVP недели: {user.first_name} {user.last_name}! 🎉")
+            await bot.send_photo(GROUP_CHAT_ID, photo=user.photo_file_id, caption=media.caption)
+        else:
+            await bot.send_message(GROUP_CHAT_ID, f"🏆 MVP недели: {user.first_name} {user.last_name}! 🎉 (фото "
+                                                  f"отсутствует)")
+
+        # Помечаем голосование завершённым
+        for candidate in candidates:
+            candidate.is_selected = False  # Сбрасываем флаг
+        db.commit()
+
+    except SQLAlchemyError as e:
+        logging.error(f"Ошибка базы данных при завершении голосования: {e}")
+        db.rollback()
+    except Exception as e:
+        logging.error(f"Ошибка при завершении голосования: {e}")
     finally:
         db.close()

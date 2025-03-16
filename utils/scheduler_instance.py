@@ -3,7 +3,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from utils.get_random_users import check_and_process_events
 from utils.notify_user import send_notifications
-from utils.get_expired_eventid import get_active_events
+from utils.send_pool import send_mvp_poll, finish_mvp_poll
 
 scheduler = AsyncIOScheduler()
 
@@ -12,6 +12,8 @@ def start_scheduler(bot: Bot):
     """
     Запускает планировщик задач.
     """
-    scheduler.add_job(send_notifications, 'interval', minutes=1, args=[bot])
+    #  scheduler.add_job(send_notifications, 'interval', minutes=1, args=[bot])
     scheduler.add_job(check_and_process_events, 'interval', minutes=1)
+    scheduler.add_job(send_mvp_poll, "cron", day_of_week="sun", hour=22, args=[bot])
+    scheduler.add_job(finish_mvp_poll, 'cron', day_of_week="mon", hour=20, args=[bot])
     scheduler.start()
