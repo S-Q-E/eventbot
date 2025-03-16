@@ -24,7 +24,7 @@ async def start_command(message: types.Message):
     user_id = message.from_user.id
 
     # Кнопки
-    events_button = InlineKeyboardButton(text="💬 Доступные event-ы", callback_data="events_page_1")
+    events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_page_1")
     registration_button = InlineKeyboardButton(text="➕ Регистрация", callback_data="start_reg")
 
     try:
