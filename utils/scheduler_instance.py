@@ -14,5 +14,4 @@ def start_scheduler(bot: Bot):
     """
     scheduler.add_job(send_notifications, 'interval', minutes=1, args=[bot])
     scheduler.add_job(check_and_process_events, 'interval', minutes=1)
-
     scheduler.start()
