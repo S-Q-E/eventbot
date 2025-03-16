@@ -5,6 +5,7 @@ import io
 from aiogram import types, Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.media_group import MediaGroupBuilder
+from sqlalchemy.orm import Session
 
 from db.database import User, get_db
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputFile, InputMediaPhoto, FSInputFile
@@ -145,18 +146,23 @@ async def show_avatar(callback: types.CallbackQuery):
 
 @user_profile_router.callback_query(F.data == "show_users_avatar")
 async def show_users_avatar(callback: types.CallbackQuery):
-    db = next(get_db())
+    db: Session = next(get_db())
     try:
         users = db.query(User).all()
-        users_groups = [users[i:i+10] for i in range(0, len(users), 10)]
+        users_groups = [users[i:i + 10] for i in range(0, len(users), 10)]
         for group in users_groups:
             media = []
             for user in group:
-                if user.photo_file_path and os.path.exists(user.photo_file_path):
+                if user.photo_file_id:
                     media.append(
-                        InputMediaPhoto(media=user.photo_file_id, caption=f"{user.first_name} {user.last_name}"))
+                        InputMediaPhoto(media=user.photo_file_id, caption=f"{user.first_name} {user.last_name}")
+                    )
+                else:
+                    logging.warning(f"У пользователя {user.first_name} {user.last_name} отсутствует photo_file_id.")
             if media:
-                await callback.message.bot.send_media_group(chat_id=callback.message.chat.id, media=media)
+                await callback.message.answer_media_group(media=media)
+            else:
+                await callback.message.answer("Нет доступных аватарок для отображения.")
     except Exception as e:
         logging.error(f"Ошибка при отправке аватарок: {e}")
         await callback.message.answer("Ошибка при загрузке аватарок.")

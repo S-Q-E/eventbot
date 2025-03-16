@@ -68,16 +68,16 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
             new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
             event.current_participants += 1
             user = db.query(User).filter_by(id=user_id).first()
-            user.user_games += 1
             logger.debug(f"Добавление новой регистрации для пользователя {user_id} на событие {event_id}.")
             db.add(new_registration)
             db.commit()
 
             await callback_query.message.answer(
                 f"Вы успешно зарегистрированы на бесплатное событие: <b>{event.name}</b>.\n\n"
-                f"Пожалуйста, выберите время напоминания.", reply_markup=get_notification_keyboard(event_id)
+                ,reply_markup=get_notification_keyboard(event_id)
             )
-            await notify_all_users_event_full(bot, event)
+            if event.current_participants == event.max_participants:
+                await notify_all_users_event_full(bot, event)
         except Exception as e:
             logger.exception(f"Ошибка при регистрации на бесплатное событие. {e}")
             await callback_query.message.answer("Произошла ошибка. Попробуйте снова.")

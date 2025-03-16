@@ -21,7 +21,6 @@ async def list_events(callback: types.CallbackQuery):
     """
     Отображает список всех событий с пагинацией и динамической кнопкой регистрации.
     """
-    # Получение текущей страницы из callback_data
     try:
         page = int(callback.data.split("_")[-1])
     except ValueError:
