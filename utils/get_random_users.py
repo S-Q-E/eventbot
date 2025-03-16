@@ -2,6 +2,7 @@ import random
 import logging
 from sqlalchemy.exc import SQLAlchemyError
 from db.database import get_db, Registration, MVPCandidate
+from utils.get_expired_eventid import get_active_events
 
 
 def get_random_user(event_id):
@@ -25,13 +26,33 @@ def get_random_user(event_id):
         db.close()
 
 
-def get_event_participants(event_id: int):
-    db = next(get_db())
+def check_and_process_events():
+    """
+    Проверяет начавшиеся события и запускает функцию отправки уведомления о начале голосования
+    :return:
+    """
+    with next(get_db()) as db:
+        active_event_ids = get_active_events()
+
+        if not active_event_ids:
+            return
+
+        for event_id in active_event_ids:
+            logging.info(f"Началось событие c ID {event_id}")
+            process_event(event_id)
+
+
+async def process_event(event_id):
+    """
+    Обрабатывает начавшееся событие.
+    Тут мы запускаем получение рандомного пользователя
+    :param event_id: int
+    :return: True or False
+    """
     try:
-        registrations = db.query(Registration).filter_by(event_id=event_id).all()
-        return [reg.user.id for reg in registrations]
-    except SQLAlchemyError as e:
-        logging.info(f"Ошибка при доступе к базе данных {__name__} {e}")
-        return []
-    finally:
-        db.close()
+        result = get_random_user(event_id)
+        if result:
+            return True
+    except Exception as e:
+        logging.info(f"Произошла ошибка при выборе случайного пользователя {e}")
+        return
