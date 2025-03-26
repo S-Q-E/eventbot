@@ -3,6 +3,8 @@ from aiogram import types, F, Router
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from sqlalchemy import asc
+
 from db.database import get_db, User
 
 edit_user_router = Router()
@@ -20,8 +22,7 @@ class EditUserStates(StatesGroup):
 async def edit_user(callback_query: types.CallbackQuery, state: FSMContext):
     try:
         with next(get_db()) as db:
-            all_users = db.query(User).order_by(User.first_name.asc()).all()
-
+            all_users = db.query(User).order_by(asc(User.first_name), asc(User.last_name)).all()
             if not all_users:
                 await callback_query.message.answer("Нет доступных пользователей")
 
