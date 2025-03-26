@@ -11,13 +11,11 @@ from sqlalchemy.exc import TimeoutError
 
 from handlers import (
     main_menu,
-    reminder,
     join_event,
     events_list,
     start_command,
     create_event,
     registration,
-    user_list,
     set_admin,
     send_event_loc,
     delete_event,
@@ -62,9 +60,7 @@ async def main():
     dp.include_router(join_event.event_join_router)
     dp.include_router(create_event.create_event_router)
     dp.include_router(edit_event.edit_event_router)
-    dp.include_router(reminder.reminder_router)
     dp.include_router(registration.registration_router)
-    dp.include_router(user_list.user_list_router)
     dp.include_router(set_admin.set_admin_router)
     dp.include_router(send_event_loc.send_loc_router)
     dp.include_router(delete_event.delete_event_router)
@@ -78,7 +74,6 @@ async def main():
     dp.include_router(delete_user_from_event.delete_user_from_event_router)
     dp.include_router(admin_help.admin_help_router)
     dp.include_router(edit_user.edit_user_router)
-    # dp.include_router(show_feedbacks.show_feedback_router)
     dp.include_router(user_profile.user_profile_router)
 
     commands = [

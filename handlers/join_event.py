@@ -7,7 +7,6 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db.database import get_db, Registration, Event, User
 from yookassa import Payment, Configuration
 from dotenv import load_dotenv
-from keyboards.notif_keyboard import get_notification_keyboard
 from utils.notify_user import notify_all_users_event_full
 
 load_dotenv()
@@ -74,7 +73,9 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
 
             await callback_query.message.answer(
                 f"Вы успешно зарегистрированы на бесплатное событие: <b>{event.name}</b>.\n\n"
-                ,reply_markup=get_notification_keyboard(event_id)
+                , reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
+                    InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
+                ]])
             )
             if event.current_participants == event.max_participants:
                 await notify_all_users_event_full(bot, event)
@@ -144,8 +145,9 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                 logging.info(
                     f"Оплата {payment_id} на событие {event.name} - оплатил {user.first_name} {user.last_name}\n")
                 await callback.message.answer(f"Оплата прошла успешно! Вы зарегистрированы на событие <b>{event.name}</b>.\n"
-                                              f"Выберите время напоминания.", reply_markup=get_notification_keyboard(event_id)
-                )
+                                              f"Выберите время напоминания.",
+                                              reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
+                                                InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]]))
                 return
             elif payment.status in ["pending", "waiting_for_capture"]:
                 await callback.message.answer("Платеж обрабатывается. Пожалуйста подождите")
