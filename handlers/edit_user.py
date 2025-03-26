@@ -27,7 +27,7 @@ async def edit_user(callback_query: types.CallbackQuery, state: FSMContext):
                 await callback_query.message.answer("Нет доступных пользователей")
 
             user_list = "\n".join(
-                f"▪️{user.first_name} {user.last_name} ID: <b>{user.id}</b>" for user in all_users
+                f"▪️{user.first_name} {user.last_name} ID: <code>{user.id}</code>" for user in all_users
                 )
             await callback_query.message.answer(f"Отлично, давайте отредактируем имя и фамилию пользователя\n"
                                                 f"Введите <b>ID и НОВОЕ имя и фамилию</b> пользователя через пробел\n"
