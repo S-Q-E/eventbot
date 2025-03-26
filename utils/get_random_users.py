@@ -2,7 +2,6 @@ import random
 import logging
 from sqlalchemy.exc import SQLAlchemyError
 from db.database import get_db, Registration, MVPCandidate
-from utils.get_expired_eventid import get_active_events
 
 
 def get_random_user(event_id):
