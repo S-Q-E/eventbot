@@ -7,7 +7,6 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db.database import get_db, Registration, Event, User
 from yookassa import Payment, Configuration
 from dotenv import load_dotenv
-from utils.notify_user import notify_all_users_event_full
 
 load_dotenv()
 ADMIN = os.getenv("ADMIN_2")

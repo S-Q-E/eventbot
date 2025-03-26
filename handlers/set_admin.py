@@ -13,7 +13,6 @@ async def set_admin(callback: types.CallbackQuery):
     db = next(get_db())
     try:
         users = db.query(User).filter(User.is_registered == True).all()
-
         if not users:
             await callback.message.answer("Нет зарегистрированных пользователей.")
             return
