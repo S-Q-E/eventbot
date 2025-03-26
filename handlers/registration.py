@@ -64,6 +64,7 @@ async def process_first_name(message: types.Message, state: FSMContext):
         logging.info(f"Пользователь ввел недостаточно данных ошибка {e}")
         await message.answer("Вы ввели неполные данные,")
 
+
 @registration_router.message(RegistrationStates.waiting_for_phone_number)
 @registration_router.message(RegistrationStates.waiting_for_phone_number, F.contact)
 async def process_phone_number(message: types.Message, state: FSMContext):

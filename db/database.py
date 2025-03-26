@@ -44,6 +44,7 @@ class User(Base):
     photo_file_id = Column(String, nullable=True)
     user_level = Column(String, nullable=True)
     is_registered = Column(Boolean, default=False)
+    is_mvp_candidate = Column(Boolean, default=False)
 
     registrations = relationship("Registration", back_populates="user", cascade="all, delete-orphan")
 
