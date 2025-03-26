@@ -12,8 +12,7 @@ def start_scheduler(bot: Bot):
     """
     Запускает планировщик задач.
     """
-    #  scheduler.add_job(send_notifications, 'interval', minutes=1, args=[bot])
     scheduler.add_job(check_and_process_events, 'interval', minutes=1)
     scheduler.add_job(send_mvp_poll, "cron", day_of_week="sun", hour=22, args=[bot])
-    scheduler.add_job(finish_mvp_poll, 'cron', day_of_week="mon", hour=20, args=[bot])
+    scheduler.add_job(finish_mvp_poll, 'cron', day_of_week="mon", hour=16, minute=19, args=[bot])
     scheduler.start()

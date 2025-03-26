@@ -5,7 +5,6 @@ from db.database import get_db, User
 delete_user_router = Router()
 
 
-# Хэндлер для вывода списка пользователей
 @delete_user_router.callback_query(F.data == "all_users")
 async def list_registered_users(callback: types.CallbackQuery):
     db = next(get_db())
