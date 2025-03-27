@@ -23,7 +23,7 @@ from handlers import (
     event_details,
     edit_event,
     user_help,
-    delete_user,
+    edit_user,
     report,
     manual_user_add,
     add_user_to_event,
