@@ -30,7 +30,8 @@ async def list_registered_users(callback: types.CallbackQuery, state: FSMContext
         for index, user in enumerate(users, 1):
             user_info += f"{index}. ID: <code>{user.id}</code>, {user.first_name} {user.last_name}\n"
 
-        await callback.message.answer(text=user_info)
+        for chunk in split_message(user_info):
+            await callback.message.answer(chunk)
 
         await callback.message.answer(text="Введите ID пользователя которого хотите удалить\n")
 
@@ -95,6 +96,28 @@ class EditUserStates(StatesGroup):
     waiting_for_user_id = State()
 
 
+MAX_MESSAGE_LENGTH = 4096  # Лимит Telegram
+
+
+def split_message(text, max_length=MAX_MESSAGE_LENGTH):
+    """Функция для разбиения длинного текста на части"""
+    lines = text.split("\n")
+    chunks = []
+    current_chunk = ""
+
+    for line in lines:
+        if len(current_chunk) + len(line) + 1 > max_length:
+            chunks.append(current_chunk)
+            current_chunk = line
+        else:
+            current_chunk += "\n" + line if current_chunk else line
+
+    if current_chunk:
+        chunks.append(current_chunk)
+
+    return chunks
+
+
 @delete_user_router.callback_query(F.data == "edit_user")
 async def edit_user(callback_query: types.CallbackQuery, state: FSMContext):
     try:
@@ -102,18 +125,28 @@ async def edit_user(callback_query: types.CallbackQuery, state: FSMContext):
             all_users = db.query(User).order_by(asc(User.first_name), asc(User.last_name)).all()
             if not all_users:
                 await callback_query.message.answer("Нет доступных пользователей")
+                return  # Выходим, если пользователей нет
 
             user_list = "\n".join(
                 f"▪️{user.first_name} {user.last_name} ID: <code>{user.id}</code>" for user in all_users
-                )
-            await callback_query.message.answer(f"Отлично, давайте отредактируем имя и фамилию пользователя\n"
-                                                f"Введите <b>ID и НОВОЕ имя и фамилию</b> пользователя через пробел\n"
-                                                f"Высылаю список пользователей:\n\n {user_list}",
-                                                reply_markup=markup)
+            )
+
+            await callback_query.message.answer(
+                "Отлично, давайте отредактируем имя и фамилию пользователя\n"
+                "Введите <b>ID и НОВОЕ имя и фамилию</b> пользователя через пробел\n"
+                "Высылаю список пользователей:\n",
+                reply_markup=markup
+            )
+
+            # Отправка списка пользователей частями
+            for chunk in split_message(user_list):
+                await callback_query.message.answer(chunk)
+
             await state.set_state(EditUserStates.waiting_for_user_id)
+
     except Exception as e:
         logging.info(f"Ошибка в edit_user.py {e}")
-        await callback_query.message.answer(f"Произошла ошибка. Попробуйте еще раз.")
+        await callback_query.message.answer("Произошла ошибка. Попробуйте еще раз.")
     finally:
         db.close()
 
