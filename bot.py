@@ -6,7 +6,6 @@ from config.config import load_config, Config
 from aiogram import Bot, Dispatcher
 from aiogram.client.bot import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
-from utils.scheduler_instance import start_scheduler
 from sqlalchemy.exc import TimeoutError
 
 from handlers import (
@@ -22,13 +21,9 @@ from handlers import (
     admin_panel,
     event_details,
     edit_event,
-    user_help,
-    edit_user,
-    report,
     manual_user_add,
     add_user_to_event,
     delete_user_from_event,
-    admin_help,
     edit_user,
     user_profile,
 )
@@ -66,14 +61,9 @@ async def main():
     dp.include_router(delete_event.delete_event_router)
     dp.include_router(admin_panel.admin_router)
     dp.include_router(event_details.event_detail_router)
-    dp.include_router(user_help.help_router)
-    dp.include_router(delete_user.delete_user_router)
-    dp.include_router(report.report_router)
     dp.include_router(manual_user_add.manual_add_user_router)
     dp.include_router(add_user_to_event.manual_register_user_router)
     dp.include_router(delete_user_from_event.delete_user_from_event_router)
-    dp.include_router(admin_help.admin_help_router)
-    dp.include_router(edit_user.edit_user_router)
     dp.include_router(user_profile.user_profile_router)
 
     commands = [
@@ -83,7 +73,6 @@ async def main():
     await bot.set_my_commands(commands)
     await bot.delete_webhook(drop_pending_updates=False)
     try:
-        start_scheduler(bot)
         await dp.start_polling(bot)
     except TimeoutError as e:
         logger.info("Ошибка {e}. Перезапуск....")

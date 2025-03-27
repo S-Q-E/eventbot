@@ -1,7 +1,8 @@
 from aiogram import Router, F, types
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
 
 from utils.check_admin import check_admin_rights
+from utils.user_report import generate_user_report
 
 admin_router = Router()
 
@@ -53,3 +54,11 @@ async def admin_help_message(callback: types.CallbackQuery):
                                   "запускавших бота\n "
                                   "🔹 <code>Сгенерировать отчет</code> - генерация Excel файла с данными о "
                                   "пользователях\n", reply_markup=markup)
+
+
+@admin_router.callback_query(F.data == "report")
+async def send_report(callback: types.CallbackQuery):
+    file_name = generate_user_report()
+    report = FSInputFile(file_name)
+    await callback.message.answer("Ваш отчет сгенерирован!")
+    await callback.message.answer_document(report)
