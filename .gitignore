@@ -1,6 +1,4 @@
 events.db
 .env
-/exports
-/alembic.ini
-/alembic
-/exports
+bot.log
+user_avatars
