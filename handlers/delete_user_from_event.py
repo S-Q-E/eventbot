@@ -1,6 +1,8 @@
 import logging
 from aiogram import types, F, Router
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from sqlalchemy import asc
+
 from db.database import get_db, User, Event, Registration
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
@@ -17,9 +19,15 @@ async def get_user_id(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.answer("Введите ID пользователя которого нужно удалить.\n")
     event_id = int(callback.data.split("_")[-1])
     with next(get_db()) as db:
-        registrations = db.query(Registration).filter_by(event_id=event_id).all()
+        registrations = (
+            db.query(Registration)
+                .filter_by(event_id=event_id)
+                .join(User)  # Убедись, что связь с User установлена
+                .order_by(asc(User.first_name), asc(User.last_name))
+                .all()
+        )
         participants_list = "\n".join(
-            f"▪️{reg.user.first_name} {reg.user.last_name} ID: {reg.user.id}"
+            f"▪️{reg.user.first_name} {reg.user.last_name} ID: <code>{reg.user.id}</code>"
             for reg in registrations
         ) or "Нет участников"
         await callback.message.answer(participants_list)

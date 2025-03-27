@@ -15,6 +15,7 @@ from handlers import (
     start_command,
     create_event,
     registration,
+    edit_user,
     set_admin,
     send_event_loc,
     delete_event,
@@ -24,7 +25,6 @@ from handlers import (
     manual_user_add,
     add_user_to_event,
     delete_user_from_event,
-    edit_user,
     user_profile,
 )
 
@@ -55,6 +55,7 @@ async def main():
     dp.include_router(join_event.event_join_router)
     dp.include_router(create_event.create_event_router)
     dp.include_router(edit_event.edit_event_router)
+    dp.include_router(edit_user.delete_user_router)
     dp.include_router(registration.registration_router)
     dp.include_router(set_admin.set_admin_router)
     dp.include_router(send_event_loc.send_loc_router)

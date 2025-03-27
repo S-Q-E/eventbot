@@ -2,6 +2,7 @@ from aiogram import types, F, Router
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
+from sqlalchemy import asc
 
 from db.database import get_db, User, Event, Registration
 
@@ -21,9 +22,9 @@ async def start_register_user_to_event(callback: types.CallbackQuery, state: FSM
     event_id = int(callback.data.split("_")[-1])
     await callback.message.answer("Введите ID пользователя, которого нужно зарегистрировать на событие:")
     with next(get_db()) as db:
-        all_users = db.query(User).filter(User.is_registered == True).all()
+        all_users = db.query(User).filter_by(is_registered = True).order_by(asc(User.first_name), asc(User.last_name)).all()
         user_list = "\n".join(
-            f"▪️{user.first_name} {user.last_name} ID: {user.id}" for user in all_users
+            f"▪️{user.first_name} {user.last_name} ID: <code>{user.id}</code>" for user in all_users
         ) or "Нет участников"
         await callback.message.answer(f"Список пользователей\n{user_list}")
     await state.update_data(event_id=event_id)
