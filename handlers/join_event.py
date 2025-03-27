@@ -65,7 +65,6 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
         try:
             new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
             event.current_participants += 1
-            user = db.query(User).filter_by(id=user_id).first()
             logger.debug(f"Добавление новой регистрации для пользователя {user_id} на событие {event_id}.")
             db.add(new_registration)
             db.commit()
@@ -76,8 +75,6 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
                     InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
                 ]])
             )
-            if event.current_participants == event.max_participants:
-                await notify_all_users_event_full(bot, event)
         except Exception as e:
             logger.exception(f"Ошибка при регистрации на бесплатное событие. {e}")
             await callback_query.message.answer("Произошла ошибка. Попробуйте снова.")
@@ -125,9 +122,6 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                     event.current_participants += 1
                     user.user_games += 1
                 db.commit()
-
-                if event.current_participants == event.max_participants:
-                    await notify_all_users_event_full(bot, event)
                 user = db.query(User).filter(User.id == user_id).first()
                 receipt_info = (
                     f"📄 Чек об оплате:\n"
