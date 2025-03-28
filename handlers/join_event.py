@@ -95,7 +95,8 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
         pay_btn = InlineKeyboardButton(text="💳 Оплатить", url=confirmation_url)
         markup = InlineKeyboardMarkup(inline_keyboard=[[pay_btn]])
         await callback_query.message.answer(
-            f"Оплатите участие, нажав на кнопку <code>Оплатить</code>, <b>выберите способ оплаты СБП:</b>\n", reply_markup=markup
+            f"Оплатите участие, нажав на кнопку <code>Оплатить</code>, <b>выберите способ оплаты СБП:</b>\n",
+            reply_markup=markup
         )
         await check_payment(payment.id, event_id, user_id, callback_query, bot)
     except Exception as e:
@@ -106,7 +107,7 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
 async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQuery, bot: Bot):
     db = next(get_db())
     try:
-        user = db.query(User).filter_by(user_id=user_id).first()
+        user = db.query(User).filter_by(id=user_id).first()
         intervals = [30, 60, 180, 600, 1800, 3600]
         for delay in intervals:
             payment = Payment.find_one(payment_id)
