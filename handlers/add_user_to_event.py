@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 from sqlalchemy import asc
 
 from db.database import get_db, User, Event, Registration
+from utils.split_message import split_message
 
 manual_register_user_router = Router()
 
@@ -26,7 +27,9 @@ async def start_register_user_to_event(callback: types.CallbackQuery, state: FSM
         user_list = "\n".join(
             f"▪️{user.first_name} {user.last_name} ID: <code> {user.id} </code>" for user in all_users
         ) or "Нет участников"
-        await callback.message.answer(f"Список пользователей\n{user_list}")
+
+        for chunk in split_message(user_list):
+            await callback.message.answer(chunk)
     await state.update_data(event_id=event_id)
     await state.set_state(RegisterUserToEvent.wait_user_id)
 

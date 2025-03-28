@@ -8,6 +8,8 @@ from sqlalchemy import asc
 from db.database import get_db, User
 from aiogram.fsm.state import StatesGroup, State
 
+from utils.split_message import split_message
+
 delete_user_router = Router()
 
 
@@ -94,28 +96,6 @@ markup = InlineKeyboardMarkup(inline_keyboard=[[to_admin_panel]])
 
 class EditUserStates(StatesGroup):
     waiting_for_user_id = State()
-
-
-MAX_MESSAGE_LENGTH = 4096  # Лимит Telegram
-
-
-def split_message(text, max_length=MAX_MESSAGE_LENGTH):
-    """Функция для разбиения длинного текста на части"""
-    lines = text.split("\n")
-    chunks = []
-    current_chunk = ""
-
-    for line in lines:
-        if len(current_chunk) + len(line) + 1 > max_length:
-            chunks.append(current_chunk)
-            current_chunk = line
-        else:
-            current_chunk += "\n" + line if current_chunk else line
-
-    if current_chunk:
-        chunks.append(current_chunk)
-
-    return chunks
 
 
 @delete_user_router.callback_query(F.data == "edit_user")
