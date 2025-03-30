@@ -73,13 +73,13 @@ async def save_new_username(message: types.Message, state: FSMContext):
 
 
 @user_profile_router.callback_query(F.data == "download_avatar")
-async def ask_photo(callback: types.CallbackQuery):
+async def ask_photo(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.answer("Пожалуйста, отправьте фото, которое вы хотите установить.")
+    await state.set_state(EditProfileStates.waiting_for_photo)
 
 
-@user_profile_router.message(F.photo)
+@user_profile_router.message(EditProfileStates.waiting_for_photo, F.photo)
 async def get_photo(message: types.Message):
-    # Берем самое большое фото
     photo = message.photo[-1]
     file_id = photo.file_id
     user_id = message.from_user.id
@@ -89,10 +89,8 @@ async def get_photo(message: types.Message):
         file_info = await bot.get_file(file_id)
         file_path = file_info.file_path
 
-
         file_bytes = await bot.download_file(file_path)
         file_data = io.BytesIO(file_bytes.read())
-
 
         output_dir = "user_avatars"
         os.makedirs(output_dir, exist_ok=True)

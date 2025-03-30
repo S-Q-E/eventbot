@@ -12,6 +12,7 @@ from handlers import (
     main_menu,
     join_event,
     events_list,
+    vote,
     start_command,
     create_event,
     registration,
@@ -66,6 +67,7 @@ async def main():
     dp.include_router(add_user_to_event.manual_register_user_router)
     dp.include_router(delete_user_from_event.delete_user_from_event_router)
     dp.include_router(user_profile.user_profile_router)
+    dp.include_router(vote.vote_router)
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),
