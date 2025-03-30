@@ -45,6 +45,7 @@ class User(Base):
     user_level = Column(String, nullable=True)
     is_registered = Column(Boolean, default=False)
     is_mvp_candidate = Column(Boolean, default=False)
+    votes = Column(Integer, default=0)
 
     registrations = relationship("Registration", back_populates="user", cascade="all, delete-orphan")
 
@@ -59,7 +60,7 @@ class Event(Base):
     price = Column(Integer, default=0)
     max_participants = Column(Integer, default=10)
     current_participants = Column(Integer, default=0)
-    is_mvp_sent = Column(Boolean, default=False)
+    is_checked = Column(Boolean, default=False)
 
     registrations = relationship("Registration", back_populates="event", cascade="all, delete-orphan")
 

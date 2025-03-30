@@ -56,7 +56,7 @@ async def event_details(callback: types.CallbackQuery):
         participants = db.query(User).join(Registration, User.id == Registration.user_id) \
             .filter(Registration.event_id == event.id).all()
         participants_list = "\n".join(
-            f"{user.first_name} {user.last_name})" for user in participants
+            f"{user.first_name} {user.last_name}" for user in participants
         ) or "Нет участников"
 
         # Формирование сообщения с информацией о событии
