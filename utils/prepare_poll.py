@@ -1,6 +1,8 @@
 import random
 import logging
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+
 from db.database import get_db, Event, Registration, User
 from datetime import datetime
 
@@ -59,3 +61,33 @@ def choose_mvp_candidate(event_id: int):
     finally:
         db.close()
     return None
+
+
+def announce_winner():
+    """
+    Определяет победителя голосования по событию.
+    Возвращает пользователя-победителя, а затем сбрасывает флаги is_mvp_candidate и счетчики голосов.
+    """
+    db: Session = next(get_db())
+    try:
+        candidates = db.query(User).filter(User.is_mvp_candidate == True).all()
+        if not candidates:
+            logging.info("Нет кандидатов")
+            return None
+
+        winner = max(candidates, key=lambda user: user.votes)
+        winner_photo_id = winner.photo_file_id
+        winner_name =f"{winner.first_name} {winner.last_name}"
+        for candidate in candidates:
+            candidate.is_mvp_candidate = False
+            candidate.votes = 0
+        db.commit()
+        return winner_name, winner_photo_id
+    except Exception as e:
+        logging.info(f"Ошибка в announce winner {e}")
+        db.rollback()
+    finally:
+        db.close()
+    return None
+
+
