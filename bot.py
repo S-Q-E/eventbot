@@ -28,6 +28,7 @@ from handlers import (
     delete_user_from_event,
     user_profile,
 )
+from utils.scheduler_instance import start_scheduler
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +77,7 @@ async def main():
     await bot.set_my_commands(commands)
     await bot.delete_webhook(drop_pending_updates=False)
     try:
+        await start_scheduler(bot)
         await dp.start_polling(bot)
     except TimeoutError as e:
         logger.info("Ошибка {e}. Перезапуск....")

@@ -1,10 +1,18 @@
 import random
 import logging
+import os
+from dotenv import load_dotenv
+from aiogram import Bot
+from aiogram.types import InputMediaPhoto
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-
-from db.database import get_db, Event, Registration, User
+from db.database import get_db, Event, Registration, User, VotingSession
 from datetime import datetime
+
+load_dotenv()
+CHAT_ID = os.getenv("CHAT_ID")
+ADMIN = os.getenv("ADMIN_2")
 
 
 def get_started_events():
@@ -24,7 +32,6 @@ def get_started_events():
                 logging.info(f"Выбран MVP-кандидат для события {event.id}: {candidate.id}")
             else:
                 logging.info(f"Не найден кандидат для события {event.id}")
-
             event.is_checked = True
         db.commit()
     except SQLAlchemyError as e:
@@ -55,6 +62,7 @@ def choose_mvp_candidate(event_id: int):
         selected_registration = random.choice(registrations)
         selected_registration.user.is_mvp_candidate = True
         db.commit()
+        return selected_registration.user
     except SQLAlchemyError as e:
         logging.error(f"Ошибка при выборе MVP-кандидата: {e}")
         db.rollback()
@@ -91,3 +99,62 @@ def announce_winner():
     return None
 
 
+async def start_voting(bot: Bot):
+    """
+    Обработчик команды для начала голосования.
+    Извлекает всех пользователей с is_mvp_candidate==True,
+    отправляет их фото (или дефолтное) и прикрепляет инлайн-клавиатуру с кнопками для голосования.
+    :param bot:
+    :return:
+    """
+    logging.info("Начинается голосование! ")
+    db = next(get_db())
+    try:
+        candidates = db.query(User).filter(User.is_mvp_candidate == True).all()
+        if not candidates:
+            await bot.send_message(chat_id=ADMIN, text="Нет кандидатов на голосование")
+        media = []
+        keyboard_builder = InlineKeyboardBuilder()
+        for candidate in candidates:
+            display_name = f"🏆 {candidate.first_name} {candidate.last_name} ({candidate.votes})"
+            photo = candidate.photo_file_id
+            media.append(InputMediaPhoto(media=photo, caption=display_name))
+            keyboard_builder.button(
+                text=display_name,
+                callback_data=f"vote_{candidate.id}"
+            )
+        await bot.send_media_group(chat_id=CHAT_ID, media=media)
+        options = [f"{c.first_name} {c.last_name}" for c in candidates]
+        print(options)
+        poll_message = await bot.send_poll(
+            chat_id=CHAT_ID,
+            question="Кто лучший игрок?",
+            options=options,
+            is_anonymous=False
+        )
+        voting_session = VotingSession(poll_id=poll_message.poll.id)
+        db.add(voting_session)
+        db.commit()
+    except Exception as e:
+        logging.info(f"Ошибка в start_voting {e}")
+        await bot.send_message(chat_id=ADMIN, text="Ошибка попробуйте позднее")
+        db.rollback()
+        db.close()
+    finally:
+        db.close()
+
+
+async def end_voting(bot: Bot):
+    """
+    Обработчик команды для завершения голосования.
+    Определяет победителя и отправляет поздравление в группу.
+    """
+    logging.info("Голосование закончилось. Идет подсчет голосов")
+    winner_name, photo_id = announce_winner()
+    if winner_name and photo_id:
+        await bot.send_photo(chat_id=CHAT_ID,
+                             photo=photo_id,
+                             caption=f"Звание лучшего игрока недели получает\n"
+                                     f" 🏆{winner_name} 🏆 \nПоздравляем!🎉🎉🎉")
+    else:
+        logging.info("Не удалось определить победителя")

@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignK
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
-
+from datetime import datetime
 DATABASE_URL = "sqlite:///events.db"
 
 engine = create_engine(
@@ -76,6 +76,14 @@ class Registration(Base):
 
     user = relationship("User", back_populates="registrations")
     event = relationship("Event", back_populates="registrations")
+
+
+class VotingSession(Base):
+    __tablename__ = 'voting_sessions'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    poll_id = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
 Base.metadata.create_all(bind=engine)
