@@ -125,7 +125,10 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                     new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
                     db.add(new_registration)
                     event.current_participants += 1
-                    user.user_games += 1
+
+                if user:
+                    user.user_games = (user.user_games or 0) + 1
+
                 db.commit()
                 user = db.query(User).filter(User.id == user_id).first()
                 receipt_info = (
