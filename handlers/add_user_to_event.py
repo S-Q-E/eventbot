@@ -87,6 +87,7 @@ async def register_user_to_event(message: types.Message, state: FSMContext):
             is_paid=True
         )
         event.current_participants += 1
+        user.user_games += 1
         db.add(new_registration)
         db.commit()
 
