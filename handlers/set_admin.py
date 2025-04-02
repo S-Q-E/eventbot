@@ -17,6 +17,8 @@ async def set_admin(callback: types.CallbackQuery):
             await callback.message.answer("Нет зарегистрированных пользователей.")
             return
 
+        messages = []  # Список для хранения сообщений
+
         for user in users:
             delete_admin_btn = InlineKeyboardButton(
                 text="Удалить админа",
@@ -24,6 +26,7 @@ async def set_admin(callback: types.CallbackQuery):
             )
             del_markup = InlineKeyboardMarkup(inline_keyboard=[[delete_admin_btn]])
             if user.is_admin:
+                messages.append(f"{user.first_name} {user.last_name} @{user.username} - Админ")
                 await callback.message.answer(f"{user.first_name} {user.last_name} @{user.username}",
                                               reply_markup=del_markup)
             else:
@@ -33,12 +36,15 @@ async def set_admin(callback: types.CallbackQuery):
                 )
                 markup = InlineKeyboardMarkup(inline_keyboard=[[make_admin_button]])
                 await callback.message.answer(
-                    f"{user.first_name} {user.last_name} (@{user.username})",
+                    f"{user.first_name} {user.last_name} (@{user.username}) - Не админ",
                     reply_markup=markup
                 )
-            back_btn = InlineKeyboardButton(text="↩️", callback_data="admin_panel")
-            back_markup = InlineKeyboardMarkup(inline_keyboard=[[back_btn]])
-            await callback.message.answer("Вернуться назад", reply_markup=back_markup)
+
+        # Отправляем назад
+        back_btn = InlineKeyboardButton(text="↩️", callback_data="admin_panel")
+        back_markup = InlineKeyboardMarkup(inline_keyboard=[[back_btn]])
+        await callback.message.answer("Вернуться назад", reply_markup=back_markup)
+
     except Exception as e:
         await callback.message.answer("Произошла ошибка при получении списка пользователей.")
         print(f"Ошибка при запросе пользователей: {e}")

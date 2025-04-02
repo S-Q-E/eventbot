@@ -13,6 +13,7 @@ from datetime import datetime
 load_dotenv()
 CHAT_ID = os.getenv("CHAT_ID")
 ADMIN = os.getenv("ADMIN_2")
+DEFAULT_PHOTO = os.getenv("DEFAULT_PHOTO_ID")
 
 
 def get_started_events():
@@ -84,8 +85,8 @@ def announce_winner():
             return None
 
         winner = max(candidates, key=lambda user: user.votes)
-        winner_photo_id = winner.photo_file_id
-        winner_name =f"{winner.first_name} {winner.last_name}"
+        winner_photo_id = winner.photo_file_id if winner.photo_file_id else DEFAULT_PHOTO
+        winner_name = f"{winner.first_name} {winner.last_name}"
         for candidate in candidates:
             candidate.is_mvp_candidate = False
             candidate.votes = 0

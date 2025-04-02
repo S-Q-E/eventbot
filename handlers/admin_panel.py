@@ -62,3 +62,5 @@ async def send_report(callback: types.CallbackQuery):
     report = FSInputFile(file_name)
     await callback.message.answer("Ваш отчет сгенерирован!")
     await callback.message.answer_document(report)
+
+
