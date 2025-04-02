@@ -46,7 +46,7 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
         await callback_query.message.answer("Событие не найдено.")
         return
 
-    if event.current_participants == event.max_participants:
+    if event.current_participants >= event.max_participants:
         await callback_query.message.answer("Все места заняты. Будем ждать вас в следующий раз!")
         return
 
@@ -60,6 +60,10 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
         else:
             await callback_query.message.answer(f"Вы начали оплату, но не завершили ее. Проверьте статус платежа")
             return
+
+    if event.current_participants == event.max_participants:
+        await callback_query.message.answer("К сожалению, место уже занято другим участником.")
+        return
 
     if event.price == 0:
         try:
@@ -170,8 +174,14 @@ async def cancel_registration(callback_query: types.CallbackQuery):
         event = db.query(Event).filter_by(id=event_id).first()
 
         if registration:
+            await callback_query.bot.send_message(ADMIN, f"Пользователь {registration.user.first_name}"
+                                                         f"{registration.user.last_name}"
+                                                         f"отменил регистрацию на событие {event.name}")
             db.delete(registration)
             event.current_participants -= 1
+            if event.current_participants < 0:
+                event.current_participants = 0
+
             db.commit()
             await callback_query.message.answer("Вы успешно отменили регистрацию на это событие.")
             db.close()
