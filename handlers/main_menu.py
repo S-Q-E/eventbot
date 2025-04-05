@@ -40,14 +40,14 @@ async def main_menu(message: types.Message):
                                  f"✅ Здесь вы найдете подходящее занятие для себя, выбрав локацию и время.\n",
                                  reply_markup=admin_markup)
         else:
-            await message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
-                                 f"<b>Добро пожаловать! {message.from_user.username}</b>\n",
+            await message.answer("Привет, {user.first_name} {user.last_name}!\n"
+                                 f"✅ Это приложение для участников спортивных событий\n"
+                                 f"✅ Здесь вы найдете подходящее занятие для себя, выбрав локацию и время.\n",
                                  reply_markup=reg_user_markup)
     else:
-        await message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
-                             f"<b>Добро пожаловать!</b>\n\n"
-                             f"<b> Вы не прошли регистрацию </b>\n"
-                             f"<b> Пожалуйста пройдите регистрацию </b>")
+        await message.answer("Привет, {user.first_name} {user.last_name}!\n"
+                             f"✅ Это приложение для участников спортивных событий\n"
+                             f"✅ Здесь вы найдете подходящее занятие для себя, выбрав локацию и время.\n")
 
 
 @main_menu_router.callback_query(F.data == "main_menu")
@@ -77,14 +77,16 @@ async def main_menu(callback: types.CallbackQuery):
     reg_user_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [user_profile], [user_help]])
     if user:
         if user.is_admin:
-            await callback.message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
-                                          f"<b>Добро пожаловать! {callback.from_user.username}</b>\n",
+            await callback.message.answer("Привет, {user.first_name} {user.last_name}!\n"
+                                          f"✅ Это приложение для участников спортивных событий\n"
+                                          f"✅ Здесь вы найдете подходящее занятие для себя, выбрав локацию и время.\n",
                                           reply_markup=admin_markup)
         else:
-            await callback.message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
-                                          f"<b>Добро пожаловать! {callback.from_user.username}</b>\n",
+            await callback.message.answer("Привет, {user.first_name} {user.last_name}!\n"
+                                          f"✅ Это приложение для участников спортивных событий\n"
+                                          f"✅ Здесь вы найдете подходящее занятие для себя, выбрав локацию и время.\n",
                                           reply_markup=reg_user_markup)
     else:
-        await callback.message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
+        await callback.message.answer(f"{callback.message.from_user.username}\n\n"
                                       f"<b>Вы не прошли регистрацию\n"
                                       f"Пожалуйста пройдите регистрацию</b?>")
