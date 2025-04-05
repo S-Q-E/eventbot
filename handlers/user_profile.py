@@ -21,8 +21,8 @@ async def user_profile_menu(callback: types.CallbackQuery):
         user = db.query(User).filter_by(id=user_id).first()
         user_menu_markup = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="✏ Изменить имя и фамилию", callback_data=f"change_username_{user_id}")],
-        [InlineKeyboardButton(text="📷 Изменить аватар", callback_data="download_avatar")],
-        [InlineKeyboardButton(text="📷 Показать мой аватар", callback_data="show_avatar")],
+        [InlineKeyboardButton(text="📷 Добавить фото", callback_data="download_avatar")],
+        [InlineKeyboardButton(text="📷 Показать моё фото", callback_data="show_avatar")],
         [InlineKeyboardButton(text="🔙 Назад", callback_data="main_menu")]
     ])
 

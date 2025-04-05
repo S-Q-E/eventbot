@@ -35,8 +35,9 @@ async def main_menu(message: types.Message):
     reg_user_markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [user_profile], [user_help]])
     if user:
         if user.is_admin:
-            await message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
-                                 f"<b>Добро пожаловать!</b> {message.from_user.username}\n",
+            await message.answer(f"Привет, {user.first_name} {user.last_name}!\n"
+                                 f"✅ Это приложение для участников спортивных событий\n"
+                                 f"✅ Здесь вы найдете подходящее занятие для себя, выбрав локацию и время.\n",
                                  reply_markup=admin_markup)
         else:
             await message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
