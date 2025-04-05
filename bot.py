@@ -72,7 +72,6 @@ async def main():
 
     commands = [
         BotCommand(command="main_menu", description="Главное меню"),
-        BotCommand(command="start", description="Запустить бота")
     ]
     await bot.set_my_commands(commands)
     await bot.delete_webhook(drop_pending_updates=False)
