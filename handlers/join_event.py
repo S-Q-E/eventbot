@@ -69,6 +69,8 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
         try:
             new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
             event.current_participants += 1
+            user = db.query(User).filter(User.id == user_id).first()
+            user.user_games += 1
             logger.debug(f"Добавление новой регистрации для пользователя {user_id} на событие {event_id}.")
             db.add(new_registration)
             db.commit()
@@ -125,9 +127,7 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                     new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
                     db.add(new_registration)
                     event.current_participants += 1
-
-                if user:
-                    user.user_games = (user.user_games or 0) + 1
+                    user.user_games += 1
 
                 db.commit()
                 user = db.query(User).filter(User.id == user_id).first()
@@ -145,8 +145,7 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                 await callback.bot.send_message(ADMIN_2, receipt_info)
                 logging.info(
                     f"Оплата {payment_id} на событие {event.name} - оплатил {user.first_name} {user.last_name}\n")
-                await callback.message.answer(f"Оплата прошла успешно! Вы зарегистрированы на событие <b>{event.name}</b>.\n"
-                                              f"Выберите время напоминания.",
+                await callback.message.answer(f"Оплата прошла успешно! Вы зарегистрированы на событие <b>{event.name}</b>.\n",
                                               reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
                                                 InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]]))
                 return
