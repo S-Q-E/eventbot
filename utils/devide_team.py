@@ -1,63 +1,84 @@
+import os
 import random
 import logging
-import os
-from dotenv import load_dotenv
+from datetime import datetime
 from aiogram import Bot
 from db.database import get_db, Registration, Event, User
-from datetime import datetime
-load_dotenv()
+from dotenv import load_dotenv
 
+load_dotenv()
 CHAT_ID = os.getenv("CHAT_ID")
 
 
 async def divide_teams_for_current_event(bot: Bot):
     """
-    Делит участников текущего (активного) события на две команды сразу после начала матча
+    Делит участников текущего (активного) события на команды сразу после начала матча
     и отправляет сообщение в чат с красивым оформлением и эмодзи.
-    Функция автоматически выбирает событие, для которого event_time <= now и is_checked == False.
-    После разделения устанавливается is_checked=True, чтобы избежать повторной обработки.
+    Если event.max_participants равно 14 – делим на 2 команды,
+    если равно 21 – делим на 3 команды.
+    После разделения помечаем событие, как обработанное, чтобы не делить его повторно.
     """
     db = next(get_db())
     try:
         now = datetime.utcnow()
-        # Выбираем последнее событие, которое уже началось и еще не было обработано
+        # Выбираем последнее событие, которое уже началось и ещё не разделено на команды
         event = (
             db.query(Event)
-            .filter(Event.event_time <= now, Event.is_team_divide == False)
-            .order_by(Event.event_time.desc())
-            .first()
+                .filter(Event.event_time <= now, Event.is_team_divide == False)
+                .order_by(Event.event_time.desc())
+                .first()
         )
         if not event:
-            await bot.send_message(chat_id=CHAT_ID, text="Нет активного события для разделения команд.")
+            logging.info("Нет события для разделения")
             return
 
+        # Определяем число команд по максимальному количеству участников
+        if event.max_participants == 14:
+            teams_count = 2
+            team_emojis = ["💪", "🤩"]
+        elif event.max_participants == 21:
+            teams_count = 3
+            team_emojis = ["💪", "🤩", "🔥"]
+        else:
+            # Если max_participants отличается – по умолчанию разделяем на 2 команды
+            teams_count = 2
+            team_emojis = ["💪", "🤩"]
+
+        # Получаем участников события
         registrations = db.query(Registration).filter_by(event_id=event.id).all()
         players = [reg.user for reg in registrations if reg.user is not None]
         if not players:
             await bot.send_message(chat_id=CHAT_ID, text="Нет участников для разделения команд.")
             return
 
-        # Перемешиваем игроков случайным образом
+        # Перемешиваем список игроков случайным образом
         random.shuffle(players)
         n = len(players)
-        mid = n // 2
-        team1 = players[:mid]
-        team2 = players[mid:]
+        teams = [[] for _ in range(teams_count)]
 
-        # Формируем списки участников с эмодзи
-        team1_text = "\n".join([f"⚡️ {p.first_name} {p.last_name or ''}".strip() for p in team1])
-        team2_text = "\n".join([f"🔥 {p.first_name} {p.last_name or ''}".strip() for p in team2])
+        base_size = n // teams_count
+        remainder = n % teams_count
+        start = 0
+        for i in range(teams_count):
+            extra = 1 if i < remainder else 0
+            teams[i] = players[start: start + base_size + extra]
+            start += base_size + extra
+
+        teams_text = ""
+        for idx, team in enumerate(teams):
+            emoji = team_emojis[idx] if idx < len(team_emojis) else ""
+            team_names = "\n".join([f"{emoji} {player.first_name} {player.last_name or ''}".strip() for player in team])
+            teams_text += f"<b>Команда {idx + 1}</b> ({len(team)} участников):\n{team_names}\n\n"
 
         message_text = (
             f"🏐 <b>Разделение команд для матча «{event.name}»</b> 🏐\n\n"
-            f"💪 <b>Команда 1</b> ({len(team1)} участников):\n{team1_text}\n\n"
-            f"🤩 <b>Команда 2</b> ({len(team2)} участников):\n{team2_text}\n\n"
+            f"{teams_text}"
             f"Желаем удачи и отличной игры! 🎉"
         )
 
-        await bot.send_message(chat_id=CHAT_ID, text=message_text)
+        await bot.send_message(chat_id=CHAT_ID, text=message_text, parse_mode="HTML")
 
-        # Помечаем событие, как обработанное, чтобы не делить его повторно
+        # Помечаем событие, как разделённое, чтобы не повторять операцию
         event.is_team_divide = True
         db.commit()
     except Exception as e:
