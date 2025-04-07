@@ -118,7 +118,7 @@ async def start_voting(bot: Bot):
         keyboard_builder = InlineKeyboardBuilder()
         for candidate in candidates:
             display_name = f"🏆 {candidate.first_name} {candidate.last_name} ({candidate.votes})"
-            photo = candidate.photo_file_id
+            photo = candidate.photo_file_id if candidate.photo_file_id else DEFAULT_PHOTO
             media.append(InputMediaPhoto(media=photo, caption=display_name))
             keyboard_builder.button(
                 text=display_name,

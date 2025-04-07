@@ -61,6 +61,8 @@ class Event(Base):
     max_participants = Column(Integer, default=10)
     current_participants = Column(Integer, default=0)
     is_checked = Column(Boolean, default=False)
+    is_team_divide = Column(Boolean, default=False)
+
 
     registrations = relationship("Registration", back_populates="event", cascade="all, delete-orphan")
 
