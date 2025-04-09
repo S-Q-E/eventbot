@@ -12,7 +12,7 @@ load_dotenv()
 ADMIN = os.getenv("ADMIN_2")
 
 event_list_router = Router()
-EVENTS_PER_PAGE = 3
+EVENTS_PER_PAGE = 4
 
 
 @event_list_router.callback_query(F.data.startswith("events_list"))

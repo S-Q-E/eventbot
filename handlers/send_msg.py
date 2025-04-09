@@ -5,7 +5,8 @@ from aiogram import Router, Bot, types, F
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from db.database import get_db, User
+from db.database import get_db, User, Registration
+from utils.get_nearest_events import get_nearest_event
 
 message_router = Router()
 
@@ -57,9 +58,11 @@ async def admin_confirmation(callback: types.CallbackQuery, state: FSMContext, b
         db = next(get_db())
         sent_count = 0
         try:
-            users = db.query(User).filter(User.is_registered == True).all()
+            event = await get_nearest_event()
+
+            users = db.query(User).filter(User.is_admin == True).all()
             keyboard_builder = InlineKeyboardBuilder()
-            keyboard_builder.button(text="да, я планирую", callback_data="events_list")
+            keyboard_builder.button(text="да, я планирую", callback_data=f"details_{event.id}")
             keyboard_builder.button(text="нет, я не смогу", callback_data="cannot_attend")
             keyboard_builder.adjust(2)
             broadcast_markup = keyboard_builder.as_markup()
@@ -71,6 +74,10 @@ async def admin_confirmation(callback: types.CallbackQuery, state: FSMContext, b
                     logging.error(f"Некорректный user id для пользователя: {user}")
                     continue
                 try:
+                    reg = db.query(Registration).filter_by(user_id=user_id, event_id=event.id).first()
+                    if reg:
+                        continue
+
                     await bot.send_message(chat_id=user_id, text=admin_text, reply_markup=broadcast_markup)
                     sent_count += 1
                 except Exception as e:
