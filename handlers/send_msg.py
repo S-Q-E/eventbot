@@ -59,10 +59,9 @@ async def admin_confirmation(callback: types.CallbackQuery, state: FSMContext, b
         sent_count = 0
         try:
             event = await get_nearest_event()
-
-            users = db.query(User).filter(User.is_admin == True).all()
+            users = db.query(User).filter(User.is_registered == True).all()
             keyboard_builder = InlineKeyboardBuilder()
-            keyboard_builder.button(text="да, я планирую", callback_data=f"details_{event.id}")
+            keyboard_builder.button(text="да, я планирую", callback_data=f"events_page_1")
             keyboard_builder.button(text="нет, я не смогу", callback_data="cannot_attend")
             keyboard_builder.adjust(2)
             broadcast_markup = keyboard_builder.as_markup()
