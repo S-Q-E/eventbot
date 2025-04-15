@@ -1,7 +1,7 @@
 import logging
 from sched import scheduler
 
-from aiogram import types, Router
+from aiogram import types, Router, F
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db.database import get_db, User
@@ -55,8 +55,7 @@ async def start_command(message: types.Message):
                              f"Добро пожаловать! <b>{message.from_user.username}</b>", reply_markup=markup)
 
 
-
-@start_router.message(types.ContentType.ANY)
+@start_router.message(F.photo)
 async def handle_message(message: types.Message):
     if message.document:
         await message.reply(f"Document file_id: {message.document.file_id}")
