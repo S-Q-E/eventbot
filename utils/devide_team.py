@@ -20,11 +20,11 @@ async def divide_teams_for_current_event(bot: Bot):
     """
     db = next(get_db())
     try:
-        now = datetime.utcnow()
+        now = datetime.now()
         # Выбираем последнее событие, которое уже началось и ещё не разделено на команды
         event = (
             db.query(Event)
-                .filter(Event.event_time <= now, Event.is_team_divide == False)
+                .filter(Event.event_time < now, Event.is_team_divide == False)
                 .order_by(Event.event_time.desc())
                 .first()
         )
