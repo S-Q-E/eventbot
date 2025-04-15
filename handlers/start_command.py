@@ -1,4 +1,6 @@
 import logging
+from sched import scheduler
+
 from aiogram import types, Router
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -51,3 +53,15 @@ async def start_command(message: types.Message):
         markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [registration_button]])
         await message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
                              f"Добро пожаловать! <b>{message.from_user.username}</b>", reply_markup=markup)
+
+
+
+@start_router.message(types.ContentType.ANY)
+async def handle_message(message: types.Message):
+    if message.document:
+        await message.reply(f"Document file_id: {message.document.file_id}")
+    elif message.photo:
+        # берем фото с наивысшим разрешением
+        await message.reply(f"Photo file_id: {message.photo[-1].file_id}")
+    else:
+        await message.reply("Нет файла для получения file_id")
