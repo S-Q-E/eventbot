@@ -21,7 +21,6 @@ async def divide_teams_for_current_event(bot: Bot):
     db = next(get_db())
     try:
         now = datetime.now()
-        # Выбираем последнее событие, которое уже началось и ещё не разделено на команды
         event = (
             db.query(Event)
                 .filter(Event.event_time < now, Event.is_team_divide == False)
@@ -49,7 +48,7 @@ async def divide_teams_for_current_event(bot: Bot):
         players = [reg.user for reg in registrations if reg.user is not None]
         if not players:
             await bot.send_message(chat_id=CHAT_ID, text="Нет участников для разделения команд.")
-            return
+            event.is_team_divide = True
 
         # Перемешиваем список игроков случайным образом
         random.shuffle(players)

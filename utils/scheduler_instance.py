@@ -14,6 +14,6 @@ async def start_scheduler(bot: Bot):
     scheduler.add_job(get_started_events, 'interval', hours=12)
     scheduler.add_job(start_voting, 'cron', day_of_week='sun', hour=22, minute=00, args=[bot])
     scheduler.add_job(end_voting, 'cron', day_of_week='mon', hour=12, minute=00, args=[bot])
-    scheduler.add_job(divide_teams_for_current_event, 'interval', minutes=10, args=[bot])
+    scheduler.add_job(divide_teams_for_current_event, 'interval', minutes=1, args=[bot])
     scheduler.start()
 
