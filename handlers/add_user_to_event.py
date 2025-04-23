@@ -14,6 +14,7 @@ class RegisterUserToEvent(StatesGroup):
     wait_user_id = State()
     wait_event_id = State()
 
+
 @manual_register_user_router.callback_query(F.data.startswith("add_user_to_event_"))
 async def start_register_user_to_event(callback: types.CallbackQuery, state: FSMContext):
     """
@@ -22,31 +23,25 @@ async def start_register_user_to_event(callback: types.CallbackQuery, state: FSM
     event_id = int(callback.data.split("_")[-1])
 
     with next(get_db()) as db:
-        # Получаем событие по ID
         event = db.query(Event).filter_by(id=event_id).first()
         if not event:
             await callback.message.answer("Событие не найдено.")
             return
 
-        # Проверяем наличие свободных мест
         if event.current_participants >= event.max_participants:
             await callback.message.answer("❌ Все места на это событие уже заняты.")
             return
 
-        # Запрашиваем ID пользователя для регистрации
         await callback.message.answer("Введите ID пользователя, которого нужно зарегистрировать на событие:")
 
-        # Получаем список всех зарегистрированных пользователей
         all_users = db.query(User).filter_by(is_registered=True).order_by(asc(User.first_name), asc(User.last_name)).all()
         user_list = "\n".join(
             f"▪️{user.first_name} {user.last_name} ID: <code>{user.id}</code>" for user in all_users
         ) or "Нет участников"
 
-        # Отправляем список пользователей частями, если он слишком длинный
         for chunk in split_message(user_list):
             await callback.message.answer(chunk)
 
-    # Сохраняем ID события в состоянии и переходим к следующему шагу
     await state.update_data(event_id=event_id)
     await state.set_state(RegisterUserToEvent.wait_user_id)
 

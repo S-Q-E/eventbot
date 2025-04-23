@@ -1,6 +1,6 @@
 import logging
 
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime, UniqueConstraint, Text
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime, UniqueConstraint
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -62,7 +62,6 @@ class Event(Base):
     current_participants = Column(Integer, default=0)
     is_checked = Column(Boolean, default=False)
     is_team_divide = Column(Boolean, default=False)
-
 
     registrations = relationship("Registration", back_populates="event", cascade="all, delete-orphan")
 
