@@ -1,0 +1,439 @@
+2025-04-25 13:13:16,111 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.136.25:8000
+2025-04-25 13:13:16,113 - INFO - [33mPress CTRL+C to quit[0m
+2025-04-25 13:13:31,109 - INFO - 192.168.136.25 - - [25/Apr/2025 13:13:31] "[33mGET / HTTP/1.1[0m" 404 -
+2025-04-25 13:13:31,229 - INFO - 192.168.136.25 - - [25/Apr/2025 13:13:31] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-25 13:14:32,921 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:32] "[33mGET / HTTP/1.1[0m" 404 -
+2025-04-25 13:14:38,305 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:38] "[32mGET /admin HTTP/1.1[0m" 308 -
+2025-04-25 13:14:38,492 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:38] "GET /admin/ HTTP/1.1" 200 -
+2025-04-25 13:14:39,139 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1" 200 -
+2025-04-25 13:14:39,150 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1" 200 -
+2025-04-25 13:14:39,167 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1" 200 -
+2025-04-25 13:14:39,169 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1" 200 -
+2025-04-25 13:14:39,174 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1" 200 -
+2025-04-25 13:14:39,190 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1" 200 -
+2025-04-25 13:14:39,198 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1" 200 -
+2025-04-25 13:14:39,202 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1" 200 -
+2025-04-25 13:14:39,207 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1" 200 -
+2025-04-25 13:14:39,214 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1" 200 -
+2025-04-25 13:14:39,222 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1" 200 -
+2025-04-25 13:14:39,260 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1" 200 -
+2025-04-25 13:14:39,261 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:39] "GET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1" 200 -
+2025-04-25 13:14:42,363 - ERROR - Exception on /admin/user/ [GET]
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such table: users
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\base.py", line 69, in inner
+    return self._run_view(f, *args, **kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\base.py", line 369, in _run_view
+    return fn(self, *args, **kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\model\base.py", line 1980, in index_view
+    count, data = self.get_list(view_args.page, sort_column, view_args.sort_desc,
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\contrib\sqla\view.py", line 1086, in get_list
+    count = count_query.scalar() if count_query else None
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\query.py", line 2805, in scalar
+    ret = self.one()
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\query.py", line 2778, in one
+    return self._iter().one()  # type: ignore
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\query.py", line 2827, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2362, in execute
+    return self._execute_internal(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2247, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\context.py", line 305, in orm_execute_statement
+    result = conn.execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1418, in execute
+    return meth(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: users
+[SQL: SELECT count(?) AS count_1 
+FROM users]
+[parameters: ('*',)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-04-25 13:14:42,802 - INFO - 192.168.136.25 - - [25/Apr/2025 13:14:42] "[35m[1mGET /admin/user/ HTTP/1.1[0m" 500 -
+2025-04-25 13:23:49,531 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.136.25:8000
+2025-04-25 13:23:49,533 - INFO - [33mPress CTRL+C to quit[0m
+2025-04-25 13:23:56,010 - ERROR - Exception on /admin/user/ [GET]
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such table: users
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\base.py", line 69, in inner
+    return self._run_view(f, *args, **kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\base.py", line 369, in _run_view
+    return fn(self, *args, **kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\model\base.py", line 1980, in index_view
+    count, data = self.get_list(view_args.page, sort_column, view_args.sort_desc,
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\contrib\sqla\view.py", line 1086, in get_list
+    count = count_query.scalar() if count_query else None
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\query.py", line 2805, in scalar
+    ret = self.one()
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\query.py", line 2778, in one
+    return self._iter().one()  # type: ignore
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\query.py", line 2827, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2362, in execute
+    return self._execute_internal(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2247, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\context.py", line 305, in orm_execute_statement
+    result = conn.execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1418, in execute
+    return meth(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: users
+[SQL: SELECT count(?) AS count_1 
+FROM users]
+[parameters: ('*',)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-04-25 13:23:56,029 - INFO - 192.168.136.25 - - [25/Apr/2025 13:23:56] "[35m[1mGET /admin/user/ HTTP/1.1[0m" 500 -
+2025-04-25 13:23:59,671 - INFO - 192.168.136.25 - - [25/Apr/2025 13:23:59] "GET /admin/ HTTP/1.1" 200 -
+2025-04-25 13:24:00,313 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,317 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,333 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,337 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,346 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,349 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,355 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,360 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,366 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,374 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,377 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,382 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:24:00,412 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:00] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,397 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "GET /admin/ HTTP/1.1" 200 -
+2025-04-25 13:24:01,432 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,468 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,470 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,471 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,472 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,474 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,477 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,503 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,522 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,534 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,542 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,549 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:01,561 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:01] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,060 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "GET /admin/ HTTP/1.1" 200 -
+2025-04-25 13:24:03,112 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,137 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,145 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,160 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,172 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,182 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,215 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,220 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,229 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,239 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,251 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,262 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:24:03,274 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:03] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:24:04,828 - ERROR - Exception on /admin/registration/ [GET]
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such table: registrations
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\base.py", line 69, in inner
+    return self._run_view(f, *args, **kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\base.py", line 369, in _run_view
+    return fn(self, *args, **kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\model\base.py", line 1980, in index_view
+    count, data = self.get_list(view_args.page, sort_column, view_args.sort_desc,
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\flask_admin\contrib\sqla\view.py", line 1086, in get_list
+    count = count_query.scalar() if count_query else None
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\query.py", line 2805, in scalar
+    ret = self.one()
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\query.py", line 2778, in one
+    return self._iter().one()  # type: ignore
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\query.py", line 2827, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2362, in execute
+    return self._execute_internal(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2247, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\context.py", line 305, in orm_execute_statement
+    result = conn.execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1418, in execute
+    return meth(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: registrations
+[SQL: SELECT count(?) AS count_1 
+FROM registrations]
+[parameters: ('*',)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-04-25 13:24:04,837 - INFO - 192.168.136.25 - - [25/Apr/2025 13:24:04] "[35m[1mGET /admin/registration/ HTTP/1.1[0m" 500 -
+2025-04-25 13:43:25,673 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.136.25:8000
+2025-04-25 13:43:25,674 - INFO - [33mPress CTRL+C to quit[0m
+2025-04-25 13:43:30,392 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:30] "[33mGET / HTTP/1.1[0m" 404 -
+2025-04-25 13:43:34,527 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:34] "GET /admin/ HTTP/1.1" 200 -
+2025-04-25 13:43:35,079 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,090 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,101 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,105 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,105 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,124 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,127 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,131 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,158 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,160 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,161 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,165 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:43:35,168 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:35] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,109 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "GET /admin/user/ HTTP/1.1" 200 -
+2025-04-25 13:43:37,161 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,202 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,204 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,204 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "GET /admin/static/vendor/select2/select2-bootstrap4.css?v=1.4.6 HTTP/1.1" 200 -
+2025-04-25 13:43:37,206 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,207 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "GET /admin/static/vendor/select2/select2.css?v=4.2.1 HTTP/1.1" 200 -
+2025-04-25 13:43:37,208 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "GET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker-bs4.css?v=1.3.22 HTTP/1.1" 200 -
+2025-04-25 13:43:37,244 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "GET /admin/static/admin/js/form.js?v=1.0.1 HTTP/1.1" 200 -
+2025-04-25 13:43:37,252 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "GET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker.js?v=1.3.22 HTTP/1.1" 200 -
+2025-04-25 13:43:37,259 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "GET /admin/static/admin/js/bs4_modal.js?v=1.0.0 HTTP/1.1" 200 -
+2025-04-25 13:43:37,264 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "GET /admin/static/admin/js/actions.js?v=1.0.0 HTTP/1.1" 200 -
+2025-04-25 13:43:37,265 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "GET /admin/static/admin/js/bs4_filters.js?v=1.0.0 HTTP/1.1" 200 -
+2025-04-25 13:43:37,269 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,305 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,311 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,317 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,331 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,348 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,361 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,363 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,365 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:37,397 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:37] "GET /admin/static/bootstrap/bootstrap4/fonts/fontawesome-webfont.woff2?v=4.7.0 HTTP/1.1" 200 -
+2025-04-25 13:43:49,303 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "GET /admin/event/ HTTP/1.1" 200 -
+2025-04-25 13:43:49,363 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,401 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,402 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,404 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker-bs4.css?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,406 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,407 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/vendor/select2/select2.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,411 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/vendor/select2/select2-bootstrap4.css?v=1.4.6 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,443 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,453 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,466 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,471 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,502 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,519 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,526 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,540 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,550 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,556 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker.js?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,569 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/admin/js/form.js?v=1.0.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,581 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/admin/js/bs4_modal.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,589 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/admin/js/bs4_filters.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:49,590 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:49] "[36mGET /admin/static/admin/js/actions.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,424 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "GET /admin/event/edit/?id=35&url=/admin/event/ HTTP/1.1" 200 -
+2025-04-25 13:43:56,477 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,520 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,522 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,524 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,529 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/vendor/select2/select2.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,533 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker-bs4.css?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,537 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/vendor/select2/select2-bootstrap4.css?v=1.4.6 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,575 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,589 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,603 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,610 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,623 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,635 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,653 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,659 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,668 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,686 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker.js?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:43:56,689 - INFO - 192.168.136.25 - - [25/Apr/2025 13:43:56] "[36mGET /admin/static/admin/js/form.js?v=1.0.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,110 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "GET /admin/registration/ HTTP/1.1" 200 -
+2025-04-25 13:44:05,159 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,210 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,212 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/vendor/select2/select2.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,213 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,214 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,216 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/vendor/select2/select2-bootstrap4.css?v=1.4.6 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,221 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker-bs4.css?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,260 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,263 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,286 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,292 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,315 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,329 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,338 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,341 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,352 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,372 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker.js?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,376 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/admin/js/form.js?v=1.0.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,380 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/admin/js/bs4_modal.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,394 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/admin/js/bs4_filters.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:05,398 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:05] "[36mGET /admin/static/admin/js/actions.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:10,809 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:10] "GET /admin/event/ HTTP/1.1" 200 -
+2025-04-25 13:44:10,885 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:10] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:10,904 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:10] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:10,904 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:10] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:10,926 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:10] "[36mGET /admin/static/vendor/select2/select2.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:10,928 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:10] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:10,933 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:10] "[36mGET /admin/static/vendor/select2/select2-bootstrap4.css?v=1.4.6 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:10,963 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:10] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker-bs4.css?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:10,980 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:10] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:10,982 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:10] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,009 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,016 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,031 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,039 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,051 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,052 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,096 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/admin/js/form.js?v=1.0.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,096 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/admin/js/bs4_modal.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,096 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/admin/js/bs4_filters.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,096 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker.js?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,103 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/admin/js/actions.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:11,103 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:11] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,305 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "GET /admin/user/ HTTP/1.1" 200 -
+2025-04-25 13:44:12,389 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,406 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,408 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,422 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,425 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/vendor/select2/select2.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,432 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/vendor/select2/select2-bootstrap4.css?v=1.4.6 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,452 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,463 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker-bs4.css?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,482 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,494 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,502 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,514 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,526 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,533 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,550 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,563 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,609 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker.js?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,612 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/admin/js/form.js?v=1.0.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,617 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/admin/js/bs4_modal.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,624 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/admin/js/bs4_filters.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:12,631 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:12] "[36mGET /admin/static/admin/js/actions.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,000 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "GET /admin/user/?page=5 HTTP/1.1" 200 -
+2025-04-25 13:44:15,055 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,122 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,125 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,135 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,148 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/vendor/select2/select2.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,155 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker-bs4.css?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,161 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/vendor/select2/select2-bootstrap4.css?v=1.4.6 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,174 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,202 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,211 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,217 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,230 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,256 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,259 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,270 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,287 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,295 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker.js?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,316 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/admin/js/form.js?v=1.0.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,325 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/admin/js/bs4_modal.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,332 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/admin/js/bs4_filters.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:15,337 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:15] "[36mGET /admin/static/admin/js/actions.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:17,872 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:17] "GET /admin/ HTTP/1.1" 200 -
+2025-04-25 13:44:17,933 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:17] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:17,982 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:17] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-25 13:44:17,983 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:17] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:17,984 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:17] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:17,987 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:17] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:17,989 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:17] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:17,994 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:17] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:18,008 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:18] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:18,044 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:18] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:18,059 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:18] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:18,072 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:18] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-25 13:44:18,076 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:18] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-25 13:44:18,076 - INFO - 192.168.136.25 - - [25/Apr/2025 13:44:18] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
