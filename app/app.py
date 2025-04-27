@@ -7,7 +7,6 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from db.database import User, Event, Registration, VotingSession
 
-# Чтобы импорт из ../db заработал, добавляем:
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 dictConfig({
@@ -32,9 +31,9 @@ dictConfig({
     }
 })
 # Пути
-BASE_DIR    = os.path.abspath(os.path.dirname(__file__))      # …/app
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))      # …/app
 PROJECT_DIR = os.path.abspath(os.path.join(BASE_DIR, '..'))   # …/eventbot
-DB_PATH     = os.path.join(PROJECT_DIR, 'events.db')
+DB_PATH = os.path.join(PROJECT_DIR, 'events.db')
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DB_PATH}"

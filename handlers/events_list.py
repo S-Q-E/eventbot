@@ -70,13 +70,31 @@ async def list_events(callback: types.CallbackQuery):
 @event_list_router.callback_query(F.data.startswith("cancel_registration_"))
 async def cancel_registration(callback_query: types.CallbackQuery):
     """
-    Обрабатывает отмену регистрации на событие и уведомляет других участников.
+    Обработчик запроса на отмену регистрации — сначала спрашивает подтверждение.
+    """
+    event_id = int(callback_query.data.split("_")[-1])
+
+    confirmation_markup = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="✅ Подтвердить отмену", callback_data=f"confirm_cancel_{event_id}"),
+            InlineKeyboardButton(text="❌ Отмена", callback_data=f"back_to_event_list_{event_id}")
+        ]
+    ])
+
+    await callback_query.message.edit_text(
+        "Вы уверены, что хотите отменить регистрацию на это событие?",
+        reply_markup=confirmation_markup
+    )
+
+@event_list_router.callback_query(F.data.startswith("confirm_cancel_"))
+async def confirm_cancel_registration(callback_query: types.CallbackQuery):
+    """
+    Реально отменяет регистрацию после подтверждения.
     """
     event_id = int(callback_query.data.split("_")[-1])
     user_id = callback_query.from_user.id
     db = next(get_db())
-    go_to_event = InlineKeyboardButton(text="Перейти к событию ➡️", callback_data=f"details_{event_id}")
-    markup = InlineKeyboardMarkup(inline_keyboard=[[go_to_event]])
+
     try:
         registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
         event = db.query(Event).filter_by(id=event_id).first()
@@ -86,20 +104,29 @@ async def cancel_registration(callback_query: types.CallbackQuery):
             return
 
         if registration:
-            await callback_query.bot.send_message(ADMIN, f"Пользователь {registration.user.first_name} "
-                                                         f"{registration.user.last_name} отменил запись на событие "
-                                                         f"{registration.event.name}")
+            await callback_query.bot.send_message(
+                ADMIN,
+                f"Пользователь {registration.user.first_name} {registration.user.last_name} отменил запись на событие {event.name}"
+            )
             db.delete(registration)
             event.current_participants -= 1
             db.commit()
+
             await callback_query.message.edit_text("Вы успешно отменили регистрацию на это событие.")
 
+            # Уведомляем других участников
             registrations = db.query(Registration).filter_by(event_id=event_id).all()
             for reg in registrations:
                 try:
+                    go_to_event = InlineKeyboardButton(
+                        text="Перейти к событию ➡️",
+                        callback_data=f"details_{event_id}"
+                    )
+                    markup = InlineKeyboardMarkup(inline_keyboard=[[go_to_event]])
+
                     await callback_query.bot.send_message(
                         chat_id=reg.user_id,
-                        text=f"⚠️ Освободилось место на событие {event.name}! Спешите зарегистрироваться, пока оно не занято!",
+                        text=f"⚠️ Освободилось место на событие {event.name}! Спешите зарегистрироваться!",
                         reply_markup=markup
                     )
                 except TelegramAPIError as e:
@@ -112,6 +139,7 @@ async def cancel_registration(callback_query: types.CallbackQuery):
         await callback_query.message.answer("Произошла ошибка при отмене регистрации.")
     finally:
         db.close()
+
 
 
 @event_list_router.callback_query(F.data.startswith("back_to_event_list"))
@@ -138,3 +166,4 @@ async def back_to_event_list(callback: types.CallbackQuery):
         f"🕒 <b>Дата:</b> {weekday} {event.event_time.strftime('%d %B')}\n",
         reply_markup=markup
     )
+
