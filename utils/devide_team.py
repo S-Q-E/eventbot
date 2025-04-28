@@ -31,6 +31,7 @@ async def divide_teams_for_current_event(bot: Bot):
 
         # Получаем участников события
         registrations = db.query(Registration).filter_by(event_id=event.id).all()
+
         players = [reg.user for reg in registrations if reg.user is not None]
         total_players = len(players)
 
@@ -42,6 +43,7 @@ async def divide_teams_for_current_event(bot: Bot):
 
         # Перемешиваем список игроков случайным образом
         random.shuffle(players)
+        random_player = random.choice(players)
 
         # Определяем структуру команд в зависимости от количества игроков
         team_structure = []
@@ -100,7 +102,8 @@ async def divide_teams_for_current_event(bot: Bot):
         message_text = (
             f"🏐 <b>Разделение команд для матча «{event.name}»</b> 🏐\n\n"
             f"{teams_text}"
-            f"Желаем удачи и отличной игры! 🎉"
+            f"Желаем удачи и отличной игры! 🎉\n\n"
+            f"Ответственный за мяч <b>{random_player.user.first_name} {random_player.user.last_name}</b>"
         )
 
         await bot.send_message(chat_id=CHAT_ID, text=message_text, parse_mode="HTML")

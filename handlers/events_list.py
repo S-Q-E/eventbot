@@ -86,6 +86,7 @@ async def cancel_registration(callback_query: types.CallbackQuery):
         reply_markup=confirmation_markup
     )
 
+
 @event_list_router.callback_query(F.data.startswith("confirm_cancel_"))
 async def confirm_cancel_registration(callback_query: types.CallbackQuery):
     """
