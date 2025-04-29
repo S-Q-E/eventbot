@@ -18,7 +18,6 @@ from handlers import (
     registration,
     edit_user,
     set_admin,
-    send_event_loc,
     delete_event,
     admin_panel,
     event_details,
@@ -61,7 +60,6 @@ async def main():
     dp.include_router(edit_user.delete_user_router)
     dp.include_router(registration.registration_router)
     dp.include_router(set_admin.set_admin_router)
-    dp.include_router(send_event_loc.send_loc_router)
     dp.include_router(delete_event.delete_event_router)
     dp.include_router(admin_panel.admin_router)
     dp.include_router(send_msg.message_router)

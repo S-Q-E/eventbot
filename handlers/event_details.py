@@ -67,7 +67,7 @@ async def event_details(callback: types.CallbackQuery):
         yandex_maps_url = f"https://yandex.ru/maps/?text={encoded_address}"
 
         show_on_map = InlineKeyboardButton(
-            text="📍 Показать на карте",
+            text="📍 Показать на Яндекс Картах",
             url=yandex_maps_url
         )
         back_button = InlineKeyboardButton(
