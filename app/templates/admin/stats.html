@@ -1,0 +1,16 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+  <div class="container-fluid">
+    <h3>📊 Статистика посещаемости</h3>
+    <p><strong>За последнюю неделю:</strong> {{ weekly_attendance }}</p>
+    <p><strong>За последний месяц:</strong> {{ monthly_attendance }}</p>
+
+    <h4>🏅 Топ-5 участников:</h4>
+    <ol>
+      {% for first, last, visits in top_users %}
+        <li>{{ first }} {{ last }} — {{ visits }} посещений</li>
+      {% endfor %}
+    </ol>
+  </div>
+{% endblock %}
