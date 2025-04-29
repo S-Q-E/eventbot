@@ -142,7 +142,6 @@ async def confirm_cancel_registration(callback_query: types.CallbackQuery):
         db.close()
 
 
-
 @event_list_router.callback_query(F.data.startswith("back_to_event_list"))
 async def back_to_event_list(callback: types.CallbackQuery):
     event_id = int(callback.data.split("_")[-1])
