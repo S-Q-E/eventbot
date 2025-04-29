@@ -1,7 +1,7 @@
 import os
 import random
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from aiogram import Bot
 from db.database import get_db, Registration, Event, User
 from dotenv import load_dotenv
@@ -18,10 +18,10 @@ async def divide_teams_for_current_event(bot: Bot):
     """
     db = next(get_db())
     try:
-        now = datetime.now()
+        ten_minutes_age = datetime.now() - timedelta(minutes=10)
         event = (
             db.query(Event)
-            .filter(Event.event_time < now, Event.is_team_divide == False)
+            .filter(Event.event_time < ten_minutes_age, Event.is_team_divide == False)
             .order_by(Event.event_time.desc())
             .first()
         )
