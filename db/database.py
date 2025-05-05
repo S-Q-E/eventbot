@@ -62,6 +62,8 @@ class Event(Base):
     current_participants = Column(Integer, default=0)
     is_checked = Column(Boolean, default=False)
     is_team_divide = Column(Boolean, default=False)
+    category_id = Column(Integer, ForeignKey('categories.id'), nullable=True)
+    category = relationship("Category", back_populates="events")
 
     registrations = relationship("Registration", back_populates="event", cascade="all, delete-orphan")
 
@@ -85,6 +87,14 @@ class VotingSession(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     poll_id = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class Category(Base):
+    __tablename__ = 'categories'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, unique=True, nullable=False)
+
+    events = relationship("Event", back_populates="category", cascade="all, delete-orphan")
 
 
 Base.metadata.create_all(bind=engine)

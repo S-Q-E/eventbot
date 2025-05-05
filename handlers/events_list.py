@@ -3,7 +3,9 @@ from datetime import datetime
 from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.exceptions import TelegramAPIError
-from db.database import get_db, Event, Registration, User
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+from db.database import get_db, Event, Registration, User, Category
 from utils.get_week_day import get_week_day
 from dotenv import load_dotenv
 
@@ -15,56 +17,110 @@ event_list_router = Router()
 EVENTS_PER_PAGE = 4
 
 
-@event_list_router.callback_query(F.data.startswith("events_list"))
-@event_list_router.callback_query(F.data.startswith("events_page_"))
-async def list_events(callback: types.CallbackQuery):
-    """
-    Отображает список всех событий с пагинацией и динамической кнопкой регистрации.
-    """
-    try:
-        page = int(callback.data.split("_")[-1])
-    except ValueError:
-        page = 1
-
+@event_list_router.callback_query(F.data == "events_list")
+async def show_categories(callback: types.CallbackQuery):
     db = next(get_db())
-    current_time = datetime.now()
+    categories = db.query(Category).order_by(Category.name).all()
+    db.close()
 
-    events = db.query(Event).filter(Event.event_time > current_time).order_by(Event.event_time.asc()).all()
-
-    if not events:
-        await callback.message.answer("Нет доступных событий.")
+    if not categories:
+        await callback.message.answer("Категории ещё не созданы.")
         return
 
+    builder = InlineKeyboardBuilder()
+    for cat in categories:
+        builder.button(
+            text=cat.name,
+            callback_data=f"filter_cat_{cat.id}"
+        )
+    builder.adjust(2)  # по 2 кнопки в ряд
+
+    await callback.message.edit_text(
+        "📂 Выберите категорию:",
+        reply_markup=builder.as_markup()
+    )
+
+
+@event_list_router.callback_query(F.data.startswith("filter_cat_"))
+async def list_events_by_category(callback: types.CallbackQuery):
+    """
+    Показывает события выбранной категории с пагинацией.
+    Ожидает callback.data вида "filter_cat_{cat_id}_{page}".
+    """
+    # Разбор callback_data
+    parts = callback.data.split("_")
+    # parts = ["filter", "cat", "{cat_id}", "{page}"]
+    try:
+        cat_id = int(parts[2])
+    except (IndexError, ValueError):
+        await callback.answer("Некорректный формат категории.", show_alert=True)
+        return
+
+    try:
+        page = int(parts[3])
+    except (IndexError, ValueError):
+        page = 1
+
+    # Получаем и фильтруем события
+    db = next(get_db())
+    now = datetime.now()
+    events = (
+        db.query(Event)
+          .filter(Event.category_id == cat_id, Event.event_time > now)
+          .order_by(Event.event_time.asc())
+          .all()
+    )
+    db.close()
+
+    if not events:
+        await callback.message.edit_text("События в этой категории отсутствуют.")
+        return
+
+    # Пагинация
     total_pages = (len(events) + EVENTS_PER_PAGE - 1) // EVENTS_PER_PAGE
     page = max(1, min(page, total_pages))
-    events_to_show = events[(page - 1) * EVENTS_PER_PAGE:page * EVENTS_PER_PAGE]
+    start = (page - 1) * EVENTS_PER_PAGE
+    slice_events = events[start:start + EVENTS_PER_PAGE]
 
-    for event in events_to_show:
-        event_details = InlineKeyboardButton(
+    # Отправляем каждое событие в отдельном сообщении
+    for event in slice_events:
+        weekday = get_week_day(event.event_time)
+        text = (
+            f"🎉 <b>{event.name}</b>\n"
+            f"🕒 <b>Дата:</b> {weekday} {event.event_time.strftime('%d %B')}\n"
+        )
+        btn = types.InlineKeyboardButton(
             text="📄 Подробнее",
             callback_data=f"details_{event.id}"
         )
-        date = event.event_time
-        weekday = get_week_day(date)
-        markup = InlineKeyboardMarkup(inline_keyboard=[[event_details]])
-        await callback.message.answer(
-            f"🎉 <b>{event.name}</b>\n"
-            f"🕒 <b>Дата:</b> {weekday} {event.event_time.strftime('%d %B') } \n",
-            reply_markup=markup,
-            parse_mode="HTML"
-        )
+        await callback.message.answer(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=[[btn]]))
 
-    pagination_buttons = []
+    # Строим клавиатуру пагинации + кнопка «Назад к категориям»
+    kb_builder = InlineKeyboardBuilder()
+    nav_buttons = []
     if page > 1:
-        pagination_buttons.append(
-            InlineKeyboardButton(text="⬅️ Предыдущая", callback_data=f"events_page_{page - 1}")
+        kb_builder.button(
+            text="⬅️ Предыдущая",
+            callback_data=f"filter_cat_{cat_id}_{page - 1}"
         )
     if page < total_pages:
-        pagination_buttons.append(
-            InlineKeyboardButton(text="Следующая ➡️", callback_data=f"events_page_{page + 1}")
+        kb_builder.button(
+            text="Следующая ➡️",
+            callback_data=f"filter_cat_{cat_id}_{page + 1}"
         )
-    pagination_markup = InlineKeyboardMarkup(inline_keyboard=[pagination_buttons])
-    await callback.message.answer(f"Страница {page}/{total_pages}", reply_markup=pagination_markup)
+    # Кнопка возврата к списку категорий
+    kb_builder.button(
+        text="🔙 Категории",
+        callback_data="events_list"
+    )
+    # Разместим навигацию в одну строку
+    kb_builder.adjust(3)
+
+    # Финальное сообщение с навигацией
+    await callback.message.answer(
+        f"Страница {page}/{total_pages}",
+        reply_markup=kb_builder.as_markup()
+    )
 
 
 @event_list_router.callback_query(F.data.startswith("cancel_registration_"))

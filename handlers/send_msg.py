@@ -13,6 +13,7 @@ message_router = Router()
 
 class AdminBroadcast(StatesGroup):
     waiting_for_text = State()
+    waiting_for_photo = State()
     waiting_for_confirmation = State()
 
 
@@ -31,22 +32,33 @@ async def admin_input_message(message: types.Message, state: FSMContext):
         await message.answer("Сообщение не может быть пустым. Введите текст:")
         return
     await state.update_data(message_text=admin_text)
+    await message.answer("Отправьте фото которое хотите прикрепить к сообщению")
+    await state.set_state(AdminBroadcast.waiting_for_photo)
 
-    keyboard_builder = InlineKeyboardBuilder()
-    keyboard_builder.button(text="Подтвердить", callback_data="admin_confirm")
-    keyboard_builder.button(text="Редактировать", callback_data="admin_edit")
-    keyboard_builder.adjust(2)
 
-    preview_text = f"Предпросмотр сообщения:\n\n{admin_text}\n\nПодтвердите или отредактируйте:"
-    await message.answer(preview_text, reply_markup=keyboard_builder.as_markup())
+@message_router.message(AdminBroadcast.waiting_for_photo, F.photo)
+async def admin_input_photo(message: types.Message, state: FSMContext):
+    photo_id = message.photo[-1].file_id
+    await state.update_data(photo_id=photo_id)
+
+    data = await state.get_data()
+    admin_text = data["message_text"]
+
+    keyboard = InlineKeyboardBuilder()
+    keyboard.button(text="Подтвердить", callback_data="admin_confirm")
+    keyboard.button(text="Редактировать текст", callback_data="admin_edit")
+    keyboard.adjust(2)
+
+    await message.answer_photo(
+        photo=photo_id,
+        caption=f"Предпросмотр сообщения:\n\n{admin_text}\n\nПодтвердите или отредактируйте:",
+        reply_markup=keyboard.as_markup()
+    )
     await state.set_state(AdminBroadcast.waiting_for_confirmation)
 
 
 @message_router.callback_query(F.data.in_(["admin_confirm", "admin_edit"]))
 async def admin_confirmation(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
-    data = await state.get_data()
-    admin_text = data.get("message_text", "").strip()
-
     if callback.data == "admin_edit":
         await callback.message.answer("Введите текст сообщения заново:")
         await state.set_state(AdminBroadcast.waiting_for_text)
@@ -54,39 +66,49 @@ async def admin_confirmation(callback: types.CallbackQuery, state: FSMContext, b
         return
 
     elif callback.data == "admin_confirm":
-        await callback.answer("Сообщение подтверждено. Начинается рассылка.")
+        await callback.answer("Начинаю рассылку...")
         db = next(get_db())
         sent_count = 0
+
+        data = await state.get_data()
+        admin_text = data["message_text"]
+        photo_id = data["photo_id"]  # ← file_id фото
+
+        # Формируем разметку для кнопок
+        keyboard = InlineKeyboardBuilder()
+        keyboard.button(text="Да, я планирую", callback_data="events_page_1")
+        keyboard.button(text="Нет, не смогу", callback_data="cannot_attend")
+        keyboard.adjust(2)
+        broadcast_markup = keyboard.as_markup()
+
         try:
             event = await get_nearest_event()
             users = db.query(User).filter(User.is_registered == True).all()
-            keyboard_builder = InlineKeyboardBuilder()
-            keyboard_builder.button(text="да, я планирую", callback_data=f"events_page_1")
-            keyboard_builder.button(text="нет, я не смогу", callback_data="cannot_attend")
-            keyboard_builder.adjust(2)
-            broadcast_markup = keyboard_builder.as_markup()
 
             for user in users:
                 try:
                     user_id = int(user.id)
                 except (ValueError, TypeError):
-                    logging.error(f"Некорректный user id для пользователя: {user}")
-                    continue
-                try:
-                    reg = db.query(Registration).filter_by(user_id=user_id, event_id=event.id).first()
-                    if reg:
-                        continue
-
-                    await bot.send_message(chat_id=user_id, text=admin_text, reply_markup=broadcast_markup)
-                    sent_count += 1
-                except Exception as e:
-                    logging.error(f"Ошибка отправки сообщения пользователю {user_id}: {e}")
+                    logging.error(f"Невалидный user_id: {user.id}")
                     continue
 
-            await callback.message.answer(f"Сообщения отправлены {sent_count} пользователям.")
+                # Пропускаем уже записавшихся на ближайшее событие
+                if db.query(Registration).filter_by(user_id=user_id, event_id=event.id).first():
+                    continue
+
+                # Основной момент: отправляем фото с подписью
+                await bot.send_photo(
+                    chat_id=user_id,
+                    photo=photo_id,
+                    caption=admin_text,
+                    reply_markup=broadcast_markup
+                )
+                sent_count += 1
+
+            await callback.message.answer(f"Рассылка завершена: отправлено {sent_count} сообщений.")
         except Exception as e:
-            logging.exception(f"Ошибка при рассылке сообщений: {e}")
-            await callback.message.answer("Ошибка при рассылке сообщений.")
+            logging.exception(f"Ошибка в рассылке: {e}")
+            await callback.message.answer("Не удалось выполнить рассылку.")
         finally:
             db.close()
             await state.clear()

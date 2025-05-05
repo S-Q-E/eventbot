@@ -26,7 +26,8 @@ from handlers import (
     add_user_to_event,
     delete_user_from_event,
     user_profile,
-    send_msg
+    send_msg,
+    categories
 )
 from utils.scheduler_instance import start_scheduler
 
@@ -67,6 +68,7 @@ async def main():
     dp.include_router(manual_user_add.manual_add_user_router)
     dp.include_router(add_user_to_event.manual_register_user_router)
     dp.include_router(delete_user_from_event.delete_user_from_event_router)
+    dp.include_router(categories.category_router)
     dp.include_router(user_profile.user_profile_router)
     dp.include_router(vote.vote_router)
 

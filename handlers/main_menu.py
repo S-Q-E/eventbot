@@ -24,7 +24,7 @@ async def main_menu(message: types.Message):
 
         return
 
-    events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_page_1")
+    events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_list")
     admin_panel = InlineKeyboardButton(text="😎 Панель админа", callback_data="admin_panel")
     user_profile = InlineKeyboardButton(text="👤 Мой профиль", callback_data="user_profile")
     user_help = InlineKeyboardButton(text="🆘 Помощь", callback_data="user_help")
@@ -66,7 +66,7 @@ async def main_menu(callback: types.CallbackQuery):
         logging.info(f"Ошибка в main_menu: {e}")
         return
 
-    events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_page_1")
+    events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_list")
     admin_panel = InlineKeyboardButton(text="😎 Панель админа", callback_data="admin_panel")
     user_profile = InlineKeyboardButton(text="👤 Мой профиль", callback_data="user_profile")
     user_help = InlineKeyboardButton(text="🆘 Помощь", callback_data="user_help")
