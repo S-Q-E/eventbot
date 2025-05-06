@@ -72,8 +72,13 @@ async def list_events_by_category(callback: types.CallbackQuery):
     )
     db.close()
 
+    keyboard = InlineKeyboardBuilder()
+
     if not events:
-        await callback.message.edit_text("События в этой категории отсутствуют.")
+        keyboard.button(
+            text="🔙 Категории",
+            callback_data="events_list")
+        await callback.message.edit_text("События в этой категории отсутствуют.", reply_markup=keyboard.as_markup())
         return
 
     # Пагинация

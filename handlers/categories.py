@@ -106,6 +106,10 @@ async def manage_categories_handler(callback: CallbackQuery):
         text="➕ Добавить категорию",
         callback_data="add_category"
     )
+    builder.button(
+        text="◀️Назад",
+        callback_data="admin_panel"
+    )
     builder.adjust(1)
     await callback.message.answer(
         "📂 Список категорий:",
