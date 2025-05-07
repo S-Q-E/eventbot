@@ -1,6 +1,6 @@
 import logging
 
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime, UniqueConstraint
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, DateTime, UniqueConstraint, Table
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -30,6 +30,13 @@ def get_db():
         db.close()
 
 
+user_interests = Table(
+    'user_interests', Base.metadata,
+    Column('user_id',     Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True),
+    Column('category_id', Integer, ForeignKey('categories.id', ondelete='CASCADE'), primary_key=True)
+)
+
+
 # Модель пользователя
 class User(Base):
     __tablename__ = 'users'
@@ -46,7 +53,11 @@ class User(Base):
     is_registered = Column(Boolean, default=False)
     is_mvp_candidate = Column(Boolean, default=False)
     votes = Column(Integer, default=0)
-
+    interests = relationship(
+        "Category",
+        secondary=user_interests,
+        back_populates="subscribers"
+    )
     registrations = relationship("Registration", back_populates="user", cascade="all, delete-orphan")
 
 
@@ -95,6 +106,11 @@ class Category(Base):
     name = Column(String, unique=True, nullable=False)
 
     events = relationship("Event", back_populates="category", cascade="all, delete-orphan")
+    subscribers = relationship(
+        "User",
+        secondary=user_interests,
+        back_populates="interests"
+    )
 
 
 Base.metadata.create_all(bind=engine)

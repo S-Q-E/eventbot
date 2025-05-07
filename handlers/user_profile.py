@@ -5,9 +5,10 @@ import io
 from aiogram import types, Router, F
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.utils.media_group import MediaGroupBuilder
 from sqlalchemy.orm import Session
-from db.database import User, get_db
+from db.database import User, get_db, Category
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputFile, InputMediaPhoto, FSInputFile
 from aiogram.fsm.state import State, StatesGroup
 user_profile_router = Router()
@@ -23,6 +24,7 @@ async def user_profile_menu(callback: types.CallbackQuery):
         [InlineKeyboardButton(text="✏ Изменить имя и фамилию", callback_data=f"change_username_{user_id}")],
         [InlineKeyboardButton(text="📷 Добавить фото", callback_data="download_avatar")],
         [InlineKeyboardButton(text="📷 Показать моё фото", callback_data="show_avatar")],
+        [InlineKeyboardButton(text="❤️Мой интересы", callback_data="interests")],
         [InlineKeyboardButton(text="🔙 Назад", callback_data="main_menu")]
     ])
 
@@ -179,3 +181,47 @@ async def help_message(callback: CallbackQuery):
                                   "Поздравляю! Вы смогли записаться на желаемое событие!\n"
                                   "Возникли трудности? Напиши @Kozlov_Vasily",
                                   reply_markup=markup)
+
+
+@user_profile_router.callback_query(F.data == "interests")
+async def show_interest_categories(callback: types.CallbackQuery):
+    db = next(get_db())
+    cats = db.query(Category).order_by(Category.name).all()
+    logging.info(f"{callback.from_user.id}")
+
+    user = db.query(User).filter_by(id=int(callback.from_user.id)).first()
+    logging.info(user)
+
+    builder = InlineKeyboardBuilder()
+    for c in cats:
+        # отмечаем, подписан ли пользователь
+        prefix = "✅ " if c in user.interests else ""
+        builder.button(
+            text=f"{prefix}{c.name}",
+            callback_data=f"toggle_interest_{c.id}"
+        )
+    builder.adjust(2)
+    await callback.message.answer("Выберите свои интересы (кликните, чтобы переключить):", reply_markup=builder.as_markup())
+    db.close()
+
+
+@user_profile_router.callback_query(F.data.startswith("toggle_interest_"))
+async def toggle_interest(callback: types.CallbackQuery):
+    cat_id = int(callback.data.split("_")[-1])
+    db = next(get_db())
+    user = db.query(User).filter_by(id=callback.from_user.id).first()
+    cat = db.query(Category).get(cat_id)
+    if not cat:
+        await callback.answer("Категория не найдена.", show_alert=True)
+    else:
+        if cat in user.interests:
+            user.interests.remove(cat)
+            action = "отписались от"
+        else:
+            user.interests.append(cat)
+            action = "подписались на"
+        db.commit()
+        await callback.answer(f"Вы {action} «{cat.name}».")
+    db.close()
+    # Перезагружаем клавиатуру, чтобы обновить галочки
+    await show_interest_categories(callback)

@@ -33,9 +33,10 @@ async def show_categories(callback: types.CallbackQuery):
             text=cat.name,
             callback_data=f"filter_cat_{cat.id}"
         )
+    builder.button(text="Главное меню", callback_data="main_menu")
     builder.adjust(2)  # по 2 кнопки в ряд
 
-    await callback.message.edit_text(
+    await callback.message.answer(
         "📂 Выберите категорию:",
         reply_markup=builder.as_markup()
     )
