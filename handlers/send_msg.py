@@ -1,173 +1,163 @@
-import os
 import logging
-import asyncio
 from aiogram import Router, Bot, types, F
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramForbiddenError
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from db.database import get_db, User, Registration
+from db.database import get_db, User, Registration, Category
 from utils.get_nearest_events import get_nearest_event
 
+logger = logging.getLogger(__name__)
 message_router = Router()
 
 
 class AdminBroadcast(StatesGroup):
     waiting_for_text = State()
+    waiting_for_text_confirm = State()   # ← Новое состояние! подтверждение текста
     waiting_for_photo = State()
-    waiting_for_confirmation = State()
+    waiting_for_send_choice = State()
+    waiting_for_category = State()
 
 
+# 1) Старт диалога рассылки
 @message_router.callback_query(F.data == "send_to_users")
-async def send_to_users_callback(callback: types.CallbackQuery, state: FSMContext):
-    await callback.message.edit_reply_markup()
-    await callback.message.answer("Введите текст сообщения:")
+async def cmd_broadcast_start(cb: types.CallbackQuery, state: FSMContext):
+    await cb.message.edit_reply_markup()
+    await cb.message.answer("Введите текст рассылки:")
     await state.set_state(AdminBroadcast.waiting_for_text)
-    await callback.answer()
+    await cb.answer()
 
 
+# 2) Ввод текста
 @message_router.message(AdminBroadcast.waiting_for_text)
-async def admin_input_message(message: types.Message, state: FSMContext):
-    admin_text = message.text.strip()
-    if not admin_text:
-        await message.answer("Сообщение не может быть пустым. Введите текст:")
-        return
-    await state.update_data(message_text=admin_text)
-    await message.answer("Отправьте фото которое хотите прикрепить к сообщению")
+async def broadcast_input_text(msg: types.Message, state: FSMContext):
+    text = msg.text.strip()
+    if not text:
+        return await msg.answer("Текст не может быть пустым, введите ещё раз:")
+    await state.update_data(text=text)
+
+    # Превью и кнопка подтверждения текста
+    kb = InlineKeyboardBuilder()
+    kb.button(text="✅ Подтвердить текст", callback_data="confirm_text")
+    kb.button(text="❌ Редактировать",    callback_data="edit_text")
+    kb.adjust(2)
+    await msg.answer(f"Предпросмотр текста:\n\n{text}", reply_markup=kb.as_markup())
+    await state.set_state(AdminBroadcast.waiting_for_text_confirm)
+
+
+# 3) Подтверждение текста
+@message_router.callback_query(AdminBroadcast.waiting_for_text_confirm)
+async def broadcast_confirm_text(cb: types.CallbackQuery, state: FSMContext):
+    await cb.answer()
+    if cb.data == "edit_text":
+        await cb.message.answer("Введите текст заново:")
+        return await state.set_state(AdminBroadcast.waiting_for_text)
+
+    # Идём дальше — просим фото
+    await cb.message.answer("Отправьте фото или «пропустить» для рассылки без фото.")
     await state.set_state(AdminBroadcast.waiting_for_photo)
 
 
-@message_router.message(AdminBroadcast.waiting_for_photo, F.photo)
-async def admin_input_photo(message: types.Message, state: FSMContext):
-    photo_id = message.photo[-1].file_id
-    await state.update_data(photo_id=photo_id)
+# 4) Ввод фото (или пропуск)
+@message_router.message(AdminBroadcast.waiting_for_photo)
+async def broadcast_input_photo(msg: types.Message, state: FSMContext):
+    if msg.photo:
+        photo_id = msg.photo[-1].file_id
+        await state.update_data(photo=photo_id)
+    elif msg.text.lower() == "пропустить":
+        await state.update_data(photo=None)
+    else:
+        return await msg.answer("Отправьте фото или «пропустить».")
 
+    # Выбор типа рассылки
+    kb = InlineKeyboardBuilder()
+    kb.button(text="Всем администраторам",      callback_data="broadcast_admins")
+    kb.button(text="Всем пользователям", callback_data="broadcast_all")
+    kb.button(text="По категории",               callback_data="broadcast_by_category")
+    kb.adjust(1)
+    await msg.answer("Выберите способ рассылки:", reply_markup=kb.as_markup())
+    await state.set_state(AdminBroadcast.waiting_for_send_choice)
+
+
+# 5) Выбор способа рассылки
+@message_router.callback_query(AdminBroadcast.waiting_for_send_choice)
+async def broadcast_choose_type(cb: types.CallbackQuery, state: FSMContext):
+    choice = cb.data
+    await cb.answer()
+
+    if choice == "broadcast_by_category":
+        # Предлагаем выбрать категорию
+        db = next(get_db())
+        cats = db.query(Category).order_by(Category.name).all()
+        db.close()
+        if not cats:
+            return await cb.message.answer("Категорий нет, добавьте минимум одну.")
+        kb = InlineKeyboardBuilder()
+        for c in cats:
+            kb.button(text=c.name, callback_data=f"broadcast_cat_{c.id}")
+        kb.adjust(2)
+        await cb.message.answer("Выберите категорию для рассылки:", reply_markup=kb.as_markup())
+        return await state.set_state(AdminBroadcast.waiting_for_category)
+
+    # Иначе сразу рассылаем
+    await do_broadcast(cb, state, mode=choice)
+
+
+# 6) Рассылка по конкретной категории
+@message_router.callback_query(AdminBroadcast.waiting_for_category)
+async def broadcast_by_category(cb: types.CallbackQuery, state: FSMContext):
+    cat_id = int(cb.data.split("_")[-1])
+    await cb.answer()
+    await do_broadcast(cb, state, mode="broadcast_cat", category_id=cat_id)
+
+
+# Общая функция рассылки
+async def do_broadcast(cb: types.CallbackQuery, state: FSMContext, mode: str, category_id: int = None):
     data = await state.get_data()
-    admin_text = data["message_text"]
+    text = data["text"]
+    photo = data.get("photo")
+    bot = cb.bot
+    sent = 0
 
-    keyboard = InlineKeyboardBuilder()
-    keyboard.button(text="Подтвердить", callback_data="admin_confirm")
-    keyboard.button(text="Редактировать текст", callback_data="admin_edit")
-    keyboard.button(text="Подтвердить и протестировать", callback_data="send_to_admins")
-    keyboard.adjust(2)
+    # Определяем ближайшее событие для фильтра «уже записались»
+    event = await get_nearest_event()
+    skip_event = event.id if event else None
 
-    await message.answer_photo(
-        photo=photo_id,
-        caption=f"Предпросмотр сообщения:\n\n{admin_text}\n\nПодтвердите или отредактируйте:",
-        reply_markup=keyboard.as_markup()
-    )
-    await state.set_state(AdminBroadcast.waiting_for_confirmation)
+    db = next(get_db())
+    if mode == "broadcast_admins":
+        users = db.query(User).filter(User.is_admin == True).all()
+    elif mode == "broadcast_all":
+        users = db.query(User).filter(User.is_registered == True).all()
+    elif mode == "broadcast_cat":
+        users = db.query(User).join(User.interests).filter(Category.id == category_id).all()
+    else:
+        users = []
 
+    for usr in users:
+        try:
+            uid = int(usr.id)
+        except (ValueError, TypeError):
+            logger.warning(f"Пропускаем невалидный user_id={usr.id}")
+            continue
 
-@message_router.callback_query(F.data.in_(["admin_confirm", "admin_edit", "send_to_admins"]))
-async def admin_confirmation(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
-    if callback.data == "admin_edit":
-        await callback.message.answer("Введите текст сообщения заново:")
-        await state.set_state(AdminBroadcast.waiting_for_text)
-        await callback.answer("Редактирование")
-        return
-    elif callback.data == "send_to_admins":
-        await callback.answer("Начинаю рассылку...")
-        db = next(get_db())
-        sent_count = 0
-
-        data = await state.get_data()
-        admin_text = data["message_text"]
-        photo_id = data["photo_id"]  # ← file_id фото
-
-        # Формируем разметку для кнопок
-        keyboard = InlineKeyboardBuilder()
-        keyboard.button(text="Да, я планирую", callback_data="events_list")
-        keyboard.button(text="Нет, не смогу", callback_data="cannot_attend")
-        keyboard.adjust(2)
-        broadcast_markup = keyboard.as_markup()
+        # Пропускаем уже записавшихся на ближайшее событие
+        if skip_event:
+            if db.query(Registration).filter_by(user_id=uid, event_id=skip_event).first():
+                continue
 
         try:
-            event = await get_nearest_event()
-            admins = db.query(User).filter(User.is_admin).all()
-
-            for user in admins:
-                try:
-                    user_id = int(user.id)
-                except (ValueError, TypeError):
-                    logging.error(f"Невалидный user_id: {user.id}")
-                    continue
-
-                # Пропускаем уже записавшихся на ближайшее событие
-                if db.query(Registration).filter_by(user_id=user_id, event_id=event.id).first():
-                    continue
-
-                try:
-                    await bot.send_photo(
-                        chat_id=user_id,
-                        photo=photo_id,
-                        caption=admin_text,
-                        reply_markup=broadcast_markup
-                    )
-                    sent_count += 1
-                except TelegramForbiddenError as e:
-                    logging.info(f"Пользователь {user.id} {user.first_name, user.last_name} заблокировал бота")
-                    continue
-            await callback.message.answer(f"Рассылка завершена: отправлено {sent_count} сообщений.")
+            if photo:
+                await bot.send_photo(chat_id=uid, photo=photo, caption=text)
+            else:
+                await bot.send_message(chat_id=uid, text=text)
+            sent += 1
+        except TelegramForbiddenError:
+            logger.info(f"Пользователь {uid} заблокировал бота")
         except Exception as e:
-            logging.exception(f"Ошибка в рассылке: {e}")
-            await callback.message.answer("Не удалось выполнить рассылку.")
-        finally:
-            db.close()
-            await state.clear()
-    elif callback.data == "admin_confirm":
-        await callback.answer("Начинаю рассылку...")
-        db = next(get_db())
-        sent_count = 0
+            logger.error(f"Ошибка при отправке {uid}: {e}")
 
-        data = await state.get_data()
-        admin_text = data["message_text"]
-        photo_id = data["photo_id"]  # ← file_id фото
-
-        # Формируем разметку для кнопок
-        keyboard = InlineKeyboardBuilder()
-        keyboard.button(text="Да, я планирую", callback_data="events_list")
-        keyboard.button(text="Нет, не смогу", callback_data="cannot_attend")
-        keyboard.adjust(2)
-        broadcast_markup = keyboard.as_markup()
-
-        try:
-            event = await get_nearest_event()
-            users = db.query(User).filter(User.is_registered == True).all()
-
-            for user in users:
-                try:
-                    user_id = int(user.id)
-                except (ValueError, TypeError):
-                    logging.error(f"Невалидный user_id: {user.id}")
-                    continue
-
-                # Пропускаем уже записавшихся на ближайшее событие
-                if db.query(Registration).filter_by(user_id=user_id, event_id=event.id).first():
-                    continue
-
-                try:
-                    await bot.send_photo(
-                        chat_id=user_id,
-                        photo=photo_id,
-                        caption=admin_text,
-                        reply_markup=broadcast_markup
-                    )
-                    sent_count += 1
-                except TelegramForbiddenError as e:
-                    logging.info(f"Пользователь {user.id} {user.first_name, user.last_name} заблокировал бота")
-                    continue
-            await callback.message.answer(f"Рассылка завершена: отправлено {sent_count} сообщений.")
-        except Exception as e:
-            logging.exception(f"Ошибка в рассылке: {e}")
-            await callback.message.answer("Не удалось выполнить рассылку.")
-        finally:
-            db.close()
-            await state.clear()
-
-
-@message_router.callback_query(F.data == "cannot_attend")
-async def user_cannot_attend(callback: types.CallbackQuery):
-    await callback.message.delete()
-    await callback.message.answer("Хорошо, будем рады видеть тебя на следующую игру.")
-    await callback.answer()
+    db.close()
+    builder = InlineKeyboardBuilder()
+    builder.button(text="В админ панель", callback_data="admin_panel")
+    await cb.message.answer(f"Рассылка завершена. Отправлено: {sent}.", reply_markup=builder.as_markup())
+    await state.clear()

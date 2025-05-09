@@ -187,8 +187,6 @@ async def help_message(callback: CallbackQuery):
 async def show_interest_categories(callback: types.CallbackQuery):
     db = next(get_db())
     cats = db.query(Category).order_by(Category.name).all()
-    logging.info(f"{callback.from_user.id}")
-
     user = db.query(User).filter_by(id=int(callback.from_user.id)).first()
     logging.info(user)
 
@@ -200,8 +198,10 @@ async def show_interest_categories(callback: types.CallbackQuery):
             text=f"{prefix}{c.name}",
             callback_data=f"toggle_interest_{c.id}"
         )
+    builder.button(text="◀️Назад", callback_data="user_profile")
     builder.adjust(2)
-    await callback.message.answer("Выберите свои интересы (кликните, чтобы переключить):", reply_markup=builder.as_markup())
+    await callback.message.edit_text("Выберите свои интересы (кликните, чтобы переключить)\n "
+                                     "✅ Галочкой помечены интересны на которые вы подписаны:", reply_markup=builder.as_markup())
     db.close()
 
 
@@ -223,5 +223,4 @@ async def toggle_interest(callback: types.CallbackQuery):
         db.commit()
         await callback.answer(f"Вы {action} «{cat.name}».")
     db.close()
-    # Перезагружаем клавиатуру, чтобы обновить галочки
     await show_interest_categories(callback)
