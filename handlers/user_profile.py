@@ -24,7 +24,7 @@ async def user_profile_menu(callback: types.CallbackQuery):
         [InlineKeyboardButton(text="✏ Изменить имя и фамилию", callback_data=f"change_username_{user_id}")],
         [InlineKeyboardButton(text="📷 Добавить фото", callback_data="download_avatar")],
         [InlineKeyboardButton(text="📷 Показать моё фото", callback_data="show_avatar")],
-        [InlineKeyboardButton(text="❤️Мой интересы", callback_data="interests")],
+        [InlineKeyboardButton(text="❤️Мои интересы", callback_data="interests")],
         [InlineKeyboardButton(text="🔙 Назад", callback_data="main_menu")]
     ])
 

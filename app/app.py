@@ -7,6 +7,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from db.database import User, Event, Registration, VotingSession
 from .stats import StatsView
+from .interests import InterestsView
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -47,6 +48,7 @@ migrate = Migrate(app, db)
 # admin
 admin = Admin(app, name="EventBot Admin", template_mode="bootstrap4")
 admin.add_view(StatsView(name="Статистика"))
+admin.add_view(InterestsView(name="Подписки пользователей"))
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Event, db.session))
 admin.add_view(ModelView(Registration, db.session))

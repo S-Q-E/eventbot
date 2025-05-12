@@ -1,6 +1,9 @@
 from aiogram import Router, F, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+from sqlalchemy.orm import Session, joinedload
 
+from db.database import get_db, User
 from utils.check_admin import check_admin_rights
 from utils.user_report import generate_user_report
 
@@ -21,6 +24,8 @@ async def admin_panel(callback: types.CallbackQuery):
         [InlineKeyboardButton(text="Отправить сообщения пользователям", callback_data="send_to_users")],
         [InlineKeyboardButton(text="Сгенерировать отчет", callback_data="report")],
         [InlineKeyboardButton(text="Просмотреть аватары пользователей", callback_data="show_users_avatar")],
+        [InlineKeyboardButton(text="Просмотреть интересы пользователей", callback_data="view_user_subscriptions")],
+        [InlineKeyboardButton(text="Отправить логи", callback_data="send_logs")],
         [InlineKeyboardButton(text="Справка", callback_data="admin_help")],
         [InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]
     ]
@@ -64,3 +69,50 @@ async def send_report(callback: types.CallbackQuery):
     report = FSInputFile(file_name)
     await callback.message.answer("Ваш отчет сгенерирован!")
     await callback.message.answer_document(report)
+
+
+@admin_router.callback_query(F.data == "send_logs")
+async def send_logs(callback: types.CallbackQuery):
+    try:
+        with open("bot.log", "r") as f:
+            lines = f.readlines()[-100:]  # последние 50 строк
+            log_chunk = "".join(lines)
+            await callback.message.answer(f"<pre>{log_chunk}</pre>")
+    except Exception as e:
+        await callback.message.answer(f"Ошибка при чтении логов: {e}")
+
+
+@admin_router.callback_query(F.data == "view_user_subscriptions")
+async def view_user_subscriptions(callback: types.CallbackQuery):
+    db: Session = next(get_db())
+    users = db.query(User).options(joinedload(User.interests)).all()
+    db.close()
+
+    messages = []
+    batch = []
+    max_message_length = 4000  # Telegram's message character limit
+    current_length = 0
+
+    for user in users:
+        username = user.username or f"{user.first_name} {user.last_name}"
+        interests = ", ".join([cat.name for cat in user.interests]) or "Нет подписок"
+        user_info = f"👤 <b>{username}</b>\n📌 Подписки: {interests}\n\n"
+        if current_length + len(user_info) > max_message_length:
+            messages.append("".join(batch))
+            batch = [user_info]
+            current_length = len(user_info)
+        else:
+            batch.append(user_info)
+            current_length += len(user_info)
+
+    if batch:
+        messages.append("".join(batch))
+
+    for msg in messages:
+        await callback.message.answer(msg)
+
+    # Кнопка «Назад»
+    keyboard = InlineKeyboardBuilder()
+    keyboard.button(text="🔙 Назад", callback_data="admin_panel")
+    await callback.message.answer("Выберите действие:", reply_markup=keyboard.as_markup())
+    await callback.answer()

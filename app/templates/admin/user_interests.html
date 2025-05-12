@@ -1,0 +1,31 @@
+{% extends 'admin/master.html' %}
+<body>
+    <h1>Подписки пользователей</h1>
+
+    {% for user in users %}
+        <div class="user-card">
+            <strong>{{ user.username or user.first_name ~ ' ' ~ user.last_name }}</strong><br>
+            <em>Подписки:</em>
+            {% if user.interests %}
+                {{ user.interests | map(attribute='name') | join(', ') }}
+            {% else %}
+                Нет подписок
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('admin_users', page=page-1) }}">« Предыдущая</a>
+        {% endif %}
+        Страница {{ page }} из {{ total_pages }}
+        {% if page < total_pages %}
+            <a href="{{ url_for('admin_users', page=page+1) }}">Следующая »</a>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a href="{{ url_for('admin_panel') }}">🔙 Назад в админ-панель</a>
+    </div>
+</body>
+

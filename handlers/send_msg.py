@@ -3,6 +3,7 @@ from aiogram import Router, Bot, types, F
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramForbiddenError
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from db.database import get_db, User, Registration, Category
 from utils.get_nearest_events import get_nearest_event
@@ -71,9 +72,9 @@ async def broadcast_input_photo(msg: types.Message, state: FSMContext):
 
     # Выбор типа рассылки
     kb = InlineKeyboardBuilder()
-    kb.button(text="Всем администраторам",      callback_data="broadcast_admins")
+    kb.button(text="Всем администраторам", callback_data="broadcast_admins")
     kb.button(text="Всем пользователям", callback_data="broadcast_all")
-    kb.button(text="По категории",               callback_data="broadcast_by_category")
+    kb.button(text="По категории", callback_data="broadcast_by_category")
     kb.adjust(1)
     await msg.answer("Выберите способ рассылки:", reply_markup=kb.as_markup())
     await state.set_state(AdminBroadcast.waiting_for_send_choice)
@@ -129,7 +130,12 @@ async def do_broadcast(cb: types.CallbackQuery, state: FSMContext, mode: str, ca
     elif mode == "broadcast_all":
         users = db.query(User).filter(User.is_registered == True).all()
     elif mode == "broadcast_cat":
-        users = db.query(User).join(User.interests).filter(Category.id == category_id).all()
+        users = (
+            db.query(User)
+                .filter(User.is_registered == True)
+                .filter(User.interests.any(Category.id == category_id))
+                .all()
+        )
     else:
         users = []
 
@@ -140,16 +146,20 @@ async def do_broadcast(cb: types.CallbackQuery, state: FSMContext, mode: str, ca
             logger.warning(f"Пропускаем невалидный user_id={usr.id}")
             continue
 
-        # Пропускаем уже записавшихся на ближайшее событие
         if skip_event:
             if db.query(Registration).filter_by(user_id=uid, event_id=skip_event).first():
                 continue
 
+        reply_markup = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="✅ Да, я смогу", callback_data="events_list")],
+            [InlineKeyboardButton(text="❌ Нет, не смогу", callback_data="cant_attend")]
+        ])
+
         try:
             if photo:
-                await bot.send_photo(chat_id=uid, photo=photo, caption=text)
+                await bot.send_photo(chat_id=uid, photo=photo, caption=text, reply_markup=reply_markup)
             else:
-                await bot.send_message(chat_id=uid, text=text)
+                await bot.send_message(chat_id=uid, text=text, reply_markup=reply_markup)
             sent += 1
         except TelegramForbiddenError:
             logger.info(f"Пользователь {uid} заблокировал бота")
@@ -161,3 +171,9 @@ async def do_broadcast(cb: types.CallbackQuery, state: FSMContext, mode: str, ca
     builder.button(text="В админ панель", callback_data="admin_panel")
     await cb.message.answer(f"Рассылка завершена. Отправлено: {sent}.", reply_markup=builder.as_markup())
     await state.clear()
+
+
+@message_router.callback_query(F.data == "cant_attend")
+async def handle_cant_attend(cb: types.CallbackQuery):
+    await cb.answer()
+    await cb.message.answer("Жаль, ждем тебя на следующей игре.")

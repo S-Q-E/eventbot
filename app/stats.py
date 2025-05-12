@@ -3,6 +3,7 @@ from sqlalchemy import func
 from datetime import datetime, timedelta
 from db.database import get_db, Registration, Event, User
 
+
 class StatsView(BaseView):
     @expose('/')
     def index(self):
