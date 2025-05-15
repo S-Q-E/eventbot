@@ -75,7 +75,7 @@ async def send_report(callback: types.CallbackQuery):
 async def send_logs(callback: types.CallbackQuery):
     try:
         with open("bot.log", "r") as f:
-            lines = f.readlines()[-35:]  # последние 50 строк
+            lines = f.readlines()[-20:]  # последние 50 строк
             log_chunk = "".join(lines)
             await callback.message.answer(f"<pre>{log_chunk}</pre>")
     except Exception as e:
@@ -90,7 +90,7 @@ async def view_user_subscriptions(callback: types.CallbackQuery):
 
     messages = []
     batch = []
-    max_message_length = 4000  # Telegram's message character limit
+    max_message_length = 4000
     current_length = 0
 
     for user in users:

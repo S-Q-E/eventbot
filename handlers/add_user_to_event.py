@@ -15,7 +15,7 @@ class RegisterUserToEvent(StatesGroup):
     wait_event_id = State()
 
 
-@manual_register_user_router.callback_query(F.data.startswith("add_user_to_event_"))
+@manual_register_user_router.callback_query(F.data.startswith("`add_user_to_event_"))
 async def start_register_user_to_event(callback: types.CallbackQuery, state: FSMContext):
     """
     Старт регистрации пользователя на событие.

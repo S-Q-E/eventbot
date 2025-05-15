@@ -262,6 +262,7 @@ async def cmd_edit_interests(callback: types.CallbackQuery):
             "👥 Выберите пользователя для редактирования интересов:",
             reply_markup=paginator.as_markup()
         )
+
     except Exception as e:
         await callback.message.answer(f"❌ Ошибка: {e}")
 

@@ -1,4 +1,6 @@
 {% extends 'admin/master.html' %}
+
+{% block body %}
 <body>
     <h1>Подписки пользователей</h1>
 
@@ -23,9 +25,5 @@
             <a href="{{ url_for('admin_users', page=page+1) }}">Следующая »</a>
         {% endif %}
     </div>
-
-    <div style="margin-top: 20px;">
-        <a href="{{ url_for('admin_panel') }}">🔙 Назад в админ-панель</a>
-    </div>
 </body>
-
+{% endblock %}
