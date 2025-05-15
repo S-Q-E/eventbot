@@ -24,3 +24,5 @@ class InterestsView(BaseView):
             page=page,
             total_pages=total_pages
         )
+
+

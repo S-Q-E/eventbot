@@ -25,6 +25,7 @@ async def admin_panel(callback: types.CallbackQuery):
         [InlineKeyboardButton(text="Сгенерировать отчет", callback_data="report")],
         [InlineKeyboardButton(text="Просмотреть аватары пользователей", callback_data="show_users_avatar")],
         [InlineKeyboardButton(text="Просмотреть интересы пользователей", callback_data="view_user_subscriptions")],
+        [InlineKeyboardButton(text="Редактировать интересы пользователей", callback_data="edit_user_interests")],
         [InlineKeyboardButton(text="Отправить логи", callback_data="send_logs")],
         [InlineKeyboardButton(text="Справка", callback_data="admin_help")],
         [InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]
@@ -75,7 +76,7 @@ async def send_report(callback: types.CallbackQuery):
 async def send_logs(callback: types.CallbackQuery):
     try:
         with open("bot.log", "r") as f:
-            lines = f.readlines()[-100:]  # последние 50 строк
+            lines = f.readlines()[-35:]  # последние 50 строк
             log_chunk = "".join(lines)
             await callback.message.answer(f"<pre>{log_chunk}</pre>")
     except Exception as e:
@@ -116,3 +117,4 @@ async def view_user_subscriptions(callback: types.CallbackQuery):
     keyboard.button(text="🔙 Назад", callback_data="admin_panel")
     await callback.message.answer("Выберите действие:", reply_markup=keyboard.as_markup())
     await callback.answer()
+

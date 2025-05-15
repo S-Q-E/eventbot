@@ -6,11 +6,13 @@ from aiogram import types, Router, F
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.utils.media_group import MediaGroupBuilder
-from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session, joinedload
 from db.database import User, get_db, Category
+from aiogram_widgets.pagination import KeyboardPaginator
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputFile, InputMediaPhoto, FSInputFile
 from aiogram.fsm.state import State, StatesGroup
+
 user_profile_router = Router()
 
 
@@ -224,3 +226,135 @@ async def toggle_interest(callback: types.CallbackQuery):
         await callback.answer(f"Вы {action} «{cat.name}».")
     db.close()
     await show_interest_categories(callback)
+
+
+USERS_PER_PAGE = 10
+
+
+@user_profile_router.callback_query(F.data == "edit_user_interests")
+async def cmd_edit_interests(callback: types.CallbackQuery):
+    """
+    Старт: админ вводит команду, получает первую страницу пользователей.
+    """
+    try:
+        db = next(get_db())
+        users = db.query(User).order_by(User.username).all()
+        db.close()
+
+        # Подготавливаем «сырые» данные для пагинатора:
+        # можно передавать dict или InlineKeyboardButton напрямую
+        data = [
+            {"text": u.username or f"{u.first_name} {u.last_name}", "callback_data": f"edit_uinterest_{u.id}"}
+            for u in users
+        ]
+
+        paginator = KeyboardPaginator(
+            data,  # data
+            user_profile_router,  # router
+            [],  # additional_buttons
+            ["⏪", "⬅️", "➡️", "⏩"],  # pagination_buttons
+            USERS_PER_PAGE,
+            (1,1)
+        )
+
+        # Шлём первую страницу
+        await callback.message.answer(
+            "👥 Выберите пользователя для редактирования интересов:",
+            reply_markup=paginator.as_markup()
+        )
+    except Exception as e:
+        await callback.message.answer(f"❌ Ошибка: {e}")
+
+
+@user_profile_router.callback_query(F.data.startswith("edit_uinterest_"))
+async def edit_user(callback: CallbackQuery):
+    try:
+        # Правильное извлечение ID
+        user_id = int(callback.data[len("edit_uinterest_"):])
+
+        db = next(get_db())
+        user = db.query(User).options(joinedload(User.interests)).filter(User.id == user_id).first()
+        if not user:
+            # Если вдруг пользователь удалён или ID неверен
+            await callback.answer("❗ Пользователь не найден", show_alert=True)
+            db.close()
+            return
+        categories = db.query(Category).order_by(Category.name).all()
+        db.close()
+
+        builder = InlineKeyboardBuilder()
+        for cat in categories:
+            subscribed = cat in user.interests
+            builder.button(
+                text=f"{'✅' if subscribed else '☑️'} {cat.name}",
+                callback_data=f"catchinterest_{user_id}_{cat.id}"
+            )
+        builder.button(text="🔙 Назад", callback_data="back_to_user_list")
+        builder.adjust(2)
+
+        await callback.message.edit_text(
+            f"✍️ Редактируем интересы <b>{user.username or user.first_name}</b>:",
+            parse_mode="HTML",
+            reply_markup=builder.as_markup()
+        )
+        await callback.answer()
+    except Exception as e:
+        await callback.message.answer(f"❌ Ошибка при загрузке категорий: {e}")
+        await callback.answer()
+
+
+@user_profile_router.callback_query(F.data == "back_to_user_list")
+async def back_to_list(callback: CallbackQuery):
+    """
+    Возврат к списку пользователей — просто повторяем старт /edit_interests.
+    """
+    # вызывает тот же код, что на /edit_interests
+    await cmd_edit_interests(callback)
+    await callback.answer()
+
+
+@user_profile_router.callback_query(F.data.startswith("catchinterest_"))
+async def toggle_interest(callback: CallbackQuery):
+    db = next(get_db())
+    try:
+        _, user_id_str, cat_id_str = callback.data.split("_")
+        user_id, cat_id = int(user_id_str), int(cat_id_str)
+
+        user = (
+            db.query(User)
+              .options(joinedload(User.interests))
+              .filter(User.id == user_id)
+              .first()
+        )
+        category = db.query(Category).get(cat_id)
+
+        if not user or not category:
+            return await callback.answer("❌ Пользователь или категория не найдены", show_alert=True)
+
+        if category in user.interests:
+            user.interests.remove(category)
+        else:
+            user.interests.append(category)
+
+        db.commit()
+
+        # теперь безопасно строим клавиатуру, session всё ещё жива
+        categories = db.query(Category).order_by(Category.name).all()
+
+        builder = InlineKeyboardBuilder()
+        for cat in categories:
+            subscribed = cat in user.interests   # session открыта, lazy load работает
+            builder.button(
+                text=f"{'✅' if subscribed else '☑️'} {cat.name}",
+                callback_data=f"catchinterest_{user_id}_{cat.id}"
+            )
+        builder.button(text="🔙 Назад", callback_data="back_to_user_list")
+        builder.adjust(2)
+
+        await callback.answer("🔄 Интерес обновлён")
+    except Exception as e:
+        await callback.message.answer(f"❌ Ошибка",)
+        logging.info(f"❌ Ошибка: {e}")
+        await callback.answer()
+    finally:
+        db.close()

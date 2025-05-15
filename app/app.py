@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from db.database import User, Event, Registration, VotingSession
+from db.database import User, Event, Registration, VotingSession, Category
 from .stats import StatsView
 from .interests import InterestsView
 
@@ -52,7 +52,7 @@ admin.add_view(InterestsView(name="Подписки пользователей")
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Event, db.session))
 admin.add_view(ModelView(Registration, db.session))
-admin.add_view(ModelView(VotingSession, db.session))
+admin.add_view(ModelView(Category, db.session))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80)

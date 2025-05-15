@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 ADMIN = os.getenv("ADMIN_2")
+ADMIN_2 = os.getenv("ADMIN_3")
 
 event_list_router = Router()
 EVENTS_PER_PAGE = 4
@@ -171,6 +172,11 @@ async def confirm_cancel_registration(callback_query: types.CallbackQuery):
                 ADMIN,
                 f"Пользователь {registration.user.first_name} {registration.user.last_name} отменил запись на событие {event.name}"
             )
+            await callback_query.bot.send_message(
+                ADMIN_2,
+                f"Пользователь {registration.user.first_name} {registration.user.last_name} отменил запись на событие {event.name}"
+            )
+
             db.delete(registration)
             event.current_participants -= 1
             db.commit()
