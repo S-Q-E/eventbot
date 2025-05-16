@@ -25,7 +25,7 @@ async def get_user_lastname(message: types.Message, state: FSMContext):
     try:
         first_name, last_name = message.text.split(" ")
         await state.update_data(first_name=first_name)
-        await state.update_data(last_name_name=last_name)
+        await state.update_data(last_name=last_name)
         await message.answer("Теперь введите номер телефона")
         await state.set_state(AddManualUser.wait_user_phone)
     except IndexError as e:
