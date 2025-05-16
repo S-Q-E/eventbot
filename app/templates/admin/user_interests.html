@@ -90,7 +90,7 @@
                     <td>{{ user.id }}</td>
                     <td>{{ user.username or (user.first_name ~ ' ' ~ user.last_name) }}</td>
                     <td>
-                        <select name="interests_{{ user.id }}[]" multiple>
+                        <select name="interests_{{ user.id }}" multiple>
                             {% for cat in all_categories %}
                                 <option value="{{ cat.id }}"
                                     {% if cat in user.interests %}selected{% endif %}>
