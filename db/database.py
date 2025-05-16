@@ -15,8 +15,10 @@ DATABASE_URL = "sqlite:///events.db"
 
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    poolclass=NullPool
+    pool_size=20,
+    max_overflow=40,
+    pool_timeout=30,
+    pool_recycle=1800
 )
 
 
