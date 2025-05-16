@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+
+from app.admin_panel import MyHomeView
 from db.database import User, Event, Registration, VotingSession, Category
 from .stats import StatsView
 from .interests import InterestsView
@@ -46,7 +48,7 @@ migrate = Migrate(app, db)
 
 
 # admin
-admin = Admin(app, name="EventBot Admin", template_mode="bootstrap4")
+admin = Admin(app, index_view=MyHomeView(), name='Моя Админка', template_mode='bootstrap3')
 admin.add_view(StatsView(name="Статистика"))
 admin.add_view(InterestsView(name="Подписки пользователей"))
 admin.add_view(ModelView(User, db.session))
