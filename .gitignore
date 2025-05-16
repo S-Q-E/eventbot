@@ -2,3 +2,4 @@ events.db
 .env
 bot.log
 user_avatars
+app.log

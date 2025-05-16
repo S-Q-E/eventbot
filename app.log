@@ -1,0 +1,37 @@
+2025-04-29 14:18:21,456 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:80
+ * Running on http://192.168.156.25:80
+2025-04-29 14:18:21,457 - INFO - [33mPress CTRL+C to quit[0m
+2025-04-29 14:18:22,903 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:22] "[33mGET / HTTP/1.1[0m" 404 -
+2025-04-29 14:18:23,011 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:23] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-04-29 14:18:26,838 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:26] "[33mGET /ad HTTP/1.1[0m" 404 -
+2025-04-29 14:18:30,988 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:30] "[32mGET /admin HTTP/1.1[0m" 308 -
+2025-04-29 14:18:31,274 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:31] "GET /admin/ HTTP/1.1" 200 -
+2025-04-29 14:18:31,935 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:31] "GET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1" 200 -
+2025-04-29 14:18:31,941 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:31] "GET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1" 200 -
+2025-04-29 14:18:31,956 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:31] "GET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1" 200 -
+2025-04-29 14:18:31,962 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:31] "GET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1" 200 -
+2025-04-29 14:18:31,978 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:31] "GET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1" 200 -
+2025-04-29 14:18:32,060 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:32] "GET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1" 200 -
+2025-04-29 14:18:32,097 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:32] "GET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1" 200 -
+2025-04-29 14:18:32,115 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:32] "GET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1" 200 -
+2025-04-29 14:18:32,126 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:32] "GET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1" 200 -
+2025-04-29 14:18:32,132 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:32] "GET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1" 200 -
+2025-04-29 14:18:32,156 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:32] "GET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1" 200 -
+2025-04-29 14:18:32,156 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:32] "GET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1" 200 -
+2025-04-29 14:18:32,254 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:32] "GET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1" 200 -
+2025-04-29 14:18:33,638 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "GET /admin/statsview/ HTTP/1.1" 200 -
+2025-04-29 14:18:33,682 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/bootstrap/bootstrap4/swatch/default/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,705 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/bootstrap/bootstrap4/css/bootstrap.min.css?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,710 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/admin/css/bootstrap4/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,713 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/bootstrap/bootstrap4/css/font-awesome.min.css?v=4.7.0 HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,718 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,730 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/bootstrap/bootstrap4/js/popper.min.js HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,734 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/bootstrap/bootstrap4/js/bootstrap.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,760 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/vendor/moment.min.js?v=2.9.0 HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,773 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/vendor/bootstrap4/util.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,782 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/vendor/bootstrap4/dropdown.js?v=4.3.1 HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,785 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,789 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
+2025-04-29 14:18:33,793 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
