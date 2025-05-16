@@ -3,6 +3,7 @@ from flask_admin import BaseView, expose
 from sqlalchemy.orm import joinedload
 from db.database import get_db, User, Category
 
+
 class InterestsView(BaseView):
     @expose("/", methods=["GET", "POST"])
     def index(self):

@@ -185,48 +185,94 @@ async def help_message(callback: CallbackQuery):
                                   reply_markup=markup)
 
 
+from sqlalchemy.orm import joinedload
+
 @user_profile_router.callback_query(F.data == "interests")
 async def show_interest_categories(callback: types.CallbackQuery):
+    # 1) Новая сессия
     db = next(get_db())
-    cats = db.query(Category).order_by(Category.name).all()
-    user = db.query(User).filter_by(id=int(callback.from_user.id)).first()
-    logging.info(user)
-
-    builder = InlineKeyboardBuilder()
-    for c in cats:
-        # отмечаем, подписан ли пользователь
-        prefix = "✅ " if c in user.interests else ""
-        builder.button(
-            text=f"{prefix}{c.name}",
-            callback_data=f"toggle_interest_{c.id}"
+    try:
+        # 2) Сразу подгружаем связи interests
+        user = (
+            db.query(User)
+              .options(joinedload(User.interests))
+              .filter(User.id == callback.from_user.id)
+              .first()
         )
-    builder.button(text="◀️Назад", callback_data="user_profile")
-    builder.adjust(2)
-    await callback.message.edit_text("Выберите свои интересы (кликните, чтобы переключить)\n "
-                                     "✅ Галочкой помечены интересны на которые вы подписаны:", reply_markup=builder.as_markup())
-    db.close()
+        if not user:
+            return await callback.answer("Пользователь не найден", show_alert=True)
+
+        cats = db.query(Category).order_by(Category.name).all()
+
+        builder = InlineKeyboardBuilder()
+        for c in cats:
+            prefix = "✅ " if c in user.interests else ""
+            builder.button(
+                text=f"{prefix}{c.name}",
+                callback_data=f"toggleinterest_{user.id}_{c.id}"
+            )
+        builder.button(text="◀️ Назад", callback_data="user_profile")
+        builder.adjust(2)
+
+        await callback.message.edit_text(
+            "Выберите свои интересы (кликните, чтобы переключить)\n"
+            "✅ — помечены подписки, на которые вы уже подписаны:",
+            reply_markup=builder.as_markup()
+        )
+    finally:
+        db.close()
+    await callback.answer()
 
 
-@user_profile_router.callback_query(F.data.startswith("toggle_interest_"))
+@user_profile_router.callback_query(F.data.startswith("toggleinterest_"))
 async def toggle_interest(callback: types.CallbackQuery):
-    cat_id = int(callback.data.split("_")[-1])
-    db = next(get_db())
-    user = db.query(User).filter_by(id=callback.from_user.id).first()
-    cat = db.query(Category).get(cat_id)
-    if not cat:
-        await callback.answer("Категория не найдена.", show_alert=True)
-    else:
-        if cat in user.interests:
-            user.interests.remove(cat)
-            action = "отписались от"
-        else:
-            user.interests.append(cat)
-            action = "подписались на"
-        db.commit()
-        await callback.answer(f"Вы {action} «{cat.name}».")
-    db.close()
-    await show_interest_categories(callback)
+    # Разбираем callback_data
+    _, user_id_str, cat_id_str = callback.data.split("_", 2)
+    user_id, cat_id = int(user_id_str), int(cat_id_str)
 
+    db = next(get_db())
+    try:
+        # Подгружаем user вместе с interests
+        user = (
+            db.query(User)
+              .options(joinedload(User.interests))
+              .filter(User.id == user_id)
+              .first()
+        )
+        category = db.query(Category).filter(Category.id == cat_id).first()
+
+        if not user or not category:
+            return await callback.answer("Пользователь или категория не найдены", show_alert=True)
+
+        # toggle
+        if category in user.interests:
+            user.interests.remove(category)
+        else:
+            user.interests.append(category)
+
+        db.commit()
+
+        db.refresh(user)
+
+        # Перестраиваем клавиатуру
+        cats = db.query(Category).order_by(Category.name).all()
+        builder = InlineKeyboardBuilder()
+        for c in cats:
+            prefix = "✅ " if c in user.interests else ""
+            builder.button(
+                text=f"{prefix}{c.name}",
+                callback_data=f"toggleinterest_{user.id}_{c.id}"
+            )
+        builder.button(text="◀️ Назад", callback_data="user_profile")
+        builder.adjust(2)
+
+        await callback.answer("🔄 Интерес обновлён")
+    except Exception as e:
+        logging.exception("Ошибка при toggle_interest")
+        # plain-text, без HTML
+        await callback.answer(f"❌ Ошибка: {e}", show_alert=True)
+    finally:
+        db.close()
 
 USERS_PER_PAGE = 10
 

@@ -15,7 +15,7 @@ engine = create_engine(
     pool_recycle=1800
 )
 
-Session = sessionmaker(bind=engine)
+Session = sessionmaker(bind=engine, expire_on_commit=True)
 Base = declarative_base()
 
 
