@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import (
     create_engine, Column, Integer, String, Boolean,
-    ForeignKey, DateTime, UniqueConstraint, Table, text
+    ForeignKey, DateTime, UniqueConstraint, Table, text, NullPool
 )
 from sqlalchemy.orm import (
     declarative_base, relationship, sessionmaker, scoped_session
@@ -15,12 +15,10 @@ DATABASE_URL = "sqlite:///events.db"
 
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False},  # Важно для SQLite и многопоточности
-    pool_size=5,
-    max_overflow=10,
-    pool_timeout=30,
-    pool_recycle=1800
+    connect_args={"check_same_thread": False},
+    poolclass=NullPool
 )
+
 
 # Настройка сессии
 SessionFactory = sessionmaker(bind=engine, expire_on_commit=True)
