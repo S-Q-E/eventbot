@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import (
     create_engine, Column, Integer, String, Boolean,
-    ForeignKey, DateTime, UniqueConstraint, Table
+    ForeignKey, DateTime, UniqueConstraint, Table, text
 )
 from sqlalchemy.orm import (
     declarative_base, relationship, sessionmaker, scoped_session
@@ -33,7 +33,7 @@ Base = declarative_base()
 def get_db():
     db = Session()
     try:
-        db.execute("PRAGMA foreign_keys = ON")  # включаем поддержку внешних ключей
+        db.execute(text("PRAGMA foreign_keys = ON"))
         db.expire_all()  # очищаем кэш (важно для бота и Flask)
         yield db
         db.commit()
