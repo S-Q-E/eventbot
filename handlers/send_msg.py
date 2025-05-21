@@ -177,3 +177,69 @@ async def do_broadcast(cb: types.CallbackQuery, state: FSMContext, mode: str, ca
 async def handle_cant_attend(cb: types.CallbackQuery):
     await cb.answer()
     await cb.message.answer("Жаль, ждем тебя на следующей игре.")
+
+
+class MessageStates(StatesGroup):
+    waiting_for_user_id = State()
+    waiting_for_message_text = State()
+
+
+@message_router.callback_query(F.data == "send_priv_message")
+async def start_send_message(callback: types.CallbackQuery, state: FSMContext):
+    try:
+        db = next(get_db())
+        users = db.query(User).order_by(User.first_name.asc(), User.last_name.asc()).all()
+        if not users:
+            await callback.message.answer("Список пользователей пуст.")
+            return
+
+        user_lines = []
+        for user in users:
+            full_name = f"{user.first_name or ''} {user.last_name or ''}".strip()
+            user_line = f"{full_name} — <code>{user.id}</code>"
+            user_lines.append(user_line)
+
+        # Разделим список на части по 50 пользователей
+        chunk_size = 50
+        for i in range(0, len(user_lines), chunk_size):
+            chunk = user_lines[i:i + chunk_size]
+            text = "\n".join(chunk)
+            await callback.message.answer(text)
+
+        await callback.message.answer("Введите ID пользователя, которому нужно отправить сообщение:")
+        await state.set_state(MessageStates.waiting_for_user_id)
+    except Exception as e:
+        await callback.message.answer(f"Ошибка при получении списка пользователей: {e}")
+
+
+@message_router.message(MessageStates.waiting_for_user_id)
+async def get_user_id(message: types.Message, state: FSMContext):
+    try:
+        user_id = int(message.text)
+        db = next(get_db())
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            await message.answer("Пользователь с таким ID не найден. Введите ID снова.")
+            return
+
+        await state.update_data(user_id=user_id)
+        await message.answer("Введите текст сообщения:")
+        await state.set_state(MessageStates.waiting_for_message_text)
+    except ValueError:
+        await message.answer("ID должен быть числом. Попробуйте снова.")
+    except Exception as e:
+        await message.answer(f"Ошибка при обработке ID: {e}")
+
+
+@message_router.message(MessageStates.waiting_for_message_text)
+async def send_message_to_user(message: types.Message, state: FSMContext):
+    data = await state.get_data()
+    user_id = data.get("user_id")
+    try:
+        builder = InlineKeyboardBuilder()
+        builder.button(text="Назад", callback_data="admin_panel")
+        await message.bot.send_message(chat_id=user_id, text=message.text, reply_markup=builder.as_markup())
+        await message.answer("Сообщение успешно отправлено.")
+    except Exception as e:
+        await message.answer(f"Не удалось отправить сообщение: {e}")
+    await state.clear()

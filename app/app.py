@@ -53,7 +53,6 @@ admin.add_view(StatsView(name="Статистика"))
 admin.add_view(InterestsView(name="Подписки пользователей"))
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Event, db.session))
-admin.add_view(ModelView(Registration, db.session))
 admin.add_view(ModelView(Category, db.session))
 
 if __name__ == '__main__':
