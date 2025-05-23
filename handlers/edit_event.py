@@ -4,8 +4,9 @@ from aiogram import types, F, Router
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from db.database import get_db, Event
+from db.database import get_db, Event, Category
 from handlers.delete_event import event_action_markup
 from utils.get_coordinates import get_location_by_address
 
@@ -24,6 +25,7 @@ class EditEventStates(StatesGroup):
     editing_price = State()
     editing_address = State()
     editing_max_participants = State()
+    edit_category = State()
 
 
 @edit_event_router.callback_query(F.data.startswith("edit_event_"))
@@ -35,6 +37,7 @@ async def edit_event(callback_query: types.CallbackQuery):
             [InlineKeyboardButton(text="📍 Адрес", callback_data=f"edit_address_{event_id}")],
             [InlineKeyboardButton(text="🕒 Время", callback_data=f"edit_time_{event_id}")],
             [InlineKeyboardButton(text="💰 Цена", callback_data=f"edit_price_{event_id}")],
+            [InlineKeyboardButton(text="🏐 Категория", callback_data=f"set_category_{event_id}")],
             [InlineKeyboardButton(text="🗓 Описание", callback_data=f"edit_desc_{event_id}")],
             [InlineKeyboardButton(text="↕️Количество участников", callback_data=f"edit_participants_{event_id}")],
             [InlineKeyboardButton(text="🔙 Назад", callback_data=f"back_to_delete_event_button_{event_id}")]
@@ -253,3 +256,46 @@ async def save_new_event_name(message: types.Message, state: FSMContext):
         logging.info(f"Ошибка в edit_event: {e}")
 
 
+@edit_event_router.callback_query(F.data.startswith("set_category_"))
+async def set_event_category(callback: types.CallbackQuery, state: FSMContext):
+    event_id = int(callback.data.split("_")[-1])
+    with next(get_db()) as db:
+        try:
+            categories = db.query(Category).order_by(Category.name).all()
+            kb = InlineKeyboardBuilder()
+            for category in categories:
+                kb.button(
+                    text=category.name,
+                    callback_data=f"setting_category_{category.id}"
+                )
+            await callback.message.answer("Выберите категорию", reply_markup=kb.as_markup())
+            await state.update_data(event_id=event_id)
+            await state.set_state(EditEventStates.edit_category)
+        except Exception as e:
+            logging.info(f"Ошибка в set_event_category {e}")
+            await callback.message.answer("Неизвестная ошибка")
+        finally:
+            db.close()
+
+
+@edit_event_router.callback_query(EditEventStates.edit_category)
+async def edit_event_category(callback: types.CallbackQuery, state: FSMContext):
+    category_id = callback.data.split("_")[-1]
+    data = await state.get_data()
+    event_id = data.get("event_id")
+    kb = InlineKeyboardBuilder()
+    kb.button(text="Назад", callback_data="admin_panel")
+    with next(get_db()) as db:
+        try:
+            event = db.query(Event).filter_by(id=event_id).first()
+            if not event:
+                await callback.message.answer("Событие не найдено")
+            else:
+                event.category_id = category_id
+                db.commit()
+                await callback.message.answer("Категория события обновлена!", reply_markup=kb.as_markup())
+        except Exception as e:
+            await callback.message.answer("Ошибка при изменений категории")
+            logging.info(f"Ошибка в dit_event_category {e}")
+        finally:
+            db.close()
