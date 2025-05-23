@@ -30,12 +30,13 @@ async def list_registered_users(callback: types.CallbackQuery, state: FSMContext
 
         user_info = "Список пользователей:\n"
         for index, user in enumerate(users, 1):
-            user_info += f"{index}. ID: <code>{user.id}</code>, {user.first_name} {user.last_name}\n"
+            user_info += f"{index}. ID: <code>{user.id}</code>, {user.username} {user.first_name} {user.last_name}\n"
 
         for chunk in split_message(user_info):
             await callback.message.answer(chunk)
 
         await callback.message.answer(text="Введите ID пользователя которого хотите удалить\n")
+        await state.set_state(DeleteUserState.waiting_for_user_id)
 
     except Exception as e:
         await callback.message.answer("Произошла ошибка при получении списка пользователей.")

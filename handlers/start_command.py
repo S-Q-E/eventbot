@@ -1,7 +1,5 @@
 import logging
-from sched import scheduler
-
-from aiogram import types, Router, F
+from aiogram import types, Router
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from db.database import get_db, User
@@ -26,7 +24,7 @@ async def start_command(message: types.Message):
     user_id = message.from_user.id
 
     # Кнопки
-    events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_page_1")
+    events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_list")
     registration_button = InlineKeyboardButton(text="➕ Регистрация", callback_data="start_reg")
 
     try:
@@ -43,14 +41,15 @@ async def start_command(message: types.Message):
             new_user = User(id=user_id, username=message.from_user.username)
             db.add(new_user)
             db.commit()
-            await message.answer("Пройдите регистрацию для получения всех возможностей бота.", reply_markup=markup)
+            await message.answer(f"Привет, <b>{message.from_user.username}!</b>\n\n"
+                                 f"✅ Это приложение для участников спортивных событий\n"
+                                 f"✅ Здесь вы найдете подходящее занятие для себя, выбрав локацию и время", reply_markup=markup)
         except Exception as e:
             await message.answer(f"Произошла ошибка при регистрации. Попробуйте снова.\n"
                                  f"Ошибка{e}")
-        else:
-            await message.answer("Вы не завершили регистрацию. Пожалуйста, пройдите её.", reply_markup=markup)
     else:
         markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [registration_button]])
-        await message.answer("🎉🎉🎉🎉🎉 EVENTBOT 🎉🎉🎉🎉🎉\n\n"
-                             f"Добро пожаловать! <b>{message.from_user.username}</b>", reply_markup=markup)
-
+        await message.answer(f"Привет, <b>{message.from_user.username}!</b>\n\n"
+                             f"✅ Это приложение для участников спортивных событий\n"
+                             f"✅ Здесь вы найдете подходящее занятие для себя, выбрав локацию и время.\n\n"
+                             , reply_markup=markup)
