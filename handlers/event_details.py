@@ -67,6 +67,12 @@ async def event_details(callback: types.CallbackQuery):
                         callback_data=f"join_{event_id}"
                     )
                 ])
+                buttons.append(([
+                    InlineKeyboardButton(
+                        text="👥 Записать друга",
+                        callback_data=f"invite_{event.id}"
+                    )
+                ]))
         else:
             buttons.append([
                 InlineKeyboardButton(

@@ -1,9 +1,11 @@
+from aiogram.utils.deep_linking import create_start_link
 from aiogram import types, F, Router
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 from sqlalchemy import asc
-
+from config.config import load_config
 from db.database import get_db, User, Event, Registration
 from utils.split_message import split_message
 
@@ -111,3 +113,18 @@ async def register_user_to_event(message: types.Message, state: FSMContext):
         )
         db.close()
         await state.clear()
+
+
+@manual_register_user_router.callback_query(F.data.startswith("invite_"))
+async def generate_invite_link(callback: types.CallbackQuery):
+    FLASK_BASE_URL = "http://127.0.0.1:5000/"
+    event_id = callback.data.split("_")[1]
+    inviter_id = callback.from_user.id
+
+    # Ссылка на веб-интерфейс добавления участников
+    flask_url = f"{FLASK_BASE_URL}/event/{event_id}/add-participants"
+    kb = InlineKeyboardBuilder()
+    kb.button(text="Перейти в форму заполнения", url=flask_url)
+    await callback.message.answer(
+        f"🌐 Добавление участников к событию:\n", reply_markup=kb.as_markup())
+

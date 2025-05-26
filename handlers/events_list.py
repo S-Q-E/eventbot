@@ -49,9 +49,7 @@ async def list_events_by_category(callback: types.CallbackQuery):
     Показывает события выбранной категории с пагинацией.
     Ожидает callback.data вида "filter_cat_{cat_id}_{page}".
     """
-    # Разбор callback_data
     parts = callback.data.split("_")
-    # parts = ["filter", "cat", "{cat_id}", "{page}"]
     try:
         cat_id = int(parts[2])
     except (IndexError, ValueError):

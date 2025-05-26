@@ -35,3 +35,347 @@
 2025-04-29 14:18:33,785 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/vendor/select2/select2.min.js?v=4.2.1 HTTP/1.1[0m" 304 -
 2025-04-29 14:18:33,789 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/vendor/multi-level-dropdowns-bootstrap/bootstrap4-dropdown-ml-hack.js HTTP/1.1[0m" 304 -
 2025-04-29 14:18:33,793 - INFO - 192.168.156.25 - - [29/Apr/2025 14:18:33] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:00:22,680 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-26 12:00:22,682 - INFO - [33mPress CTRL+C to quit[0m
+2025-05-26 12:00:26,199 - INFO - 127.0.0.1 - - [26/May/2025 12:00:26] "[33mGET / HTTP/1.1[0m" 404 -
+2025-05-26 12:00:26,283 - INFO - 127.0.0.1 - - [26/May/2025 12:00:26] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-26 12:03:08,671 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-26 12:03:08,671 - INFO - [33mPress CTRL+C to quit[0m
+2025-05-26 12:03:28,744 - INFO - 127.0.0.1 - - [26/May/2025 12:03:28] "[33mGET / HTTP/1.1[0m" 404 -
+2025-05-26 12:03:31,951 - INFO - 127.0.0.1 - - [26/May/2025 12:03:31] "[32mGET /admin HTTP/1.1[0m" 308 -
+2025-05-26 12:03:31,970 - ERROR - Exception on /admin/ [GET]
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask_admin\base.py", line 69, in inner
+    return self._run_view(f, *args, **kwargs)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask_admin\base.py", line 369, in _run_view
+    return fn(self, *args, **kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\admin_panel.py", line 9, in index
+    return self.render('admin/myhome.html', message=message)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask_admin\base.py", line 308, in render
+    return render_template(template, **kwargs)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\templating.py", line 149, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\jinja2\environment.py", line 1084, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\jinja2\environment.py", line 1013, in get_template
+    return self._load_template(name, globals)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\jinja2\environment.py", line 972, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\jinja2\loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\templating.py", line 65, in get_source
+    return self._get_source_fast(environment, template)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\templating.py", line 99, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: admin/myhome.html
+2025-05-26 12:03:32,146 - INFO - 127.0.0.1 - - [26/May/2025 12:03:32] "[35m[1mGET /admin/ HTTP/1.1[0m" 500 -
+2025-05-26 12:04:04,480 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-26 12:04:04,480 - INFO - [33mPress CTRL+C to quit[0m
+2025-05-26 12:04:21,043 - INFO - 127.0.0.1 - - [26/May/2025 12:04:21] "[33mGET / HTTP/1.1[0m" 404 -
+2025-05-26 12:04:24,036 - INFO - 127.0.0.1 - - [26/May/2025 12:04:24] "GET /admin/ HTTP/1.1" 200 -
+2025-05-26 12:04:24,673 - INFO - 127.0.0.1 - - [26/May/2025 12:04:24] "GET /admin/static/bootstrap/bootstrap3/swatch/default/bootstrap.min.css?v=3.3.5 HTTP/1.1" 200 -
+2025-05-26 12:04:24,699 - INFO - 127.0.0.1 - - [26/May/2025 12:04:24] "GET /admin/static/admin/css/bootstrap3/submenu.css HTTP/1.1" 200 -
+2025-05-26 12:04:24,748 - INFO - 127.0.0.1 - - [26/May/2025 12:04:24] "GET /admin/static/admin/css/bootstrap3/admin.css?v=1.1.1 HTTP/1.1" 200 -
+2025-05-26 12:04:24,748 - INFO - 127.0.0.1 - - [26/May/2025 12:04:24] "GET /admin/static/bootstrap/bootstrap3/css/bootstrap-theme.min.css?v=3.3.5 HTTP/1.1" 200 -
+2025-05-26 12:04:24,813 - INFO - 127.0.0.1 - - [26/May/2025 12:04:24] "GET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1" 200 -
+2025-05-26 12:04:24,858 - INFO - 127.0.0.1 - - [26/May/2025 12:04:24] "GET /admin/static/vendor/moment.min.js?v=2.22.2 HTTP/1.1" 200 -
+2025-05-26 12:04:24,861 - INFO - 127.0.0.1 - - [26/May/2025 12:04:24] "GET /admin/static/bootstrap/bootstrap3/js/bootstrap.min.js?v=3.3.5 HTTP/1.1" 200 -
+2025-05-26 12:04:24,912 - INFO - 127.0.0.1 - - [26/May/2025 12:04:24] "GET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1" 200 -
+2025-05-26 12:04:24,964 - INFO - 127.0.0.1 - - [26/May/2025 12:04:24] "GET /admin/static/vendor/select2/select2.min.js?v=3.5.2 HTTP/1.1" 200 -
+2025-05-26 12:04:26,199 - INFO - 127.0.0.1 - - [26/May/2025 12:04:26] "GET /admin/statsview/ HTTP/1.1" 200 -
+2025-05-26 12:04:26,248 - INFO - 127.0.0.1 - - [26/May/2025 12:04:26] "[36mGET /admin/static/bootstrap/bootstrap3/swatch/default/bootstrap.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:26,259 - INFO - 127.0.0.1 - - [26/May/2025 12:04:26] "[36mGET /admin/static/bootstrap/bootstrap3/css/bootstrap-theme.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:26,264 - INFO - 127.0.0.1 - - [26/May/2025 12:04:26] "[36mGET /admin/static/admin/css/bootstrap3/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:26,273 - INFO - 127.0.0.1 - - [26/May/2025 12:04:26] "[36mGET /admin/static/admin/css/bootstrap3/submenu.css HTTP/1.1[0m" 304 -
+2025-05-26 12:04:26,281 - INFO - 127.0.0.1 - - [26/May/2025 12:04:26] "[36mGET /admin/static/bootstrap/bootstrap3/js/bootstrap.min.js?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:26,283 - INFO - 127.0.0.1 - - [26/May/2025 12:04:26] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:26,293 - INFO - 127.0.0.1 - - [26/May/2025 12:04:26] "[36mGET /admin/static/vendor/moment.min.js?v=2.22.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:26,304 - INFO - 127.0.0.1 - - [26/May/2025 12:04:26] "[36mGET /admin/static/vendor/select2/select2.min.js?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:26,306 - INFO - 127.0.0.1 - - [26/May/2025 12:04:26] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:27,602 - INFO - 127.0.0.1 - - [26/May/2025 12:04:27] "GET /admin/interestsview/ HTTP/1.1" 200 -
+2025-05-26 12:04:27,655 - INFO - 127.0.0.1 - - [26/May/2025 12:04:27] "[36mGET /admin/static/bootstrap/bootstrap3/swatch/default/bootstrap.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:27,666 - INFO - 127.0.0.1 - - [26/May/2025 12:04:27] "[36mGET /admin/static/admin/css/bootstrap3/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:27,671 - INFO - 127.0.0.1 - - [26/May/2025 12:04:27] "[36mGET /admin/static/bootstrap/bootstrap3/css/bootstrap-theme.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:27,679 - INFO - 127.0.0.1 - - [26/May/2025 12:04:27] "[36mGET /admin/static/admin/css/bootstrap3/submenu.css HTTP/1.1[0m" 304 -
+2025-05-26 12:04:27,683 - INFO - 127.0.0.1 - - [26/May/2025 12:04:27] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:27,691 - INFO - 127.0.0.1 - - [26/May/2025 12:04:27] "[36mGET /admin/static/bootstrap/bootstrap3/js/bootstrap.min.js?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:27,693 - INFO - 127.0.0.1 - - [26/May/2025 12:04:27] "[36mGET /admin/static/vendor/moment.min.js?v=2.22.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:27,702 - INFO - 127.0.0.1 - - [26/May/2025 12:04:27] "[36mGET /admin/static/vendor/select2/select2.min.js?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:27,717 - INFO - 127.0.0.1 - - [26/May/2025 12:04:27] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:30,367 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "GET /admin/user/ HTTP/1.1" 200 -
+2025-05-26 12:04:30,411 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "[36mGET /admin/static/bootstrap/bootstrap3/swatch/default/bootstrap.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:30,444 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "[36mGET /admin/static/admin/css/bootstrap3/submenu.css HTTP/1.1[0m" 304 -
+2025-05-26 12:04:30,446 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "[36mGET /admin/static/bootstrap/bootstrap3/css/bootstrap-theme.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:30,447 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "[36mGET /admin/static/admin/css/bootstrap3/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:30,477 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "GET /admin/static/vendor/select2/select2-bootstrap3.css?v=1.4.6 HTTP/1.1" 200 -
+2025-05-26 12:04:30,483 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "GET /admin/static/vendor/select2/select2.css?v=3.5.2 HTTP/1.1" 200 -
+2025-05-26 12:04:30,484 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "GET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker-bs3.css?v=1.3.22 HTTP/1.1" 200 -
+2025-05-26 12:04:30,610 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "GET /admin/static/admin/js/filters.js?v=1.0.0 HTTP/1.1" 200 -
+2025-05-26 12:04:30,616 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "GET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker.js?v=1.3.22 HTTP/1.1" 200 -
+2025-05-26 12:04:30,620 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:30,630 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "GET /admin/static/admin/js/actions.js?v=1.0.0 HTTP/1.1" 200 -
+2025-05-26 12:04:30,636 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "GET /admin/static/admin/js/form.js?v=1.0.1 HTTP/1.1" 200 -
+2025-05-26 12:04:30,649 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "[36mGET /admin/static/bootstrap/bootstrap3/js/bootstrap.min.js?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:30,666 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "[36mGET /admin/static/vendor/moment.min.js?v=2.22.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:30,676 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "[36mGET /admin/static/vendor/select2/select2.min.js?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:30,680 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:30,687 - INFO - 127.0.0.1 - - [26/May/2025 12:04:30] "GET /admin/static/bootstrap/bootstrap3/swatch/fonts/glyphicons-halflings-regular.woff2 HTTP/1.1" 200 -
+2025-05-26 12:04:33,845 - INFO - 127.0.0.1 - - [26/May/2025 12:04:33] "GET /admin/ HTTP/1.1" 200 -
+2025-05-26 12:04:33,946 - INFO - 127.0.0.1 - - [26/May/2025 12:04:33] "[36mGET /admin/static/bootstrap/bootstrap3/swatch/default/bootstrap.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:33,959 - INFO - 127.0.0.1 - - [26/May/2025 12:04:33] "[36mGET /admin/static/bootstrap/bootstrap3/css/bootstrap-theme.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:33,962 - INFO - 127.0.0.1 - - [26/May/2025 12:04:33] "[36mGET /admin/static/admin/css/bootstrap3/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:33,964 - INFO - 127.0.0.1 - - [26/May/2025 12:04:33] "[36mGET /admin/static/admin/css/bootstrap3/submenu.css HTTP/1.1[0m" 304 -
+2025-05-26 12:04:33,977 - INFO - 127.0.0.1 - - [26/May/2025 12:04:33] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:33,998 - INFO - 127.0.0.1 - - [26/May/2025 12:04:33] "[36mGET /admin/static/bootstrap/bootstrap3/js/bootstrap.min.js?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:34,015 - INFO - 127.0.0.1 - - [26/May/2025 12:04:34] "[36mGET /admin/static/vendor/moment.min.js?v=2.22.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:34,041 - INFO - 127.0.0.1 - - [26/May/2025 12:04:34] "[36mGET /admin/static/vendor/select2/select2.min.js?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:34,044 - INFO - 127.0.0.1 - - [26/May/2025 12:04:34] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:35,028 - INFO - 127.0.0.1 - - [26/May/2025 12:04:35] "GET /admin/ HTTP/1.1" 200 -
+2025-05-26 12:04:35,063 - INFO - 127.0.0.1 - - [26/May/2025 12:04:35] "[36mGET /admin/static/bootstrap/bootstrap3/swatch/default/bootstrap.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:35,097 - INFO - 127.0.0.1 - - [26/May/2025 12:04:35] "[36mGET /admin/static/admin/css/bootstrap3/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:35,098 - INFO - 127.0.0.1 - - [26/May/2025 12:04:35] "[36mGET /admin/static/bootstrap/bootstrap3/css/bootstrap-theme.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:35,101 - INFO - 127.0.0.1 - - [26/May/2025 12:04:35] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:35,104 - INFO - 127.0.0.1 - - [26/May/2025 12:04:35] "[36mGET /admin/static/vendor/moment.min.js?v=2.22.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:35,107 - INFO - 127.0.0.1 - - [26/May/2025 12:04:35] "[36mGET /admin/static/bootstrap/bootstrap3/js/bootstrap.min.js?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:35,117 - INFO - 127.0.0.1 - - [26/May/2025 12:04:35] "[36mGET /admin/static/admin/css/bootstrap3/submenu.css HTTP/1.1[0m" 304 -
+2025-05-26 12:04:35,167 - INFO - 127.0.0.1 - - [26/May/2025 12:04:35] "[36mGET /admin/static/vendor/select2/select2.min.js?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:04:35,183 - INFO - 127.0.0.1 - - [26/May/2025 12:04:35] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:08:25,102 - INFO - 127.0.0.1 - - [26/May/2025 12:08:25] "[33mGET /event/37/add-participants HTTP/1.1[0m" 404 -
+2025-05-26 12:08:25,206 - INFO - 127.0.0.1 - - [26/May/2025 12:08:25] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-26 12:10:51,888 - INFO - 127.0.0.1 - - [26/May/2025 12:10:51] "[33mGET /event/37/add-participants HTTP/1.1[0m" 404 -
+2025-05-26 12:13:35,442 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-26 12:13:35,444 - INFO - [33mPress CTRL+C to quit[0m
+2025-05-26 12:13:49,300 - INFO - 127.0.0.1 - - [26/May/2025 12:13:49] "GET /event/37/add-participants HTTP/1.1" 200 -
+2025-05-26 12:14:35,834 - ERROR - Exception on /event/37/add-participants [POST]
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\app.py", line 65, in add_participants
+    return redirect(url_for('some_view'))  # Замените 'some_view' на нужный вам маршрут
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\helpers.py", line 232, in url_for
+    return current_app.url_for(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\werkzeug\routing\map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'some_view'. Did you mean 'user.edit_view' instead?
+2025-05-26 12:14:35,925 - INFO - 127.0.0.1 - - [26/May/2025 12:14:35] "[35m[1mPOST /event/37/add-participants HTTP/1.1[0m" 500 -
+2025-05-26 12:23:36,872 - INFO - 127.0.0.1 - - [26/May/2025 12:23:36] "GET /event/37/add-participants HTTP/1.1" 200 -
+2025-05-26 12:23:54,075 - ERROR - Exception on /event/37/add-participants [POST]
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\app.py", line 65, in add_participants
+    db.session.commit()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\helpers.py", line 232, in url_for
+    return current_app.url_for(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\werkzeug\routing\map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'some_view'. Did you mean 'user.edit_view' instead?
+2025-05-26 12:23:54,084 - INFO - 127.0.0.1 - - [26/May/2025 12:23:54] "[35m[1mPOST /event/37/add-participants HTTP/1.1[0m" 500 -
+2025-05-26 12:24:13,078 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-26 12:24:13,079 - INFO - [33mPress CTRL+C to quit[0m
+2025-05-26 12:24:13,120 - INFO -  * Restarting with stat
+2025-05-26 12:24:17,321 - INFO - 127.0.0.1 - - [26/May/2025 12:24:17] "GET /event/37/add-participants HTTP/1.1" 200 -
+2025-05-26 12:24:33,322 - ERROR - Exception on /event/37/add-participants [POST]
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\app.py", line 66, in add_participants
+    return redirect(url_for('index.html'))  # Замените 'some_view' на нужный вам маршрут
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\helpers.py", line 232, in url_for
+    return current_app.url_for(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\werkzeug\routing\map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'index.html'. Did you mean 'admin.index' instead?
+2025-05-26 12:24:33,331 - INFO - 127.0.0.1 - - [26/May/2025 12:24:33] "[35m[1mPOST /event/37/add-participants HTTP/1.1[0m" 500 -
+2025-05-26 12:25:24,184 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-26 12:25:24,447 - INFO -  * Restarting with stat
+2025-05-26 12:25:28,162 - INFO - 127.0.0.1 - - [26/May/2025 12:25:28] "GET /event/37/add-participants HTTP/1.1" 200 -
+2025-05-26 12:25:46,662 - ERROR - Exception on /event/37/add-participants [POST]
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\app.py", line 66, in add_participants
+    return redirect(url_for('admin.myhome.html'))  # Замените 'some_view' на нужный вам маршрут
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\helpers.py", line 232, in url_for
+    return current_app.url_for(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\werkzeug\routing\map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin.myhome.html'. Did you mean 'admin.index' instead?
+2025-05-26 12:25:46,671 - INFO - 127.0.0.1 - - [26/May/2025 12:25:46] "[35m[1mPOST /event/37/add-participants HTTP/1.1[0m" 500 -
+2025-05-26 12:26:15,454 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-26 12:26:19,894 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-26 12:26:19,895 - INFO - [33mPress CTRL+C to quit[0m
+2025-05-26 12:26:19,899 - INFO -  * Restarting with stat
+2025-05-26 12:26:23,436 - INFO - 127.0.0.1 - - [26/May/2025 12:26:23] "GET /event/37/add-participants HTTP/1.1" 200 -
+2025-05-26 12:26:38,543 - ERROR - Exception on /event/37/add-participants [POST]
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\app.py", line 66, in add_participants
+    return redirect(url_for('admin/myhome.html'))  # Замените 'some_view' на нужный вам маршрут
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\helpers.py", line 232, in url_for
+    return current_app.url_for(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\werkzeug\routing\map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin/myhome.html'. Did you mean 'admin.static' instead?
+2025-05-26 12:26:38,553 - INFO - 127.0.0.1 - - [26/May/2025 12:26:38] "[35m[1mPOST /event/37/add-participants HTTP/1.1[0m" 500 -
+2025-05-26 12:31:33,570 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-26 12:31:33,836 - INFO -  * Restarting with stat
+2025-05-26 12:32:06,026 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-26 12:32:06,365 - INFO -  * Restarting with stat
+2025-05-26 12:35:06,293 - INFO - 127.0.0.1 - - [26/May/2025 12:35:06] "GET /event/37/add-participants HTTP/1.1" 200 -
+2025-05-26 12:35:10,397 - INFO - 127.0.0.1 - - [26/May/2025 12:35:10] "[32mPOST /event/37/add-participants HTTP/1.1[0m" 302 -
+2025-05-26 12:35:10,512 - INFO - 127.0.0.1 - - [26/May/2025 12:35:10] "GET /admin/ HTTP/1.1" 200 -
+2025-05-26 12:35:11,197 - INFO - 127.0.0.1 - - [26/May/2025 12:35:11] "[36mGET /admin/static/bootstrap/bootstrap3/js/bootstrap.min.js?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:35:11,202 - INFO - 127.0.0.1 - - [26/May/2025 12:35:11] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:35:11,207 - INFO - 127.0.0.1 - - [26/May/2025 12:35:11] "[36mGET /admin/static/bootstrap/bootstrap3/swatch/default/bootstrap.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:35:11,219 - INFO - 127.0.0.1 - - [26/May/2025 12:35:11] "[36mGET /admin/static/vendor/moment.min.js?v=2.22.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:35:11,234 - INFO - 127.0.0.1 - - [26/May/2025 12:35:11] "[36mGET /admin/static/vendor/select2/select2.min.js?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:35:11,236 - INFO - 127.0.0.1 - - [26/May/2025 12:35:11] "[36mGET /admin/static/admin/css/bootstrap3/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:35:11,240 - INFO - 127.0.0.1 - - [26/May/2025 12:35:11] "[36mGET /admin/static/admin/css/bootstrap3/submenu.css HTTP/1.1[0m" 304 -
+2025-05-26 12:35:11,242 - INFO - 127.0.0.1 - - [26/May/2025 12:35:11] "[36mGET /admin/static/bootstrap/bootstrap3/css/bootstrap-theme.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:35:11,247 - INFO - 127.0.0.1 - - [26/May/2025 12:35:11] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:36:07,193 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-26 12:36:07,517 - INFO -  * Restarting with stat
+2025-05-26 12:39:45,408 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-26 12:39:46,031 - INFO -  * Restarting with stat
+2025-05-26 12:41:33,462 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-26 12:41:33,978 - INFO -  * Restarting with stat
+2025-05-26 12:44:57,581 - INFO - 127.0.0.1 - - [26/May/2025 12:44:57] "GET /admin/event/ HTTP/1.1" 200 -
+2025-05-26 12:44:58,304 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/admin/css/bootstrap3/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,321 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker-bs3.css?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,323 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/vendor/select2/select2-bootstrap3.css?v=1.4.6 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,343 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,349 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/bootstrap/bootstrap3/js/bootstrap.min.js?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,369 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/vendor/moment.min.js?v=2.22.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,375 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/vendor/select2/select2.min.js?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,381 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/bootstrap/bootstrap3/swatch/default/bootstrap.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,404 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/admin/css/bootstrap3/submenu.css HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,408 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/bootstrap/bootstrap3/css/bootstrap-theme.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,419 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/vendor/select2/select2.css?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,423 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,426 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker.js?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,441 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/admin/js/form.js?v=1.0.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,456 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/admin/js/filters.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,464 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/admin/js/actions.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:44:58,533 - INFO - 127.0.0.1 - - [26/May/2025 12:44:58] "[36mGET /admin/static/bootstrap/bootstrap3/swatch/fonts/glyphicons-halflings-regular.woff2 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,747 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "GET /admin/event/new/?url=/admin/event/ HTTP/1.1" 200 -
+2025-05-26 12:45:01,805 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/bootstrap/bootstrap3/swatch/default/bootstrap.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,838 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/bootstrap/bootstrap3/css/bootstrap-theme.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,838 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker-bs3.css?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,838 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/admin/css/bootstrap3/submenu.css HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,838 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/admin/css/bootstrap3/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,838 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/vendor/select2/select2-bootstrap3.css?v=1.4.6 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,846 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/vendor/select2/select2.css?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,865 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,889 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/bootstrap/bootstrap3/js/bootstrap.min.js?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,893 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/vendor/moment.min.js?v=2.22.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,909 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/vendor/select2/select2.min.js?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,921 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,937 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker.js?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-05-26 12:45:01,941 - INFO - 127.0.0.1 - - [26/May/2025 12:45:01] "[36mGET /admin/static/admin/js/form.js?v=1.0.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,646 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[32mPOST /admin/event/new/?url=/admin/event/ HTTP/1.1[0m" 302 -
+2025-05-26 12:46:21,681 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "GET /admin/event/ HTTP/1.1" 200 -
+2025-05-26 12:46:21,793 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/admin/css/bootstrap3/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,796 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/admin/css/bootstrap3/submenu.css HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,798 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/vendor/select2/select2.css?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,800 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/bootstrap/bootstrap3/css/bootstrap-theme.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,802 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/bootstrap/bootstrap3/swatch/default/bootstrap.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,803 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/vendor/select2/select2-bootstrap3.css?v=1.4.6 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,835 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker-bs3.css?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,845 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,864 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/bootstrap/bootstrap3/js/bootstrap.min.js?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,868 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/vendor/moment.min.js?v=2.22.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,893 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/vendor/select2/select2.min.js?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,906 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,925 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/vendor/bootstrap-daterangepicker/daterangepicker.js?v=1.3.22 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,927 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/admin/js/form.js?v=1.0.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,933 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/admin/js/filters.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:46:21,946 - INFO - 127.0.0.1 - - [26/May/2025 12:46:21] "[36mGET /admin/static/admin/js/actions.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:50:25,054 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-26 12:50:25,054 - INFO - [33mPress CTRL+C to quit[0m
+2025-05-26 12:50:25,068 - INFO -  * Restarting with stat
+2025-05-26 12:50:27,961 - INFO - 127.0.0.1 - - [26/May/2025 12:50:27] "GET /event/37/add-participants HTTP/1.1" 200 -
+2025-05-26 12:50:50,285 - INFO - 127.0.0.1 - - [26/May/2025 12:50:50] "POST /event/37/add-participants HTTP/1.1" 200 -
+2025-05-26 12:50:54,902 - INFO - 127.0.0.1 - - [26/May/2025 12:50:54] "GET /admin/ HTTP/1.1" 200 -
+2025-05-26 12:50:55,566 - INFO - 127.0.0.1 - - [26/May/2025 12:50:55] "[36mGET /admin/static/vendor/jquery.min.js?v=3.5.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:50:55,580 - INFO - 127.0.0.1 - - [26/May/2025 12:50:55] "[36mGET /admin/static/vendor/moment.min.js?v=2.22.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:50:55,583 - INFO - 127.0.0.1 - - [26/May/2025 12:50:55] "[36mGET /admin/static/bootstrap/bootstrap3/swatch/default/bootstrap.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:50:55,602 - INFO - 127.0.0.1 - - [26/May/2025 12:50:55] "[36mGET /admin/static/vendor/select2/select2.min.js?v=3.5.2 HTTP/1.1[0m" 304 -
+2025-05-26 12:50:55,609 - INFO - 127.0.0.1 - - [26/May/2025 12:50:55] "[36mGET /admin/static/admin/js/helpers.js?v=1.0.0 HTTP/1.1[0m" 304 -
+2025-05-26 12:50:55,627 - INFO - 127.0.0.1 - - [26/May/2025 12:50:55] "[36mGET /admin/static/bootstrap/bootstrap3/js/bootstrap.min.js?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:50:55,643 - INFO - 127.0.0.1 - - [26/May/2025 12:50:55] "[36mGET /admin/static/admin/css/bootstrap3/admin.css?v=1.1.1 HTTP/1.1[0m" 304 -
+2025-05-26 12:50:55,645 - INFO - 127.0.0.1 - - [26/May/2025 12:50:55] "[36mGET /admin/static/bootstrap/bootstrap3/css/bootstrap-theme.min.css?v=3.3.5 HTTP/1.1[0m" 304 -
+2025-05-26 12:50:55,652 - INFO - 127.0.0.1 - - [26/May/2025 12:50:55] "[36mGET /admin/static/admin/css/bootstrap3/submenu.css HTTP/1.1[0m" 304 -
+2025-05-26 13:04:40,402 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\handlers\\events_list.py', reloading
+2025-05-26 13:04:41,155 - INFO -  * Restarting with stat
+2025-05-26 13:07:15,184 - INFO - 127.0.0.1 - - [26/May/2025 13:07:15] "GET /event/39/add-participants HTTP/1.1" 200 -
+2025-05-26 13:08:05,566 - INFO - 127.0.0.1 - - [26/May/2025 13:08:05] "GET /event/39/add-participants HTTP/1.1" 200 -
+2025-05-26 13:08:32,062 - INFO - 127.0.0.1 - - [26/May/2025 13:08:32] "POST /event/39/add-participants HTTP/1.1" 200 -
+2025-05-26 13:20:17,929 - INFO - 127.0.0.1 - - [26/May/2025 13:20:17] "GET /event/39/add-participants HTTP/1.1" 200 -
+2025-05-26 13:20:46,393 - INFO - 127.0.0.1 - - [26/May/2025 13:20:46] "POST /event/39/add-participants HTTP/1.1" 200 -

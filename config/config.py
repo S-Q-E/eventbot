@@ -8,6 +8,7 @@ from config.base import getenv
 @dataclass
 class TelegramBotConfig:
     token: str
+    bot_username: str
 
 
 @dataclass
@@ -16,7 +17,12 @@ class Config:
 
 
 def load_config() -> Config:
-    # Parse a `.env` file and load the variables into environment valriables
     load_dotenv()
 
-    return Config(tg_bot=TelegramBotConfig(token=getenv("BOT_TOKEN")))
+    return Config(
+        tg_bot=TelegramBotConfig(
+            token=getenv("BOT_TOKEN"),
+            bot_username=getenv("BOT_USERNAME")
+        )
+    )
+

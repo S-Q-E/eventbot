@@ -1,1 +1,458 @@
 hello! this is my log!
+2025-05-25 22:38:49,015 - INFO - Starting bot
+2025-05-25 22:38:50,555 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:38:50,568 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:38:50,568 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:38:50,569 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:38:50,572 - INFO - Added job "get_started_events" to job store "default"
+2025-05-25 22:38:50,573 - INFO - Added job "start_voting" to job store "default"
+2025-05-25 22:38:50,575 - INFO - Added job "end_voting" to job store "default"
+2025-05-25 22:38:50,578 - INFO - Added job "divide_teams_for_current_event" to job store "default"
+2025-05-25 22:38:50,579 - INFO - Scheduler started
+2025-05-25 22:38:50,581 - INFO - Start polling
+2025-05-25 22:38:50,740 - INFO - Run polling for bot @quanyshkz_bot id=2039588022 - 'EventBOT'
+2025-05-25 22:38:51,844 - INFO - Update id=80233499 is handled. Duration 844 ms by bot id=2039588022
+2025-05-25 22:38:54,602 - INFO - Update id=80233500 is handled. Duration 264 ms by bot id=2039588022
+2025-05-25 22:39:00,512 - INFO - Update id=80233501 is handled. Duration 282 ms by bot id=2039588022
+2025-05-25 22:39:06,042 - INFO - Update id=80233502 is handled. Duration 327 ms by bot id=2039588022
+2025-05-25 22:39:08,901 - INFO - Update id=80233503 is handled. Duration 233 ms by bot id=2039588022
+2025-05-25 22:39:11,080 - INFO - Update id=80233504 is handled. Duration 469 ms by bot id=2039588022
+2025-05-25 22:39:13,553 - INFO - Update id=80233505 is handled. Duration 282 ms by bot id=2039588022
+2025-05-25 22:39:23,009 - INFO - Update id=80233506 is handled. Duration 250 ms by bot id=2039588022
+2025-05-25 22:39:31,233 - INFO - Update id=80233507 is handled. Duration 405 ms by bot id=2039588022
+2025-05-25 22:39:34,933 - INFO - Update id=80233508 is handled. Duration 1407 ms by bot id=2039588022
+2025-05-25 22:39:46,890 - INFO - Update id=80233509 is handled. Duration 296 ms by bot id=2039588022
+2025-05-25 22:39:50,593 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:40:50 +05)" (scheduled at 2025-05-25 22:39:50.569341+05:00)
+2025-05-25 22:39:50,600 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:39:50,640 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:40:50 +05)" executed successfully
+2025-05-25 22:39:55,433 - INFO - Update id=80233510 is handled. Duration 282 ms by bot id=2039588022
+2025-05-25 22:39:58,833 - INFO - Update id=80233511 is handled. Duration 656 ms by bot id=2039588022
+2025-05-25 22:39:59,862 - INFO - Update id=80233512 is handled. Duration 375 ms by bot id=2039588022
+2025-05-25 22:40:01,153 - INFO - Update id=80233513 is handled. Duration 297 ms by bot id=2039588022
+2025-05-25 22:40:04,529 - INFO - Update id=80233514 is handled. Duration 186 ms by bot id=2039588022
+2025-05-25 22:40:06,605 - INFO - Update id=80233515 is handled. Duration 217 ms by bot id=2039588022
+2025-05-25 22:40:13,398 - INFO - Update id=80233516 is handled. Duration 297 ms by bot id=2039588022
+2025-05-25 22:40:16,902 - INFO - Update id=80233517 is handled. Duration 1390 ms by bot id=2039588022
+2025-05-25 22:40:24,843 - INFO - Update id=80233518 is handled. Duration 250 ms by bot id=2039588022
+2025-05-25 22:40:27,123 - INFO - Update id=80233519 is handled. Duration 233 ms by bot id=2039588022
+2025-05-25 22:40:28,401 - INFO - Update id=80233520 is handled. Duration 202 ms by bot id=2039588022
+2025-05-25 22:40:30,036 - INFO - Update id=80233521 is handled. Duration 422 ms by bot id=2039588022
+2025-05-25 22:40:31,314 - INFO - Update id=80233522 is handled. Duration 266 ms by bot id=2039588022
+2025-05-25 22:40:32,892 - INFO - Update id=80233523 is handled. Duration 218 ms by bot id=2039588022
+2025-05-25 22:40:50,572 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:41:50 +05)" (scheduled at 2025-05-25 22:40:50.569341+05:00)
+2025-05-25 22:40:50,577 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:40:50,578 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:41:50 +05)" executed successfully
+2025-05-25 22:40:55,801 - WARNING - Не удалось декодировать payload: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+2025-05-25 22:40:56,514 - INFO - Update id=80233524 is handled. Duration 718 ms by bot id=2039588022
+2025-05-25 22:41:00,727 - INFO - Update id=80233525 is handled. Duration 217 ms by bot id=2039588022
+2025-05-25 22:41:10,048 - INFO - Update id=80233526 is handled. Duration 266 ms by bot id=2039588022
+2025-05-25 22:41:13,719 - INFO - Update id=80233527 is handled. Duration 266 ms by bot id=2039588022
+2025-05-25 22:41:16,516 - INFO - Update id=80233528 is handled. Duration 375 ms by bot id=2039588022
+2025-05-25 22:41:50,582 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:42:50 +05)" (scheduled at 2025-05-25 22:41:50.569341+05:00)
+2025-05-25 22:41:50,589 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:41:50,590 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:42:50 +05)" executed successfully
+2025-05-25 22:42:21,762 - INFO - Update id=80233529 is handled. Duration 546 ms by bot id=2039588022
+2025-05-25 22:42:23,540 - INFO - Update id=80233530 is handled. Duration 313 ms by bot id=2039588022
+2025-05-25 22:42:26,311 - INFO - Update id=80233531 is handled. Duration 891 ms by bot id=2039588022
+2025-05-25 22:42:37,203 - INFO - Update id=80233532 is handled. Duration 265 ms by bot id=2039588022
+2025-05-25 22:42:39,687 - INFO - Update id=80233533 is handled. Duration 218 ms by bot id=2039588022
+2025-05-25 22:42:50,582 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:43:50 +05)" (scheduled at 2025-05-25 22:42:50.569341+05:00)
+2025-05-25 22:42:50,586 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:42:50,586 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:43:50 +05)" executed successfully
+2025-05-25 22:43:50,572 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:44:50 +05)" (scheduled at 2025-05-25 22:43:50.569341+05:00)
+2025-05-25 22:43:50,575 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:43:50,576 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:44:50 +05)" executed successfully
+2025-05-25 22:44:50,585 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:45:50 +05)" (scheduled at 2025-05-25 22:44:50.569341+05:00)
+2025-05-25 22:44:50,591 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:44:50,592 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:45:50 +05)" executed successfully
+2025-05-25 22:45:50,585 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:46:50 +05)" (scheduled at 2025-05-25 22:45:50.569341+05:00)
+2025-05-25 22:45:50,587 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:45:50,588 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:46:50 +05)" executed successfully
+2025-05-25 22:46:50,590 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:47:50 +05)" (scheduled at 2025-05-25 22:46:50.569341+05:00)
+2025-05-25 22:46:50,595 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:46:50,596 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:47:50 +05)" executed successfully
+2025-05-25 22:47:50,577 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:48:50 +05)" (scheduled at 2025-05-25 22:47:50.569341+05:00)
+2025-05-25 22:47:50,582 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:47:50,584 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:48:50 +05)" executed successfully
+2025-05-25 22:48:50,578 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:49:50 +05)" (scheduled at 2025-05-25 22:48:50.569341+05:00)
+2025-05-25 22:48:50,585 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:48:50,586 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:49:50 +05)" executed successfully
+2025-05-25 22:49:06,219 - INFO - Polling stopped for bot @quanyshkz_bot id=2039588022 - 'EventBOT'
+2025-05-25 22:49:06,221 - INFO - Polling stopped
+2025-05-25 22:49:06,480 - INFO - Bot stopped
+2025-05-25 22:49:17,887 - INFO - Starting bot
+2025-05-25 22:49:18,851 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:49:18,861 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:49:18,861 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:49:18,863 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:49:18,866 - INFO - Added job "get_started_events" to job store "default"
+2025-05-25 22:49:18,866 - INFO - Added job "start_voting" to job store "default"
+2025-05-25 22:49:18,867 - INFO - Added job "end_voting" to job store "default"
+2025-05-25 22:49:18,867 - INFO - Added job "divide_teams_for_current_event" to job store "default"
+2025-05-25 22:49:18,868 - INFO - Scheduler started
+2025-05-25 22:49:18,869 - INFO - Start polling
+2025-05-25 22:49:19,013 - INFO - Run polling for bot @quanyshkz_bot id=2039588022 - 'EventBOT'
+2025-05-25 22:49:28,763 - INFO - Update id=80233534 is handled. Duration 577 ms by bot id=2039588022
+2025-05-25 22:49:30,166 - INFO - Update id=80233535 is handled. Duration 358 ms by bot id=2039588022
+2025-05-25 22:49:31,630 - INFO - Update id=80233536 is handled. Duration 266 ms by bot id=2039588022
+2025-05-25 22:49:33,193 - INFO - Update id=80233537 is handled. Duration 188 ms by bot id=2039588022
+2025-05-25 22:49:53,966 - INFO - Update id=80233538 is handled. Duration 844 ms by bot id=2039588022
+2025-05-25 22:50:02,117 - INFO - Update id=80233539 is handled. Duration 218 ms by bot id=2039588022
+2025-05-25 22:50:10,738 - INFO - Update id=80233540 is handled. Duration 155 ms by bot id=2039588022
+2025-05-25 22:50:13,590 - INFO - Update id=80233541 is handled. Duration 219 ms by bot id=2039588022
+2025-05-25 22:50:15,883 - INFO - Update id=80233542 is handled. Duration 187 ms by bot id=2039588022
+2025-05-25 22:50:18,863 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:51:18 +05)" (scheduled at 2025-05-25 22:50:18.863142+05:00)
+2025-05-25 22:50:18,872 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:50:18,873 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:51:18 +05)" executed successfully
+2025-05-25 22:50:21,554 - INFO - Polling stopped for bot @quanyshkz_bot id=2039588022 - 'EventBOT'
+2025-05-25 22:50:21,554 - INFO - Polling stopped
+2025-05-25 22:50:21,820 - INFO - Bot stopped
+2025-05-25 22:56:42,563 - INFO - Starting bot
+2025-05-25 22:56:44,141 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:56:44,153 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:56:44,154 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:56:44,155 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 22:56:44,158 - INFO - Added job "get_started_events" to job store "default"
+2025-05-25 22:56:44,160 - INFO - Added job "start_voting" to job store "default"
+2025-05-25 22:56:44,160 - INFO - Added job "end_voting" to job store "default"
+2025-05-25 22:56:44,161 - INFO - Added job "divide_teams_for_current_event" to job store "default"
+2025-05-25 22:56:44,161 - INFO - Scheduler started
+2025-05-25 22:56:44,162 - INFO - Start polling
+2025-05-25 22:56:44,460 - INFO - Run polling for bot @quanyshkz_bot id=2039588022 - 'EventBOT'
+2025-05-25 22:56:44,683 - WARNING - Не удалось декодировать payload: 'utf-8' codec can't decode byte 0x8a in position 0: invalid start byte
+2025-05-25 22:56:45,350 - INFO - Update id=80233544 is handled. Duration 670 ms by bot id=2039588022
+2025-05-25 22:56:45,354 - INFO - Update id=80233543 is handled. Duration 670 ms by bot id=2039588022
+2025-05-25 22:57:02,541 - INFO - Update id=80233545 is handled. Duration 577 ms by bot id=2039588022
+2025-05-25 22:57:05,372 - INFO - Update id=80233546 is handled. Duration 375 ms by bot id=2039588022
+2025-05-25 22:57:08,421 - INFO - Update id=80233547 is handled. Duration 1125 ms by bot id=2039588022
+2025-05-25 22:57:10,562 - INFO - Update id=80233548 is handled. Duration 297 ms by bot id=2039588022
+2025-05-25 22:57:13,367 - INFO - Update id=80233549 is handled. Duration 250 ms by bot id=2039588022
+2025-05-25 22:57:14,900 - INFO - Update id=80233550 is handled. Duration 250 ms by bot id=2039588022
+2025-05-25 22:57:17,664 - INFO - Update id=80233551 is handled. Duration 250 ms by bot id=2039588022
+2025-05-25 22:57:19,774 - INFO - Update id=80233552 is handled. Duration 202 ms by bot id=2039588022
+2025-05-25 22:57:22,160 - INFO - Update id=80233553 is handled. Duration 625 ms by bot id=2039588022
+2025-05-25 22:57:23,737 - INFO - Update id=80233554 is handled. Duration 375 ms by bot id=2039588022
+2025-05-25 22:57:25,508 - INFO - Update id=80233555 is handled. Duration 407 ms by bot id=2039588022
+2025-05-25 22:57:44,175 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:58:44 +05)" (scheduled at 2025-05-25 22:57:44.155019+05:00)
+2025-05-25 22:57:44,187 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:57:44,189 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:58:44 +05)" executed successfully
+2025-05-25 22:58:26,214 - INFO - Update id=80233556 is handled. Duration 688 ms by bot id=2039588022
+2025-05-25 22:58:28,617 - INFO - Update id=80233557 is handled. Duration 233 ms by bot id=2039588022
+2025-05-25 22:58:33,803 - INFO - Update id=80233558 is handled. Duration 297 ms by bot id=2039588022
+2025-05-25 22:58:36,237 - INFO - Update id=80233559 is handled. Duration 264 ms by bot id=2039588022
+2025-05-25 22:58:38,727 - INFO - Update id=80233560 is handled. Duration 233 ms by bot id=2039588022
+2025-05-25 22:58:44,160 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:59:44 +05)" (scheduled at 2025-05-25 22:58:44.155019+05:00)
+2025-05-25 22:58:44,171 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:58:44,173 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 22:59:44 +05)" executed successfully
+2025-05-25 22:59:44,162 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:00:44 +05)" (scheduled at 2025-05-25 22:59:44.155019+05:00)
+2025-05-25 22:59:44,167 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 22:59:44,168 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:00:44 +05)" executed successfully
+2025-05-25 23:00:12,589 - INFO - Update id=80233561 is handled. Duration 672 ms by bot id=2039588022
+2025-05-25 23:00:15,752 - INFO - Update id=80233562 is handled. Duration 266 ms by bot id=2039588022
+2025-05-25 23:00:19,095 - INFO - Update id=80233563 is handled. Duration 1235 ms by bot id=2039588022
+2025-05-25 23:00:24,881 - INFO - Update id=80233564 is handled. Duration 266 ms by bot id=2039588022
+2025-05-25 23:00:38,660 - INFO - Update id=80233565 is not handled. Duration 0 ms by bot id=2039588022
+2025-05-25 23:00:38,661 - ERROR - Cause exception while process update id=80233565 by bot id=2039588022
+AttributeError: 'NoneType' object has no attribute 'first_name'
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "C:\Users\User\Desktop\Python projects\eventbot\venv\lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+  File "C:\Users\User\Desktop\Python projects\eventbot\handlers\main_menu.py", line 48, in main_menu
+    await message.answer(f"Привет, <b>{user.first_name} {user.last_name}!</b>\n\n"
+AttributeError: 'NoneType' object has no attribute 'first_name'
+2025-05-25 23:00:44,177 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:01:44 +05)" (scheduled at 2025-05-25 23:00:44.155019+05:00)
+2025-05-25 23:00:44,194 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:00:44,195 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:01:44 +05)" executed successfully
+2025-05-25 23:01:02,264 - INFO - Update id=80233566 is handled. Duration 671 ms by bot id=2039588022
+2025-05-25 23:01:04,659 - INFO - Update id=80233567 is handled. Duration 202 ms by bot id=2039588022
+2025-05-25 23:01:06,903 - INFO - Update id=80233568 is handled. Duration 890 ms by bot id=2039588022
+2025-05-25 23:01:08,657 - INFO - Update id=80233569 is handled. Duration 1031 ms by bot id=2039588022
+2025-05-25 23:01:09,499 - INFO - Update id=80233570 is handled. Duration 218 ms by bot id=2039588022
+2025-05-25 23:01:21,328 - INFO - Update id=80233571 is handled. Duration 281 ms by bot id=2039588022
+2025-05-25 23:01:28,448 - INFO - Update id=80233572 is handled. Duration 233 ms by bot id=2039588022
+2025-05-25 23:01:40,304 - INFO - Update id=80233573 is handled. Duration 218 ms by bot id=2039588022
+2025-05-25 23:01:44,166 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:02:44 +05)" (scheduled at 2025-05-25 23:01:44.155019+05:00)
+2025-05-25 23:01:44,172 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:01:44,176 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:02:44 +05)" executed successfully
+2025-05-25 23:01:44,443 - INFO - Update id=80233574 is handled. Duration 250 ms by bot id=2039588022
+2025-05-25 23:01:51,956 - INFO - Update id=80233575 is handled. Duration 375 ms by bot id=2039588022
+2025-05-25 23:01:54,851 - INFO - Update id=80233576 is handled. Duration 327 ms by bot id=2039588022
+2025-05-25 23:02:23,911 - INFO - Update id=80233577 is handled. Duration 1000 ms by bot id=2039588022
+2025-05-25 23:02:26,634 - INFO - Update id=80233578 is handled. Duration 250 ms by bot id=2039588022
+2025-05-25 23:02:30,936 - INFO - Update id=80233579 is handled. Duration 233 ms by bot id=2039588022
+2025-05-25 23:02:33,324 - INFO - Update id=80233580 is handled. Duration 594 ms by bot id=2039588022
+2025-05-25 23:02:34,773 - INFO - Update id=80233581 is handled. Duration 406 ms by bot id=2039588022
+2025-05-25 23:02:37,095 - INFO - Update id=80233582 is handled. Duration 281 ms by bot id=2039588022
+2025-05-25 23:02:44,184 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:03:44 +05)" (scheduled at 2025-05-25 23:02:44.155019+05:00)
+2025-05-25 23:02:44,189 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:02:44,190 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:03:44 +05)" executed successfully
+2025-05-25 23:03:00,368 - INFO - Update id=80233583 is handled. Duration 702 ms by bot id=2039588022
+2025-05-25 23:03:02,116 - INFO - Update id=80233584 is handled. Duration 311 ms by bot id=2039588022
+2025-05-25 23:03:04,367 - INFO - Update id=80233585 is handled. Duration 811 ms by bot id=2039588022
+2025-05-25 23:03:05,806 - INFO - Update id=80233586 is handled. Duration 266 ms by bot id=2039588022
+2025-05-25 23:03:08,765 - INFO - Update id=80233587 is handled. Duration 312 ms by bot id=2039588022
+2025-05-25 23:03:10,174 - INFO - Update id=80233588 is handled. Duration 250 ms by bot id=2039588022
+2025-05-25 23:03:12,048 - INFO - Update id=80233589 is handled. Duration 608 ms by bot id=2039588022
+2025-05-25 23:03:16,139 - INFO - Update id=80233590 is handled. Duration 1327 ms by bot id=2039588022
+2025-05-25 23:03:18,500 - INFO - Update id=80233591 is handled. Duration 1218 ms by bot id=2039588022
+2025-05-25 23:03:26,030 - INFO - Update id=80233592 is handled. Duration 967 ms by bot id=2039588022
+2025-05-25 23:03:31,706 - INFO - Update id=80233593 is handled. Duration 328 ms by bot id=2039588022
+2025-05-25 23:03:34,569 - INFO - Update id=80233594 is handled. Duration 1031 ms by bot id=2039588022
+2025-05-25 23:03:35,799 - INFO - Update id=80233595 is handled. Duration 202 ms by bot id=2039588022
+2025-05-25 23:03:38,154 - INFO - Update id=80233596 is handled. Duration 500 ms by bot id=2039588022
+2025-05-25 23:03:41,523 - INFO - Update id=80233597 is handled. Duration 1531 ms by bot id=2039588022
+2025-05-25 23:03:44,166 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:04:44 +05)" (scheduled at 2025-05-25 23:03:44.155019+05:00)
+2025-05-25 23:03:44,170 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:03:44,171 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:04:44 +05)" executed successfully
+2025-05-25 23:03:46,610 - INFO - Update id=80233598 is handled. Duration 264 ms by bot id=2039588022
+2025-05-25 23:03:49,293 - INFO - Update id=80233599 is handled. Duration 172 ms by bot id=2039588022
+2025-05-25 23:03:51,782 - INFO - Update id=80233600 is handled. Duration 483 ms by bot id=2039588022
+2025-05-25 23:03:53,145 - INFO - Update id=80233601 is handled. Duration 484 ms by bot id=2039588022
+2025-05-25 23:03:54,644 - INFO - Update id=80233602 is handled. Duration 391 ms by bot id=2039588022
+2025-05-25 23:03:57,618 - INFO - Update id=80233603 is handled. Duration 405 ms by bot id=2039588022
+2025-05-25 23:04:09,194 - INFO - Update id=80233604 is handled. Duration 515 ms by bot id=2039588022
+2025-05-25 23:04:11,656 - INFO - Update id=80233605 is handled. Duration 311 ms by bot id=2039588022
+2025-05-25 23:04:16,455 - INFO - Update id=80233606 is handled. Duration 500 ms by bot id=2039588022
+2025-05-25 23:04:19,250 - INFO - Update id=80233607 is handled. Duration 421 ms by bot id=2039588022
+2025-05-25 23:04:22,802 - INFO - Update id=80233608 is handled. Duration 391 ms by bot id=2039588022
+2025-05-25 23:04:24,671 - INFO - Update id=80233609 is handled. Duration 218 ms by bot id=2039588022
+2025-05-25 23:04:26,179 - INFO - Update id=80233610 is handled. Duration 407 ms by bot id=2039588022
+2025-05-25 23:04:27,821 - INFO - Update id=80233611 is handled. Duration 406 ms by bot id=2039588022
+2025-05-25 23:04:37,552 - INFO - Update id=80233612 is handled. Duration 297 ms by bot id=2039588022
+2025-05-25 23:04:44,156 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:05:44 +05)" (scheduled at 2025-05-25 23:04:44.155019+05:00)
+2025-05-25 23:04:44,162 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:04:44,163 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:05:44 +05)" executed successfully
+2025-05-25 23:04:46,047 - INFO - Update id=80233613 is handled. Duration 391 ms by bot id=2039588022
+2025-05-25 23:04:47,904 - INFO - Update id=80233614 is handled. Duration 811 ms by bot id=2039588022
+2025-05-25 23:04:49,951 - INFO - Update id=80233615 is handled. Duration 1015 ms by bot id=2039588022
+2025-05-25 23:04:57,935 - INFO - Update id=80233616 is handled. Duration 204 ms by bot id=2039588022
+2025-05-25 23:05:01,206 - INFO - Update id=80233617 is handled. Duration 187 ms by bot id=2039588022
+2025-05-25 23:05:44,171 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:06:44 +05)" (scheduled at 2025-05-25 23:05:44.155019+05:00)
+2025-05-25 23:05:44,171 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:05:44,171 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:06:44 +05)" executed successfully
+2025-05-25 23:06:44,166 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:07:44 +05)" (scheduled at 2025-05-25 23:06:44.155019+05:00)
+2025-05-25 23:06:44,169 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:06:44,170 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:07:44 +05)" executed successfully
+2025-05-25 23:07:44,170 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:08:44 +05)" (scheduled at 2025-05-25 23:07:44.155019+05:00)
+2025-05-25 23:07:44,174 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:07:44,174 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:08:44 +05)" executed successfully
+2025-05-25 23:08:44,172 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:09:44 +05)" (scheduled at 2025-05-25 23:08:44.155019+05:00)
+2025-05-25 23:08:44,176 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:08:44,177 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:09:44 +05)" executed successfully
+2025-05-25 23:09:44,173 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:10:44 +05)" (scheduled at 2025-05-25 23:09:44.155019+05:00)
+2025-05-25 23:09:44,177 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:09:44,177 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:10:44 +05)" executed successfully
+2025-05-25 23:10:44,176 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:11:44 +05)" (scheduled at 2025-05-25 23:10:44.155019+05:00)
+2025-05-25 23:10:44,176 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:10:44,176 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:11:44 +05)" executed successfully
+2025-05-25 23:11:44,165 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:12:44 +05)" (scheduled at 2025-05-25 23:11:44.155019+05:00)
+2025-05-25 23:11:44,172 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:11:44,172 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:12:44 +05)" executed successfully
+2025-05-25 23:12:44,156 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:13:44 +05)" (scheduled at 2025-05-25 23:12:44.155019+05:00)
+2025-05-25 23:12:44,161 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:12:44,162 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:13:44 +05)" executed successfully
+2025-05-25 23:13:44,165 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:14:44 +05)" (scheduled at 2025-05-25 23:13:44.155019+05:00)
+2025-05-25 23:13:44,169 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:13:44,170 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:14:44 +05)" executed successfully
+2025-05-25 23:14:44,166 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:15:44 +05)" (scheduled at 2025-05-25 23:14:44.155019+05:00)
+2025-05-25 23:14:44,171 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:14:44,171 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:15:44 +05)" executed successfully
+2025-05-25 23:15:44,179 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:16:44 +05)" (scheduled at 2025-05-25 23:15:44.155019+05:00)
+2025-05-25 23:15:44,184 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:15:44,185 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:16:44 +05)" executed successfully
+2025-05-25 23:16:44,178 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:17:44 +05)" (scheduled at 2025-05-25 23:16:44.155019+05:00)
+2025-05-25 23:16:44,178 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:16:44,178 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:17:44 +05)" executed successfully
+2025-05-25 23:17:44,165 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:18:44 +05)" (scheduled at 2025-05-25 23:17:44.155019+05:00)
+2025-05-25 23:17:44,169 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:17:44,169 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:18:44 +05)" executed successfully
+2025-05-25 23:18:44,171 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:19:44 +05)" (scheduled at 2025-05-25 23:18:44.155019+05:00)
+2025-05-25 23:18:44,176 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:18:44,177 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:19:44 +05)" executed successfully
+2025-05-25 23:19:44,157 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:20:44 +05)" (scheduled at 2025-05-25 23:19:44.155019+05:00)
+2025-05-25 23:19:44,162 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:19:44,163 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:20:44 +05)" executed successfully
+2025-05-25 23:20:44,170 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:21:44 +05)" (scheduled at 2025-05-25 23:20:44.155019+05:00)
+2025-05-25 23:20:44,175 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:20:44,175 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:21:44 +05)" executed successfully
+2025-05-25 23:21:44,161 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:22:44 +05)" (scheduled at 2025-05-25 23:21:44.155019+05:00)
+2025-05-25 23:21:44,165 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:21:44,166 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:22:44 +05)" executed successfully
+2025-05-25 23:22:44,165 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:23:44 +05)" (scheduled at 2025-05-25 23:22:44.155019+05:00)
+2025-05-25 23:22:44,170 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:22:44,171 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:23:44 +05)" executed successfully
+2025-05-25 23:23:44,160 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:24:44 +05)" (scheduled at 2025-05-25 23:23:44.155019+05:00)
+2025-05-25 23:23:44,168 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:23:44,169 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:24:44 +05)" executed successfully
+2025-05-25 23:24:44,170 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:25:44 +05)" (scheduled at 2025-05-25 23:24:44.155019+05:00)
+2025-05-25 23:24:44,172 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:24:44,172 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:25:44 +05)" executed successfully
+2025-05-25 23:25:44,163 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:26:44 +05)" (scheduled at 2025-05-25 23:25:44.155019+05:00)
+2025-05-25 23:25:44,169 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:25:44,170 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:26:44 +05)" executed successfully
+2025-05-25 23:26:44,168 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:27:44 +05)" (scheduled at 2025-05-25 23:26:44.155019+05:00)
+2025-05-25 23:26:44,172 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:26:44,173 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:27:44 +05)" executed successfully
+2025-05-25 23:27:44,160 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:28:44 +05)" (scheduled at 2025-05-25 23:27:44.155019+05:00)
+2025-05-25 23:27:44,160 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:27:44,160 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:28:44 +05)" executed successfully
+2025-05-25 23:28:44,157 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:29:44 +05)" (scheduled at 2025-05-25 23:28:44.155019+05:00)
+2025-05-25 23:28:44,162 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:28:44,162 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:29:44 +05)" executed successfully
+2025-05-25 23:29:44,169 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:30:44 +05)" (scheduled at 2025-05-25 23:29:44.155019+05:00)
+2025-05-25 23:29:44,174 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:29:44,174 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:30:44 +05)" executed successfully
+2025-05-25 23:30:44,168 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:31:44 +05)" (scheduled at 2025-05-25 23:30:44.155019+05:00)
+2025-05-25 23:30:44,168 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:30:44,168 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:31:44 +05)" executed successfully
+2025-05-25 23:31:44,163 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:32:44 +05)" (scheduled at 2025-05-25 23:31:44.155019+05:00)
+2025-05-25 23:31:44,163 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:31:44,163 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:32:44 +05)" executed successfully
+2025-05-25 23:32:44,164 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:33:44 +05)" (scheduled at 2025-05-25 23:32:44.155019+05:00)
+2025-05-25 23:32:44,170 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:32:44,171 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:33:44 +05)" executed successfully
+2025-05-25 23:33:44,169 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:34:44 +05)" (scheduled at 2025-05-25 23:33:44.155019+05:00)
+2025-05-25 23:33:44,173 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:33:44,174 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:34:44 +05)" executed successfully
+2025-05-25 23:34:44,162 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:35:44 +05)" (scheduled at 2025-05-25 23:34:44.155019+05:00)
+2025-05-25 23:34:44,167 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:34:44,168 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:35:44 +05)" executed successfully
+2025-05-25 23:34:55,417 - INFO - Polling stopped for bot @quanyshkz_bot id=2039588022 - 'EventBOT'
+2025-05-25 23:34:55,419 - INFO - Polling stopped
+2025-05-25 23:34:55,689 - INFO - Bot stopped
+2025-05-25 23:35:07,583 - INFO - Starting bot
+2025-05-25 23:35:08,413 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 23:35:08,425 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 23:35:08,426 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 23:35:08,427 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-05-25 23:35:08,431 - INFO - Added job "get_started_events" to job store "default"
+2025-05-25 23:35:08,432 - INFO - Added job "start_voting" to job store "default"
+2025-05-25 23:35:08,433 - INFO - Added job "end_voting" to job store "default"
+2025-05-25 23:35:08,433 - INFO - Added job "divide_teams_for_current_event" to job store "default"
+2025-05-25 23:35:08,434 - INFO - Scheduler started
+2025-05-25 23:35:08,435 - INFO - Start polling
+2025-05-25 23:35:08,738 - INFO - Run polling for bot @quanyshkz_bot id=2039588022 - 'EventBOT'
+2025-05-25 23:35:13,920 - INFO - Update id=80233618 is handled. Duration 593 ms by bot id=2039588022
+2025-05-25 23:35:15,789 - INFO - Update id=80233619 is handled. Duration 281 ms by bot id=2039588022
+2025-05-25 23:35:18,334 - INFO - Update id=80233620 is handled. Duration 906 ms by bot id=2039588022
+2025-05-25 23:35:25,117 - INFO - Update id=80233621 is handled. Duration 250 ms by bot id=2039588022
+2025-05-25 23:35:27,367 - INFO - Update id=80233622 is handled. Duration 202 ms by bot id=2039588022
+2025-05-25 23:35:28,761 - INFO - Update id=80233623 is handled. Duration 250 ms by bot id=2039588022
+2025-05-25 23:35:30,125 - INFO - Update id=80233624 is handled. Duration 530 ms by bot id=2039588022
+2025-05-25 23:35:31,494 - INFO - Update id=80233625 is handled. Duration 311 ms by bot id=2039588022
+2025-05-25 23:35:39,997 - INFO - Update id=80233626 is handled. Duration 186 ms by bot id=2039588022
+2025-05-25 23:35:41,336 - INFO - Update id=80233627 is handled. Duration 235 ms by bot id=2039588022
+2025-05-25 23:35:45,541 - INFO - Update id=80233628 is handled. Duration 750 ms by bot id=2039588022
+2025-05-25 23:35:48,575 - INFO - Update id=80233629 is handled. Duration 422 ms by bot id=2039588022
+2025-05-25 23:35:56,888 - INFO - Update id=80233630 is handled. Duration 250 ms by bot id=2039588022
+2025-05-25 23:36:00,629 - INFO - Update id=80233631 is handled. Duration 1593 ms by bot id=2039588022
+2025-05-25 23:36:02,702 - INFO - Update id=80233632 is handled. Duration 953 ms by bot id=2039588022
+2025-05-25 23:36:06,864 - INFO - Update id=80233633 is handled. Duration 2545 ms by bot id=2039588022
+2025-05-25 23:36:08,440 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:37:08 +05)" (scheduled at 2025-05-25 23:36:08.427924+05:00)
+2025-05-25 23:36:08,449 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:36:08,450 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:37:08 +05)" executed successfully
+2025-05-25 23:36:08,463 - INFO - Update id=80233634 is handled. Duration 1094 ms by bot id=2039588022
+2025-05-25 23:36:10,487 - INFO - Update id=80233635 is handled. Duration 170 ms by bot id=2039588022
+2025-05-25 23:36:20,185 - INFO - Update id=80233636 is handled. Duration 218 ms by bot id=2039588022
+2025-05-25 23:36:22,918 - INFO - Update id=80233637 is handled. Duration 202 ms by bot id=2039588022
+2025-05-25 23:36:27,057 - INFO - Update id=80233638 is handled. Duration 188 ms by bot id=2039588022
+2025-05-25 23:36:29,866 - INFO - Update id=80233639 is handled. Duration 405 ms by bot id=2039588022
+2025-05-25 23:36:34,316 - INFO - Update id=80233640 is handled. Duration 172 ms by bot id=2039588022
+2025-05-25 23:36:35,744 - INFO - Update id=80233641 is handled. Duration 171 ms by bot id=2039588022
+2025-05-25 23:36:37,149 - INFO - Update id=80233642 is handled. Duration 375 ms by bot id=2039588022
+2025-05-25 23:36:38,390 - INFO - Update id=80233643 is handled. Duration 234 ms by bot id=2039588022
+2025-05-25 23:36:41,440 - INFO - Update id=80233644 is handled. Duration 188 ms by bot id=2039588022
+2025-05-25 23:36:48,318 - INFO - Update id=80233645 is handled. Duration 282 ms by bot id=2039588022
+2025-05-25 23:36:50,894 - INFO - Update id=80233646 is handled. Duration 234 ms by bot id=2039588022
+2025-05-25 23:36:52,416 - INFO - Update id=80233647 is handled. Duration 327 ms by bot id=2039588022
+2025-05-25 23:36:54,228 - INFO - Update id=80233648 is handled. Duration 342 ms by bot id=2039588022
+2025-05-25 23:36:55,532 - INFO - Update id=80233649 is handled. Duration 233 ms by bot id=2039588022
+2025-05-25 23:36:58,273 - INFO - Update id=80233650 is handled. Duration 186 ms by bot id=2039588022
+2025-05-25 23:37:08,438 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:38:08 +05)" (scheduled at 2025-05-25 23:37:08.427924+05:00)
+2025-05-25 23:37:08,443 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:37:08,444 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:38:08 +05)" executed successfully
+2025-05-25 23:37:35,687 - INFO - Update id=80233651 is handled. Duration 484 ms by bot id=2039588022
+2025-05-25 23:37:39,778 - INFO - Update id=80233652 is handled. Duration 202 ms by bot id=2039588022
+2025-05-25 23:37:44,268 - INFO - Update id=80233653 is handled. Duration 734 ms by bot id=2039588022
+2025-05-25 23:37:49,248 - INFO - Update id=80233654 is handled. Duration 421 ms by bot id=2039588022
+2025-05-25 23:37:55,964 - INFO - Update id=80233655 is handled. Duration 235 ms by bot id=2039588022
+2025-05-25 23:37:58,323 - INFO - Update id=80233656 is handled. Duration 733 ms by bot id=2039588022
+2025-05-25 23:37:59,925 - INFO - Update id=80233657 is handled. Duration 172 ms by bot id=2039588022
+2025-05-25 23:38:08,441 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:39:08 +05)" (scheduled at 2025-05-25 23:38:08.427924+05:00)
+2025-05-25 23:38:08,445 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:38:08,446 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:39:08 +05)" executed successfully
+2025-05-25 23:39:08,441 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:40:08 +05)" (scheduled at 2025-05-25 23:39:08.427924+05:00)
+2025-05-25 23:39:08,447 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:39:08,454 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:40:08 +05)" executed successfully
+2025-05-25 23:40:08,441 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:41:08 +05)" (scheduled at 2025-05-25 23:40:08.427924+05:00)
+2025-05-25 23:40:08,445 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:40:08,446 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:41:08 +05)" executed successfully
+2025-05-25 23:41:08,435 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:42:08 +05)" (scheduled at 2025-05-25 23:41:08.427924+05:00)
+2025-05-25 23:41:08,438 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:41:08,439 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:42:08 +05)" executed successfully
+2025-05-25 23:42:08,448 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:43:08 +05)" (scheduled at 2025-05-25 23:42:08.427924+05:00)
+2025-05-25 23:42:08,453 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:42:08,454 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:43:08 +05)" executed successfully
+2025-05-25 23:43:08,445 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:44:08 +05)" (scheduled at 2025-05-25 23:43:08.427924+05:00)
+2025-05-25 23:43:08,445 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:43:08,445 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:44:08 +05)" executed successfully
+2025-05-25 23:44:05,619 - INFO - Update id=80233658 is handled. Duration 546 ms by bot id=2039588022
+2025-05-25 23:44:07,505 - INFO - Update id=80233659 is handled. Duration 186 ms by bot id=2039588022
+2025-05-25 23:44:08,433 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:45:08 +05)" (scheduled at 2025-05-25 23:44:08.427924+05:00)
+2025-05-25 23:44:08,438 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:44:08,439 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:45:08 +05)" executed successfully
+2025-05-25 23:44:43,386 - INFO - Update id=80233660 is handled. Duration 2577 ms by bot id=2039588022
+2025-05-25 23:44:45,036 - INFO - Update id=80233661 is handled. Duration 1640 ms by bot id=2039588022
+2025-05-25 23:44:47,138 - INFO - Update id=80233662 is handled. Duration 2234 ms by bot id=2039588022
+2025-05-25 23:44:48,897 - INFO - Update id=80233663 is handled. Duration 2297 ms by bot id=2039588022
+2025-05-25 23:44:50,838 - INFO - Update id=80233664 is handled. Duration 328 ms by bot id=2039588022
+2025-05-25 23:44:50,913 - INFO - Update id=80233665 is handled. Duration 202 ms by bot id=2039588022
+2025-05-25 23:44:54,195 - INFO - Update id=80233666 is handled. Duration 156 ms by bot id=2039588022
+2025-05-25 23:44:54,643 - INFO - Update id=80233667 is handled. Duration 202 ms by bot id=2039588022
+2025-05-25 23:44:57,305 - INFO - Update id=80233668 is handled. Duration 157 ms by bot id=2039588022
+2025-05-25 23:45:08,432 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:46:08 +05)" (scheduled at 2025-05-25 23:45:08.427924+05:00)
+2025-05-25 23:45:08,436 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:45:08,437 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:46:08 +05)" executed successfully
+2025-05-25 23:45:17,033 - INFO - Update id=80233669 is handled. Duration 436 ms by bot id=2039588022
+2025-05-25 23:46:08,440 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:47:08 +05)" (scheduled at 2025-05-25 23:46:08.427924+05:00)
+2025-05-25 23:46:08,444 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:46:08,445 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:47:08 +05)" executed successfully
+2025-05-25 23:47:08,437 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:48:08 +05)" (scheduled at 2025-05-25 23:47:08.427924+05:00)
+2025-05-25 23:47:08,443 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:47:08,444 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:48:08 +05)" executed successfully
+2025-05-25 23:48:08,435 - INFO - Running job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:49:08 +05)" (scheduled at 2025-05-25 23:48:08.427924+05:00)
+2025-05-25 23:48:08,440 - INFO - Нет событий, начинающихся в ближайшие 10 минут
+2025-05-25 23:48:08,441 - INFO - Job "divide_teams_for_current_event (trigger: interval[0:01:00], next run at: 2025-05-25 23:49:08 +05)" executed successfully
+2025-05-25 23:48:12,248 - INFO - Polling stopped for bot @quanyshkz_bot id=2039588022 - 'EventBOT'
+2025-05-25 23:48:12,249 - INFO - Polling stopped
+2025-05-25 23:48:12,516 - INFO - Bot stopped
