@@ -25,7 +25,8 @@ async def divide_teams_for_current_event(bot: Bot):
             db.query(Event)
                 .filter(Event.event_time > now,
                         Event.event_time <= in_10_min,
-                        Event.is_team_divide == False)
+                        Event.is_team_divide == False,
+                        Event.category_id == 2)
                 .order_by(Event.event_time)
                 .first()
         )

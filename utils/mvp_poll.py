@@ -25,7 +25,8 @@ def get_started_events():
         now = datetime.now()
         events = db.query(Event).filter(
             Event.event_time < now,
-            Event.is_checked == False
+            Event.is_checked == False,
+            Event.category_id == 2
         ).all()
         for event in events:
             candidate = choose_mvp_candidate(event.id)

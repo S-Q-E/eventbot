@@ -379,3 +379,208 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin/
 2025-05-26 13:08:32,062 - INFO - 127.0.0.1 - - [26/May/2025 13:08:32] "POST /event/39/add-participants HTTP/1.1" 200 -
 2025-05-26 13:20:17,929 - INFO - 127.0.0.1 - - [26/May/2025 13:20:17] "GET /event/39/add-participants HTTP/1.1" 200 -
 2025-05-26 13:20:46,393 - INFO - 127.0.0.1 - - [26/May/2025 13:20:46] "POST /event/39/add-participants HTTP/1.1" 200 -
+2025-05-27 13:26:45,727 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-05-27 13:26:45,727 - INFO - [33mPress CTRL+C to quit[0m
+2025-05-27 13:26:45,743 - INFO -  * Restarting with stat
+2025-05-27 13:26:49,637 - INFO - 127.0.0.1 - - [27/May/2025 13:26:49] "[33mGET / HTTP/1.1[0m" 404 -
+2025-05-27 13:26:49,692 - INFO - 127.0.0.1 - - [27/May/2025 13:26:49] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-27 13:28:21,590 - ERROR - Exception on /event/39/add-participants [GET]
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\app.py", line 84, in add_participants
+    event = db.session.get(Event, event_id)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\scoping.py", line 1060, in get
+    return self._proxied.get(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 3693, in get
+    return self._get_impl(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 3873, in _get_impl
+    return db_load_fn(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\loading.py", line 694, in load_on_pk_identity
+    session.execute(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2362, in execute
+    return self._execute_internal(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2235, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+2025-05-27 13:28:21,847 - INFO - 127.0.0.1 - - [27/May/2025 13:28:21] "[35m[1mGET /event/39/add-participants HTTP/1.1[0m" 500 -
+2025-05-27 13:29:10,549 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-27 13:29:10,852 - INFO -  * Restarting with stat
+2025-05-27 13:29:14,756 - INFO - 127.0.0.1 - - [27/May/2025 13:29:14] "GET /event/39/add-participants HTTP/1.1" 200 -
+2025-05-27 13:29:43,049 - INFO - 127.0.0.1 - - [27/May/2025 13:29:43] "[32mPOST /event/39/add-participants HTTP/1.1[0m" 302 -
+2025-05-27 13:29:43,060 - INFO - 127.0.0.1 - - [27/May/2025 13:29:43] "GET /event/39/add-participants HTTP/1.1" 200 -
+2025-05-27 13:30:34,870 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-27 13:30:35,279 - INFO -  * Restarting with stat
+2025-05-27 13:30:40,534 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-27 13:30:40,797 - INFO -  * Restarting with stat
+2025-05-27 13:30:44,039 - INFO -  * Restarting with stat
+2025-05-27 13:31:24,678 - INFO - 127.0.0.1 - - [27/May/2025 13:31:24] "[32mPOST /event/39/add-participants HTTP/1.1[0m" 302 -
+2025-05-27 13:31:24,704 - INFO - 127.0.0.1 - - [27/May/2025 13:31:24] "GET /event/39/add-participants HTTP/1.1" 200 -
+2025-05-27 13:41:20,645 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-27 13:41:20,920 - INFO -  * Restarting with stat
+2025-05-27 13:41:34,226 - INFO - 127.0.0.1 - - [27/May/2025 13:41:34] "[32mPOST /event/39/add-participants HTTP/1.1[0m" 302 -
+2025-05-27 13:41:34,284 - ERROR - Exception on /event/39/add-participants [GET]
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\app.py", line 128, in add_participants
+    return render_template('add_participants.html', event=event)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\templating.py", line 149, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\jinja2\environment.py", line 1084, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\jinja2\environment.py", line 1013, in get_template
+    return self._load_template(name, globals)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\jinja2\environment.py", line 972, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\jinja2\loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\jinja2\environment.py", line 768, in compile
+    self.handle_exception(source=source_hint)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\jinja2\environment.py", line 939, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\templates\add_participants.html", line 41, in template
+    {% endfor %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endfor'.
+2025-05-27 13:41:34,399 - INFO - 127.0.0.1 - - [27/May/2025 13:41:34] "[35m[1mGET /event/39/add-participants HTTP/1.1[0m" 500 -
+2025-05-27 13:41:58,366 - INFO - 127.0.0.1 - - [27/May/2025 13:41:58] "GET /event/39/add-participants HTTP/1.1" 200 -
+2025-05-27 13:42:10,282 - INFO - 127.0.0.1 - - [27/May/2025 13:42:10] "[32mPOST /event/39/add-participants HTTP/1.1[0m" 302 -
+2025-05-27 13:42:10,293 - INFO - 127.0.0.1 - - [27/May/2025 13:42:10] "GET /event/39/add-participants HTTP/1.1" 200 -
+2025-05-27 13:44:03,646 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-27 13:44:04,074 - INFO -  * Restarting with stat
+2025-05-27 13:45:26,236 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-27 13:45:26,538 - INFO -  * Restarting with stat
+2025-05-27 13:45:35,919 - INFO - 127.0.0.1 - - [27/May/2025 13:45:35] "[35m[1mGET /event/39/add-participants HTTP/1.1[0m" 500 -
+2025-05-27 13:45:36,042 - ERROR - Error on request:
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\werkzeug\serving.py", line 331, in execute
+    application_iter = app(environ, start_response)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\cli.py", line 972, in app
+    raise err from None
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\cli.py", line 961, in run_command
+    app: WSGIApplication = info.load_app()  # pyright: ignore
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\cli.py", line 349, in load_app
+    app = locate_app(import_name, name)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\cli.py", line 245, in locate_app
+    __import__(module_name)
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\app.py", line 48, in <module>
+    Configuration.account_id = app.config['YOOKASSA_SHOP_ID']
+KeyError: 'YOOKASSA_SHOP_ID'
+2025-05-27 13:45:47,327 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-27 13:45:47,621 - INFO -  * Restarting with stat
+2025-05-27 13:46:31,122 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-27 13:46:31,391 - INFO -  * Restarting with stat
+2025-05-27 13:46:35,122 - ERROR - Exception on /event/39/add-participants [GET]
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\app.py", line 85, in add_participants
+    event = db.session.get(Event, event_id)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\scoping.py", line 1060, in get
+    return self._proxied.get(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 3693, in get
+    return self._get_impl(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 3873, in _get_impl
+    return db_load_fn(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\loading.py", line 694, in load_on_pk_identity
+    session.execute(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2362, in execute
+    return self._execute_internal(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2235, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+2025-05-27 13:46:35,135 - INFO - 127.0.0.1 - - [27/May/2025 13:46:35] "[35m[1mGET /event/39/add-participants HTTP/1.1[0m" 500 -
+2025-05-27 13:46:36,579 - ERROR - Exception on /event/39/add-participants [GET]
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\app.py", line 85, in add_participants
+    event = db.session.get(Event, event_id)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\scoping.py", line 1060, in get
+    return self._proxied.get(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 3693, in get
+    return self._get_impl(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 3873, in _get_impl
+    return db_load_fn(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\loading.py", line 694, in load_on_pk_identity
+    session.execute(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2362, in execute
+    return self._execute_internal(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2235, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+2025-05-27 13:46:36,581 - INFO - 127.0.0.1 - - [27/May/2025 13:46:36] "[35m[1mGET /event/39/add-participants HTTP/1.1[0m" 500 -
+2025-05-27 13:46:38,548 - ERROR - Exception on /event/39/add-participants [GET]
+Traceback (most recent call last):
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\User\Desktop\Python projects\eventbot\app\app.py", line 85, in add_participants
+    event = db.session.get(Event, event_id)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\scoping.py", line 1060, in get
+    return self._proxied.get(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 3693, in get
+    return self._get_impl(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 3873, in _get_impl
+    return db_load_fn(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\loading.py", line 694, in load_on_pk_identity
+    session.execute(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2362, in execute
+    return self._execute_internal(
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\sqlalchemy\orm\session.py", line 2235, in _execute_internal
+    bind = self.get_bind(**bind_arguments)
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask_sqlalchemy\session.py", line 53, in get_bind
+    engines = self._db.engines
+  File "c:\users\user\desktop\python projects\eventbot\venv\lib\site-packages\flask_sqlalchemy\extension.py", line 690, in engines
+    raise RuntimeError(
+RuntimeError: The current Flask app is not registered with this 'SQLAlchemy' instance. Did you forget to call 'init_app', or did you create multiple 'SQLAlchemy' instances?
+2025-05-27 13:46:38,551 - INFO - 127.0.0.1 - - [27/May/2025 13:46:38] "[35m[1mGET /event/39/add-participants HTTP/1.1[0m" 500 -
+2025-05-27 13:46:50,985 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
+2025-05-27 13:46:51,270 - INFO -  * Restarting with stat
+2025-05-27 13:46:55,017 - INFO - 127.0.0.1 - - [27/May/2025 13:46:55] "GET /event/39/add-participants HTTP/1.1" 200 -
+2025-05-27 13:47:19,302 - INFO - 127.0.0.1 - - [27/May/2025 13:47:19] "[32mPOST /event/39/add-participants HTTP/1.1[0m" 302 -
+2025-05-27 13:54:14,329 - INFO -  * Detected change in 'C:\\Users\\User\\Desktop\\Python projects\\eventbot\\app\\app.py', reloading
