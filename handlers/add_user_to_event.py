@@ -117,7 +117,7 @@ async def register_user_to_event(message: types.Message, state: FSMContext):
 
 @manual_register_user_router.callback_query(F.data.startswith("invite_"))
 async def generate_invite_link(callback: types.CallbackQuery):
-    FLASK_BASE_URL = "http://127.0.0.1:5000/"
+    FLASK_BASE_URL = "http://109.73.201.136:8000/"
     event_id = callback.data.split("_")[1]
     inviter_id = callback.from_user.id
 
