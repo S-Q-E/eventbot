@@ -29,6 +29,7 @@ from handlers import (
     send_msg,
     categories
 )
+from middleware.only_private import OnlyPrivateMiddleware
 from utils.scheduler_instance import start_scheduler
 
 logger = logging.getLogger(__name__)
@@ -51,6 +52,9 @@ async def main():
 
     bot: Bot = Bot(token=config.tg_bot.token, default=default_properties)
     dp: Dispatcher = Dispatcher(storage=MemoryStorage())
+
+    dp.message.middleware(OnlyPrivateMiddleware())
+    dp.callback_query.middleware(OnlyPrivateMiddleware())
 
     dp.include_router(start_command.start_router)
     dp.include_router(main_menu.main_menu_router)

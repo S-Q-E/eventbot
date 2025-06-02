@@ -138,6 +138,7 @@ def add_participants(event_id):
 
     return render_template('add_participants.html', event=event)
 
+
 admin = Admin(app, index_view=MyHomeView(), name='Моя Админка', template_mode='bootstrap3')
 admin.add_view(StatsView(name="Статистика"))
 admin.add_view(InterestsView(name="Подписки пользователей"))
