@@ -54,7 +54,6 @@ async def main():
     dp: Dispatcher = Dispatcher(storage=MemoryStorage())
 
     dp.message.middleware(OnlyPrivateMiddleware())
-    dp.callback_query.middleware(OnlyPrivateMiddleware())
 
     dp.include_router(start_command.start_router)
     dp.include_router(main_menu.main_menu_router)
