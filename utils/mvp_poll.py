@@ -90,7 +90,11 @@ def announce_winner():
         winner_name = f"{winner.first_name} {winner.last_name}"
         for candidate in candidates:
             candidate.is_mvp_candidate = False
-            candidate.votes = 0
+
+        users = db.query(User).all()
+        for user in users:
+            user.votes = 0
+
         db.commit()
         return winner_name, winner_photo_id
     except Exception as e:

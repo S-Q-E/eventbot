@@ -21,29 +21,34 @@
     {% endwith %}
 
     <form method="post">
-        <div id="participants">
-            <div class="row mb-3">
-                <div class="col">
-                    <input type="text" name="first_name" class="form-control" placeholder="Имя" required>
+                <div class="participant-row row mb-3 align-items-end">
+                    <div class="col">
+                        <input type="text" name="first_name" class="form-control" placeholder="Имя" required>
+                    </div>
+
+                    <div class="col">
+                        <input type="text" name="last_name" class="form-control" placeholder="Фамилия" required>
+                    </div>
+
+                    <div class="col">
+                        <input type="text" name="phone_number" class="form-control" placeholder="Телефон" required>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-danger" onclick="removeParticipant(this)">Удалить участника</button>
+                    </div>
                 </div>
-                <div class="col">
-                    <input type="text" name="last_name" class="form-control" placeholder="Фамилия" required>
-                </div>
-                <div class="col">
-                    <input type="text" name="phone_number" class="form-control" placeholder="Телефон" required>
-                </div>
-            </div>
-        </div>
-        <button type="button" class="btn btn-secondary mb-3" onclick="addParticipant()">Добавить участника</button>
+        <button type="button" class="btn btn-secondary mb-3" onclick="addParticipant()">Добавить ещё участника</button>
         <br>
-        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <button type="submit" class="btn btn-primary">Перейти к оплате</button>
     </form>
-    <script>
+        <script>
+        let participantCount = 1;
+
         function addParticipant() {
             const container = document.getElementById('participants');
-            const row = document.createElement('div');
-            row.className = 'row mb-3';
-            row.innerHTML = `
+            const wrapper = document.createElement('div');
+            wrapper.className = 'participant-row row mb-3 align-items-end';
+            wrapper.innerHTML = `
                 <div class="col">
                     <input type="text" name="first_name" class="form-control" placeholder="Имя" required>
                 </div>
@@ -53,9 +58,17 @@
                 <div class="col">
                     <input type="text" name="phone_number" class="form-control" placeholder="Телефон" required>
                 </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-danger" onclick="removeParticipant(this)">Удалить</button>
+                </div>
             `;
-            container.appendChild(row);
+            container.appendChild(wrapper);
+            participantCount++;
         }
-    </script>
-</body>
+
+        function removeParticipant(button) {
+            button.closest('.participant-row').remove();
+        }
+        </script>
+    </body>
 </html>

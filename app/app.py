@@ -53,9 +53,11 @@ Configuration.secret_key = os.getenv('YOOKASSA_API_KEY')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 # Фоновая проверка статуса платежа
 def check_payment_status(payment_id, users_data, event_id):
