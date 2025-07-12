@@ -22,6 +22,7 @@ async def admin_panel(callback: types.CallbackQuery):
         [InlineKeyboardButton(text="Настройки админа", callback_data="set_admin")],
         [InlineKeyboardButton(text="Отправить сообщения пользователям", callback_data="send_to_users")],
         [InlineKeyboardButton(text="Отправить личное сообщение", callback_data="send_priv_message")],
+        [InlineKeyboardButton(text="Изменить уровень игрока", callback_data="change_users_level")],
         [InlineKeyboardButton(text="Сгенерировать отчет", callback_data="report")],
         [InlineKeyboardButton(text="Просмотреть аватары пользователей", callback_data="show_users_avatar")],
         [InlineKeyboardButton(text="Просмотреть интересы пользователей", callback_data="view_user_subscriptions")],

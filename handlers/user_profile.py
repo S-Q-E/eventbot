@@ -27,6 +27,7 @@ async def user_profile_menu(callback: types.CallbackQuery):
         [InlineKeyboardButton(text="📷 Добавить фото", callback_data="download_avatar")],
         [InlineKeyboardButton(text="📷 Показать моё фото", callback_data="show_avatar")],
         [InlineKeyboardButton(text="❤️Мои интересы", callback_data="interests")],
+        [InlineKeyboardButton(text="⭐️Изменить мой уровень", callback_data="change_user_level")],
         [InlineKeyboardButton(text="🔙 Назад", callback_data="main_menu")]
     ])
 
@@ -405,3 +406,53 @@ async def toggle_interest(callback: CallbackQuery):
         await callback.answer()
     finally:
         db.close()
+
+
+@user_profile_router.callback_query(F.data == "change_user_level")
+async def change_user_level(callback: types.CallbackQuery):
+    builder = InlineKeyboardBuilder()
+    builder.button(text="⭐️ Новичок", callback_data="set_user_level_1")
+    builder.button(text="⭐️⭐️ Любитель", callback_data="set_user_level_2")
+    builder.button(text="⭐️⭐️⭐️ Профи", callback_data="set_user_level_3")
+    builder.button(text="🔙 Назад", callback_data="user_profile")
+    builder.adjust(1)
+
+    # Получаем текущий уровень пользователя
+    db = next(get_db())
+    user = db.query(User).filter_by(id=callback.from_user.id).first()
+    level = user.user_level if user else "не установлен"
+    db.close()
+
+    await callback.message.answer(
+        f"Выберите уровень вашей игры (текущий: <b>{level}</b>):",
+        reply_markup=builder.as_markup()
+    )
+    await callback.answer()
+
+LEVEL_MAP = {
+    "set_user_level_1": "Новичок",
+    "set_user_level_2": "Любитель",
+    "set_user_level_3": "Профи"
+}
+
+
+@user_profile_router.callback_query(
+    F.data.in_(["set_user_level_1", "set_user_level_2", "set_user_level_3"])
+)
+async def set_user_level(callback: types.CallbackQuery):
+    level = LEVEL_MAP[callback.data]
+    user_id = callback.from_user.id
+
+    db = next(get_db())
+    user = db.query(User).filter_by(id=user_id).first()
+    builder = InlineKeyboardBuilder()
+    if user:
+        user.user_level = level
+        db.commit()
+        builder.button(text="В мой профиль", callback_data="user_profile")
+        await callback.message.answer(f"Уровень установлен: <b>{level}</b>", reply_markup=builder.as_markup())
+    else:
+        await callback.message.answer("Ошибка: пользователь не найден.", reply_markup=builder.as_markup())
+    db.close()
+    await callback.answer()
+

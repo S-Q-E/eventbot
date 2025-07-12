@@ -20,6 +20,8 @@ class Form(StatesGroup):
     description = State()
     max_participants = State()
     waiting_for_category = State()
+    waiting_for_user_level = State()
+
 
 
 @create_event_router.message(Command("create_event"))
@@ -80,16 +82,42 @@ async def process_time(message: types.Message, state: FSMContext):
 
 
 @create_event_router.message(Form.event_time)
-async def process_participants(message: types.Message, state: FSMContext):
+async def ask_user_level(message: types.Message, state: FSMContext):
     try:
         event_time = datetime.strptime(message.text, '%d/%m/%Y %H:%M')
         await state.update_data(event_time=event_time)
         await state.set_state(Form.max_participants)
-        await message.reply("📌 <b>Максимальное кол-во участников</b>\n\n"
-                            "📝 Пожалуйста, введите <b>максимальное количество участников</b>:\n"
-                            "🔹 Пример: <i>10</i>\n\n")
     except ValueError:
         await message.reply("Неверный формат даты. Попробуйте снова в формате ДД/ММ/ГГГГ ЧЧ:ММ.")
+
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Только новички", callback_data="players_level_newbies")
+    builder.button(text="Любители и профи", callback_data="players_level_not_newbies")
+    builder.adjust(1)
+
+    await message.answer(
+        "Кто может участвовать в этой игре?\n"
+        "Выберите вариант:",
+        reply_markup=builder.as_markup()
+    )
+    await state.set_state(Form.waiting_for_user_level)
+
+
+@create_event_router.callback_query(
+    F.data.in_(["players_level_newbies", "players_level_not_newbies"])
+)
+async def save_players_level(callback: types.CallbackQuery, state: FSMContext):
+    players_level = (
+        "Только новички" if callback.data == "players_level_newbies"
+        else "Любители и профи"
+    )
+    await state.update_data(players_level=players_level)
+    await callback.message.answer(
+        f"🔹 Вы выбрали: <b>{players_level}</b>.\n",
+    )
+    # Перевести FSM на следующий этап (например, выбор цены)
+    await state.set_state(Form.max_participants)  # замените на актуальный этап!
+    await callback.message.answer("Введите максимальное количество участников события. \n Например: 9")
 
 
 @create_event_router.message(Form.max_participants)
@@ -151,7 +179,8 @@ async def adding_to_db(callback: types.CallbackQuery, state: FSMContext):
         event_time=event_data['event_time'],
         max_participants=int(event_data['max_participants']),
         price=int(event_data['price']),
-        category_id=int(event_data['category_id'])
+        category_id=int(event_data['category_id']),
+        players_level=event_data['players_level']
     )
     db.add(new_event)
     db.commit()

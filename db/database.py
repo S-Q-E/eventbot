@@ -85,7 +85,7 @@ class Event(Base):
     current_participants = Column(Integer, default=0)
     is_checked = Column(Boolean, default=False)
     is_team_divide = Column(Boolean, default=False)
-
+    players_level = Column(String, nullable=True)
     category_id = Column(Integer, ForeignKey('categories.id'), nullable=True)
     category = relationship("Category", back_populates="events")
 
@@ -105,14 +105,14 @@ class Registration(Base):
     user = relationship("User", back_populates="registrations")
     event = relationship("Event", back_populates="registrations")
 
-# Сессии голосования за MVP
+
 class VotingSession(Base):
     __tablename__ = 'voting_sessions'
     id = Column(Integer, primary_key=True, autoincrement=True)
     poll_id = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-# Категории событий
+
 class Category(Base):
     __tablename__ = 'categories'
     id = Column(Integer, primary_key=True, autoincrement=True)

@@ -4,6 +4,8 @@ import os
 import uuid
 from aiogram import Router, types, F, Bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+
 from db.database import get_db, Registration, Event, User
 from yookassa import Payment, Configuration
 from dotenv import load_dotenv
@@ -28,6 +30,14 @@ async def fetch_event(event_id):
     db = next(get_db())
     event = db.query(Event).filter_by(id=event_id).first()
     return event, db
+
+USER_LEVELS = ["Новичок", "Любитель", "Профи"]
+
+def get_level_index(level):
+    try:
+        return USER_LEVELS.index(level)
+    except (ValueError, TypeError):
+        return -1  # Если уровень не установлен
 
 
 @event_join_router.callback_query(F.data.startswith("join_"))
@@ -63,6 +73,29 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
 
     if event.current_participants == event.max_participants:
         await callback_query.message.answer("К сожалению, место уже занято другим участником.")
+        return
+
+    user = db.query(User).filter_by(id=callback_query.from_user.id).first()
+    user_level = user.user_level or "Новичок"
+    event_level = event.players_level or "Новичок"
+
+    if event_level == "Любители и профи" and user_level == "Новичок":
+
+        markup = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="🚀 Всё равно записаться", callback_data=f"force_join_{event_id}"),
+                    InlineKeyboardButton(text="❌ Отмена", callback_data="cancel_join")
+                ]
+            ]
+        )
+        await callback_query.message.answer(
+            "⚠️ Ваш уровень: <b>Новичок</b>\n"
+            "А это событие только для <b>Любителей и Профи</b>!\n\n"
+            "Вы уверены, что хотите записаться? 🤔",
+            reply_markup=markup
+        )
+        await callback_query.answer()
         return
 
     if event.price == 0:
@@ -190,3 +223,44 @@ async def cancel_registration(callback_query: types.CallbackQuery):
         else:
             await callback_query.answer("Вы не были записаны на это событие.")
 
+
+@event_join_router.callback_query(F.data.startswith("force_join_"))
+async def force_join(callback: types.CallbackQuery, bot: Bot):
+    event_id = int(callback.data.split("_")[-1])
+    db = next(get_db())
+    try:
+        user = db.query(User).filter_by(id=callback.from_user.id).first()
+        event = db.query(Event).filter_by(id=event_id).first()
+        try:
+            payment = Payment.create({
+                "amount": {"value": str(event.price), "currency": "RUB"},
+                "payment_method_data": {
+                    "type": "sbp"
+                },
+                "confirmation": {"type": "redirect", "return_url": "https://t.me/GuruEvent_bot/"},
+                "capture": True,
+                "description": f"Оплата участия в событии {event.name}",
+                "metadata": {"user_id": user.id, "event_id": event_id},
+            })
+            confirmation_url = payment.confirmation.confirmation_url
+            pay_btn = InlineKeyboardButton(text="💳 Оплатить", url=confirmation_url)
+            markup = InlineKeyboardMarkup(inline_keyboard=[[pay_btn]])
+            await callback.message.answer(
+                f"Оплатите участие, нажав на кнопку <code>Оплатить</code>, <b>выберите способ оплаты СБП:</b>\n",
+                reply_markup=markup
+            )
+            await check_payment(payment.id, event_id, user.id, callback, bot)
+        except Exception as e:
+            logger.exception(f"Ошибка при создании платежа. {e}")
+            await callback.message.answer("Ошибка при создании платежа. Попробуйте позже.")
+    except Exception as e:
+        await callback.message.answer("Ошибка при записи на игру")
+    finally:
+        db.close()
+
+
+@event_join_router.callback_query(F.data == "cancel_join")
+async def cancel_join(callback: types.CallbackQuery):
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Назад", callback_data="main_menu")
+    await callback.message.answer("❌ Запись отменена. Вы всегда можете выбрать другое событие!", reply_markup=builder.as_markup())
