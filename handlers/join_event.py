@@ -77,22 +77,21 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
 
     user = db.query(User).filter_by(id=callback_query.from_user.id).first()
     user_level = user.user_level or "Новичок"
-    event_level = event.players_level or "Новичок"
+    event_level = event.players_level or "Смешанный"
 
     if event_level == "Любители и профи" and user_level == "Новичок":
 
         markup = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
-                    InlineKeyboardButton(text="🚀 Всё равно записаться", callback_data=f"force_join_{event_id}"),
-                    InlineKeyboardButton(text="❌ Отмена", callback_data="cancel_join")
+                    InlineKeyboardButton(text="❌ Назад", callback_data="events_list")
                 ]
             ]
         )
         await callback_query.message.answer(
             "⚠️ Ваш уровень: <b>Новичок</b>\n"
             "А это событие только для <b>Любителей и Профи</b>!\n\n"
-            "Вы уверены, что хотите записаться? 🤔",
+            "Запись невозможна 🤔",
             reply_markup=markup
         )
         await callback_query.answer()

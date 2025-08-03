@@ -85,20 +85,31 @@ def announce_winner():
             logging.info("Нет кандидатов")
             return None
 
+        logging.info(f"Определяем победителя из {len(candidates)} кандидатов:")
+        for candidate in candidates:
+            logging.info(f"  - {candidate.first_name} {candidate.last_name} (ID: {candidate.id}): {candidate.votes} голосов")
+
         winner = max(candidates, key=lambda user: user.votes)
         winner_photo_id = winner.photo_file_id if winner.photo_file_id else DEFAULT_PHOTO
         winner_name = f"{winner.first_name} {winner.last_name}"
+        
+        logging.info(f"🏆 Победитель: {winner_name} (ID: {winner.id}) с {winner.votes} голосами")
+        
+        # Сбрасываем флаги кандидатов
         for candidate in candidates:
             candidate.is_mvp_candidate = False
+            logging.info(f"Сброшен флаг кандидата для {candidate.first_name} {candidate.last_name}")
 
+        # Сбрасываем счетчики голосов для всех пользователей
         users = db.query(User).all()
         for user in users:
             user.votes = 0
 
         db.commit()
+        logging.info("База данных обновлена, флаги и счетчики сброшены")
         return winner_name, winner_photo_id
     except Exception as e:
-        logging.info(f"Ошибка в announce winner {e}")
+        logging.error(f"Ошибка в announce_winner: {e}")
         db.rollback()
     finally:
         db.close()
@@ -119,8 +130,13 @@ async def start_voting(bot: Bot):
         candidates = db.query(User).filter(User.is_mvp_candidate == True).all()
         if not candidates:
             await bot.send_message(chat_id=ADMIN, text="Нет кандидатов на голосование")
+            return
+        
         media = []
         keyboard_builder = InlineKeyboardBuilder()
+        
+        # Создаем опции с ID кандидатов для правильного сопоставления
+        options = []
         for candidate in candidates:
             display_name = f"🏆 {candidate.first_name} {candidate.last_name} ({candidate.votes})"
             photo = candidate.photo_file_id if candidate.photo_file_id else DEFAULT_PHOTO
@@ -129,18 +145,30 @@ async def start_voting(bot: Bot):
                 text=display_name,
                 callback_data=f"vote_{candidate.id}"
             )
+            # Создаем опцию с ID кандидата в скобках для идентификации
+            option_text = f"{candidate.first_name} {candidate.last_name} (ID:{candidate.id})"
+            options.append(option_text)
+        
         await bot.send_media_group(chat_id=CHAT_ID, media=media)
-        options = [f"{c.first_name} {c.last_name}" for c in candidates]
-        print(options)
+        
+        logging.info(f"Создаем опрос с {len(options)} опциями")
+        for i, option in enumerate(options):
+            logging.info(f"Опция {i}: {option}")
+        
         poll_message = await bot.send_poll(
             chat_id=CHAT_ID,
             question="Кто лучший игрок?",
             options=options,
             is_anonymous=False
         )
+        
+        # Сохраняем информацию о кандидатах для данного опроса
         voting_session = VotingSession(poll_id=poll_message.poll.id)
         db.add(voting_session)
         db.commit()
+        
+        logging.info(f"Опрос создан с ID: {poll_message.poll.id}")
+        
     except Exception as e:
         logging.info(f"Ошибка в start_voting {e}")
         await bot.send_message(chat_id=ADMIN, text="Ошибка попробуйте позднее")
@@ -158,9 +186,37 @@ async def end_voting(bot: Bot):
     logging.info("Голосование закончилось. Идет подсчет голосов")
     winner_name, photo_id = announce_winner()
     if winner_name and photo_id:
+        logging.info(f"Отправляем поздравление победителю: {winner_name}")
         await bot.send_photo(chat_id=CHAT_ID,
                              photo=photo_id,
                              caption=f"Звание лучшего игрока недели получает\n"
                                      f" 🏆{winner_name} 🏆 \nПоздравляем!🎉🎉🎉")
+        logging.info("Поздравление отправлено успешно")
     else:
-        logging.info("Не удалось определить победителя")
+        logging.warning("Не удалось определить победителя")
+        await bot.send_message(chat_id=CHAT_ID, text="Не удалось определить победителя голосования")
+
+
+async def debug_voting_status(bot: Bot):
+    """
+    Функция для отладки - показывает текущее состояние голосования
+    """
+    db = next(get_db())
+    try:
+        candidates = db.query(User).filter(User.is_mvp_candidate == True).all()
+        if not candidates:
+            await bot.send_message(chat_id=ADMIN, text="Нет активных кандидатов")
+            return
+        
+        status_text = "📊 Текущее состояние голосования:\n\n"
+        for candidate in candidates:
+            status_text += f"👤 {candidate.first_name} {candidate.last_name} (ID: {candidate.id})\n"
+            status_text += f"   🗳️ Голосов: {candidate.votes}\n\n"
+        
+        await bot.send_message(chat_id=ADMIN, text=status_text)
+        
+    except Exception as e:
+        logging.error(f"Ошибка в debug_voting_status: {e}")
+        await bot.send_message(chat_id=ADMIN, text=f"Ошибка при получении статуса: {e}")
+    finally:
+        db.close()

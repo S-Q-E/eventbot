@@ -43,6 +43,7 @@ async def event_details(callback: types.CallbackQuery):
         event_info = (
             f"<b>📅 {event.name}</b>\n\n"
             f"📝 <b>Описание:</b> {event.description}\n\n"
+            f"⬆️<b>Уровень игры:</b> {event.players_level}\n"
             f"📍 <b>Адрес:</b> {event.address}\n"
             f"🕒 <b>Время:</b> {formatted_time}\n"
             f"💰 <b>Цена:</b> {event.price} руб.\n"

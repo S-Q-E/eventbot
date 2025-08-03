@@ -23,7 +23,6 @@ class Form(StatesGroup):
     waiting_for_user_level = State()
 
 
-
 @create_event_router.message(Command("create_event"))
 @create_event_router.callback_query(F.data == "create_event")
 async def command_start(callback_query: CallbackQuery, state: FSMContext) -> None:
@@ -91,8 +90,8 @@ async def ask_user_level(message: types.Message, state: FSMContext):
         await message.reply("Неверный формат даты. Попробуйте снова в формате ДД/ММ/ГГГГ ЧЧ:ММ.")
 
     builder = InlineKeyboardBuilder()
-    builder.button(text="Только новички", callback_data="players_level_newbies")
-    builder.button(text="Любители и профи", callback_data="players_level_not_newbies")
+    builder.button(text="Смешанный(все уровни игроков)", callback_data="players_level_newbies")
+    builder.button(text="Только любители и профи", callback_data="players_level_not_newbies")
     builder.adjust(1)
 
     await message.answer(
@@ -108,7 +107,7 @@ async def ask_user_level(message: types.Message, state: FSMContext):
 )
 async def save_players_level(callback: types.CallbackQuery, state: FSMContext):
     players_level = (
-        "Только новички" if callback.data == "players_level_newbies"
+        "Смешанный" if callback.data == "players_level_newbies"
         else "Любители и профи"
     )
     await state.update_data(players_level=players_level)
