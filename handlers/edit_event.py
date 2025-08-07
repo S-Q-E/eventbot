@@ -294,8 +294,9 @@ async def edit_event_category(callback: types.CallbackQuery, state: FSMContext):
                 event.category_id = category_id
                 db.commit()
                 await callback.message.answer("Категория события обновлена!", reply_markup=kb.as_markup())
+            await state.clear()
         except Exception as e:
             await callback.message.answer("Ошибка при изменений категории")
-            logging.info(f"Ошибка в dit_event_category {e}")
+            logging.info(f"Ошибка в edit_event_category {e}")
         finally:
             db.close()
