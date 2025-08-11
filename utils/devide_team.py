@@ -36,6 +36,7 @@ async def divide_teams_for_current_event(bot: Bot):
             return
 
         registrations = db.query(Registration).filter_by(event_id=event.id).all()
+
         players = [reg.user for reg in registrations if reg.user]
         if len(players) < 8:
             await bot.send_message(chat_id=CHAT_ID, text="Недостаточно участников для игры")
@@ -50,6 +51,10 @@ async def divide_teams_for_current_event(bot: Bot):
                     f"Ответственный за мяч: <b>{random_player.first_name} {random_player.last_name}</b>"
                 )
             )
+
+            for registration in registrations:
+                registration.user.user_games += 1
+
         event.is_team_divide = True
         db.commit()
     except Exception as e:

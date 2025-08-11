@@ -102,7 +102,6 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
             new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
             event.current_participants += 1
             user = db.query(User).filter(User.id == user_id).first()
-            user.user_games += 1
             logger.debug(f"Добавление новой регистрации для пользователя {user_id} на событие {event_id}.")
             db.add(new_registration)
             db.commit()
@@ -160,8 +159,6 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                         new_registration = Registration(user_id=user_id, event_id=event_id, is_paid=True)
                         db.add(new_registration)
                         event.current_participants += 1
-
-                    user.user_games += 1
 
                     receipt_info = (
                         f"📄 Чек об оплате:\n"
