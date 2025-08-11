@@ -143,56 +143,61 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
 
 
 async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQuery, bot: Bot):
-    db = next(get_db())
     try:
-        user = db.query(User).filter_by(id=user_id).first()
         intervals = [30, 60, 180, 600, 1800, 3600]
         for delay in intervals:
             payment = Payment.find_one(payment_id)
             if payment.status == "succeeded":
-                event, db = await fetch_event(event_id)
-                existing_registration: Registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
-                if existing_registration:
-                    existing_registration.is_paid = True
-                    user.user_games += 1
-                else:
-                    new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
-                    db.add(new_registration)
-                    event.current_participants += 1
+                # Используем with для автоматического commit и close
+                with next(get_db()) as db:
+                    event = db.query(Event).filter_by(id=event_id).first()
+                    user = db.query(User).filter_by(id=user_id).first()
+                    existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
+
+                    if existing_registration:
+                        existing_registration.is_paid = True
+                    else:
+                        new_registration = Registration(user_id=user_id, event_id=event_id, is_paid=True)
+                        db.add(new_registration)
+                        event.current_participants += 1
+
                     user.user_games += 1
 
-                db.commit()
-                user = db.query(User).filter(User.id == user_id).first()
-                receipt_info = (
-                    f"📄 Чек об оплате:\n"
-                    f"🎊 Событие: {event.name}\n"
-                    f"📆 Дата события: {event.event_time}\n"
-                    f"🆔 Оплатил: {user.first_name}, {user.last_name}\n"
-                    f"💰 Сумма: {event.price} руб.\n"
-                    f"🛠 Способ оплаты: {payment.payment_method.type}\n"
-                    f"👤 Номер плательщика: {user.phone_number}\n"
-                    f"🕒 Дата создания: {payment.created_at}\n"
-                )
+                    receipt_info = (
+                        f"📄 Чек об оплате:\n"
+                        f"🎊 Событие: {event.name}\n"
+                        f"📆 Дата события: {event.event_time}\n"
+                        f"🆔 Оплатил: {user.first_name}, {user.last_name}\n"
+                        f"💰 Сумма: {event.price} руб.\n"
+                        f"🛠 Способ оплаты: {payment.payment_method.type}\n"
+                        f"👤 Номер плательщика: {user.phone_number}\n"
+                        f"🕒 Дата создания: {payment.created_at}\n"
+                    )
+
+                # Отправляем сообщения после закрытия сессии
                 await callback.bot.send_message(ADMIN, receipt_info)
                 await callback.bot.send_message(ADMIN_2, receipt_info)
                 logging.info(
-                    f"Оплата {payment_id} на событие {event.name} - оплатил {user.first_name} {user.last_name}\n")
-                await callback.message.answer(f"Оплата прошла успешно! Вы зарегистрированы на событие <b>{event.name}</b>.\n",
-                                              reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
-                                                InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]]))
+                    f"Оплата {payment_id} на событие {event.name} - оплатил {user.first_name} {user.last_name}")
+                await callback.message.answer(
+                    f"Оплата прошла успешно! Вы зарегистрированы на событие <b>{event.name}</b>.\n",
+                    reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
+                        InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
+                    ]])
+                )
                 return
+
             elif payment.status in ["pending", "waiting_for_capture"]:
                 await callback.message.answer("Платеж обрабатывается. Пожалуйста подождите")
                 await asyncio.sleep(delay)
             else:
                 await callback.message.answer("Вы не оплатили событие. Регистрация отменена")
                 break
+
         await callback.message.answer("Оплата не завершена. Попробуйте снова.")
     except Exception as e:
         logger.exception(f"Ошибка при проверке статуса платежа. {e}")
         await callback.message.answer("Ошибка при проверке платежа. Попробуйте позже.")
-    finally:
-        db.close()
 
 
 @event_join_router.callback_query(F.data.startswith("cancel_registration_"))
