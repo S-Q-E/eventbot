@@ -39,7 +39,7 @@ async def delete_event(callback_query: types.CallbackQuery):
         page = 1
 
     db = next(get_db())
-    events = db.query(Event).order_by(Event.event_time.asc()).all()
+    events = db.query(Event).order_by(Event.event_time.desc()).all()
 
     if not events:
         await callback_query.message.answer("Нет доступных событий.")
