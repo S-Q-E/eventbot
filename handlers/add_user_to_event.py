@@ -34,8 +34,17 @@ async def start_register_user_to_event(callback: types.CallbackQuery, state: FSM
             await callback.message.answer("❌ Все места на это событие уже заняты.")
             return
 
-        await callback.message.answer("Введите ID пользователя, которого нужно зарегистрировать на событие:")
+        kb = InlineKeyboardBuilder()
+        kb.button(text="Вывести список пользователей", callback_data="show_users_id")
+        await callback.message.answer("Введите ID пользователя, которого нужно зарегистрировать на событие:", reply_markup=kb.as_markup())
 
+    await state.update_data(event_id=event_id)
+    await state.set_state(RegisterUserToEvent.wait_user_id)
+
+
+@manual_register_user_router.callback_query(F.data == "show_users_id")
+async def show_users_ids(callback: types.CallbackQuery, state: FSMContext):
+    with next(get_db()) as db:
         all_users = db.query(User).filter_by(is_registered=True).order_by(asc(User.first_name), asc(User.last_name)).all()
         user_list = "\n".join(
             f"▪️{user.first_name} {user.last_name} ID: <code>{user.id}</code>" for user in all_users
@@ -43,9 +52,8 @@ async def start_register_user_to_event(callback: types.CallbackQuery, state: FSM
 
         for chunk in split_message(user_list):
             await callback.message.answer(chunk)
-
-    await state.update_data(event_id=event_id)
-    await state.set_state(RegisterUserToEvent.wait_user_id)
+            await callback.message.answer("Введите ID пользователя, которого хотите добавить")
+            await state.set_state(RegisterUserToEvent.wait_user_id)
 
 
 @manual_register_user_router.message(RegisterUserToEvent.wait_user_id)
