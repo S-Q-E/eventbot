@@ -33,6 +33,7 @@ async def fetch_event(event_id):
 
 USER_LEVELS = ["Новичок", "Любитель", "Профи"]
 
+
 def get_level_index(level):
     try:
         return USER_LEVELS.index(level)
@@ -57,15 +58,12 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
             await callback_query.message.answer("Событие не найдено.")
             return
 
-        # ИСПРАВЛЕНИЕ: убираем дублирующую проверку, оставляем только одну
         if event.current_participants >= event.max_participants:
             await callback_query.message.answer("Все места заняты. Будем ждать вас в следующий раз!")
             return
 
         existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
         if existing_registration:
-            logging.debug(
-                f"Пользователь {user_id} уже зарегистрирован на событие {event_id}. Оплачен: {existing_registration.is_paid}")
             if existing_registration.is_paid:
                 await callback_query.message.answer(f"Вы уже записаны на это событие {event.name}")
                 return
@@ -94,7 +92,6 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
 
         if event.price == 0:
             try:
-                # ИСПРАВЛЕНИЕ: создаем регистрацию и сразу коммитим
                 new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=True)
                 event.current_participants += 1
                 db.add(new_registration)
@@ -123,11 +120,6 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
                 "metadata": {"user_id": user_id, "event_id": event_id},
             })
 
-            # ИСПРАВЛЕНИЕ: создаем неоплаченную регистрацию сразу
-            new_registration = Registration(user_id=user_id, event_id=event.id, is_paid=False)
-            db.add(new_registration)
-            db.commit()
-
             confirmation_url = payment.confirmation.confirmation_url
             pay_btn = InlineKeyboardButton(text="💳 Оплатить", url=confirmation_url)
             markup = InlineKeyboardMarkup(inline_keyboard=[[pay_btn]])
@@ -136,41 +128,38 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
                 f"Оплатите участие, нажав на кнопку <code>Оплатить</code>, <b>выберите способ оплаты СБП:</b>\n",
                 reply_markup=markup
             )
+            # Передаем payment_id в check_payment, чтобы отслеживать статус
             await check_payment(payment.id, event_id, user_id, callback_query, bot)
 
         except Exception as e:
-            db.rollback()
             logger.exception(f"Ошибка при создании платежа. {e}")
             await callback_query.message.answer("Ошибка при создании платежа. Попробуйте позже.")
     finally:
         db.close()
 
-
 async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQuery, bot: Bot):
     try:
-        intervals = [30, 60, 180, 600, 1800, 3600]
+        intervals = [30, 60, 180, 600, 1800, 3600]  # Интервалы ожидания
         for delay in intervals:
             payment = Payment.find_one(payment_id)
             if payment.status == "succeeded":
-                # Правильно получаем сессию БД
                 db = next(get_db())
                 try:
                     event = db.query(Event).filter_by(id=event_id).first()
                     user = db.query(User).filter_by(id=user_id).first()
-                    existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
 
+                    # Проверяем, не зарегистрирован ли пользователь уже
+                    existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
                     if existing_registration:
-                        # Если регистрация уже существует, просто помечаем как оплаченную
                         if not existing_registration.is_paid:
                             existing_registration.is_paid = True
-                            event.current_participants += 1  # ИСПРАВЛЕНИЕ: увеличиваем счетчик
+                            event.current_participants += 1
                     else:
-                        # Создаем новую регистрацию
+                        # Создаем регистрацию только после успешной оплаты
                         new_registration = Registration(user_id=user_id, event_id=event_id, is_paid=True)
                         db.add(new_registration)
                         event.current_participants += 1
 
-                    # Сохраняем изменения
                     db.commit()
 
                     receipt_info = (
@@ -184,7 +173,6 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                         f"🕒 Дата создания: {payment.created_at}\n"
                     )
 
-                    # Отправляем уведомления
                     await callback.bot.send_message(ADMIN, receipt_info)
                     await callback.bot.send_message(ADMIN_2, receipt_info)
 
@@ -202,18 +190,20 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                 except Exception as db_error:
                     db.rollback()
                     logger.exception(f"Ошибка при работе с БД: {db_error}")
-                    raise db_error
+                    await callback.message.answer("Ошибка при регистрации. Попробуйте снова.")
+                    return
                 finally:
                     db.close()
 
             elif payment.status in ["pending", "waiting_for_capture"]:
-                await callback.message.answer("Платеж обрабатывается. Пожалуйста подождите")
+                await callback.message.answer("Платеж обрабатывается. Пожалуйста, подождите.")
                 await asyncio.sleep(delay)
             else:
-                await callback.message.answer("Вы не оплатили событие. Регистрация отменена")
-                break
+                await callback.message.answer("Оплата не была завершена. Регистрация не выполнена.")
+                return
 
-        await callback.message.answer("Оплата не завершена. Попробуйте снова.")
+        # Если время ожидания истекло
+        await callback.message.answer("Время ожидания оплаты истекло. Попробуйте снова.")
     except Exception as e:
         logger.exception(f"Ошибка при проверке статуса платежа. {e}")
         await callback.message.answer("Ошибка при проверке платежа. Попробуйте позже.")
