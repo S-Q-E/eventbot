@@ -1,4 +1,5 @@
 import os
+import locale
 from datetime import datetime
 from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -87,12 +88,17 @@ async def list_events_by_category(callback: types.CallbackQuery):
     start = (page - 1) * EVENTS_PER_PAGE
     slice_events = events[start:start + EVENTS_PER_PAGE]
 
+    try:
+        locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
+    except locale.Error:
+        # Если локаль не найдена, попробуйте другую, например 'Russian'.
+        locale.setlocale(locale.LC_TIME, 'Russian')
     # Отправляем каждое событие в отдельном сообщении
     for event in slice_events:
         weekday = get_week_day(event.event_time)
         text = (
             f"🎉 <b>{event.name}</b>\n"
-            f"🕒 <b>Дата:</b> {weekday} {event.event_time.strftime('%d %B')}\n"
+            f"🕒 Дата:<b>{weekday} {event.event_time.strftime('%d %B')}</b>\n"
         )
         btn = types.InlineKeyboardButton(
             text="📄 Подробнее",

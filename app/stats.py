@@ -45,7 +45,7 @@ class StatsView(BaseView):
               .filter(Registration.is_paid == True)
               .group_by(User.id)
               .order_by(func.count(Registration.id).desc())
-              .limit(5)
+              .limit(10)
               .all()
         )
 
