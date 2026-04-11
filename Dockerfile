@@ -1,14 +1,19 @@
-# Используем базовый образ Python
 FROM python:3.10-slim
 
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем файлы проекта
+# 👉 Устанавливаем локали
+RUN apt-get update && apt-get install -y locales \
+    && sed -i '/ru_RU.UTF-8/s/^# //g' /etc/locale.gen \
+    && locale-gen \
+    && apt-get clean
+
+# 👉 Устанавливаем переменные окружения
+ENV LANG=ru_RU.UTF-8
+ENV LC_ALL=ru_RU.UTF-8
+
 COPY . /app
 
-# Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Указываем команду для запуска бота
 CMD ["python", "bot.py"]
