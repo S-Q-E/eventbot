@@ -84,7 +84,7 @@ async def main():
         await start_scheduler(bot)
         await dp.start_polling(bot)
     except TimeoutError as e:
-        logger.info("Ошибка {e}. Перезапуск....")
+        logger.info(f"Ошибка {e}. Перезапуск....")
         sys.exit(1)
 
 if __name__ == "__main__":

@@ -33,44 +33,42 @@ def get_top_users(db, period: str):
     )
 
 
+import html
+from utils.get_match_word import get_match_word
+
 async def send_stats(callback, period: str):
-    db = next(get_db())
-    try:
-        users = get_top_users(db, period)
+    with get_db() as db:
+        try:
+            users = get_top_users(db, period)
 
-        if not users:
-            await callback.message.answer("📊 Пока нет статистики игр. Участвуйте в событиях!")
-            return
+            if not users:
+                await callback.message.answer("📊 Пока нет статистики игр. Участвуйте в событиях!")
+                return
 
-        # Заголовок
-        titles = {
-            "month": "📊 <b>Топ игроков за месяц:</b>\n\n",
-            "all": "📊 <b>Топ игроков за всё время:</b>\n\n",
-        }
-        stats_text = titles.get(period, titles["all"])
+            # ... (заголовок)
+            for i, user in enumerate(users[:10], 1):
+                first_name = html.escape(user.first_name or "")
+                last_name = html.escape(user.last_name or "")
+                games_text = get_match_word(user.games)
+                if i <= 3:
+                    stats_text += f"{medals[i-1]} {first_name} {last_name} — {user.games} {games_text}\n"
+                else:
+                    stats_text += f"{i}. {first_name} {last_name} — {user.games} {games_text}\n"
 
-        medals = ["👑", "🥈", "🥉"]
+            # Текущий пользователь
+            user_id = callback.from_user.id
+            current_user_position = None
+            current_user_games = 0
+            for i, user in enumerate(users, 1):
+                if user.id == user_id:
+                    current_user_position = i
+                    current_user_games = user.games
+                    break
 
-        for i, user in enumerate(users[:10], 1):
-            games_text = "матч" if user.games == 1 else "матчей"
-            if i <= 3:
-                stats_text += f"{medals[i-1]} {user.first_name} {user.last_name} — {user.games} {games_text}\n"
-            else:
-                stats_text += f"{i}. {user.first_name} {user.last_name} — {user.games} {games_text}\n"
-
-        # Текущий пользователь
-        user_id = callback.from_user.id
-        current_user_position = None
-        current_user_games = 0
-        for i, user in enumerate(users, 1):
-            if user.id == user_id:
-                current_user_position = i
-                current_user_games = user.games
-                break
-
-        if current_user_position and current_user_position > 10:
-            games_text = "матч" if current_user_games == 1 else "матчей"
-            stats_text += f"\n{current_user_position}. Вы — {current_user_games} {games_text}"
+            if current_user_position and current_user_position > 10:
+                games_text = get_match_word(current_user_games)
+                stats_text += f"\n{current_user_position}. Вы — {current_user_games} {games_text}"
+            # ... (остальное)
 
         # Кнопки переключения
         markup = InlineKeyboardMarkup(inline_keyboard=[

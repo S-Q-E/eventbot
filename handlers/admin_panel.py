@@ -1,3 +1,4 @@
+import html
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
@@ -38,7 +39,8 @@ async def admin_panel(callback: types.CallbackQuery):
         InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
     ]])
     if is_admin:
-        await callback.message.edit_text(f"<b>Добро пожаловать {callback.message.from_user.username}</b>\n",
+        safe_username = html.escape(callback.from_user.username or callback.from_user.first_name or "Admin")
+        await callback.message.edit_text(f"<b>Добро пожаловать {safe_username}</b>\n",
                                          reply_markup=markup)
     else:
         await callback.message.edit_text("У вас нет доступа к этой панели.\n"
@@ -244,17 +246,4 @@ async def set_user_level(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
 
 
-# 4. Обработка кнопки "назад" из любого состояния FSM
-@admin_router.callback_query(F.data == "admin_panel")
-async def back_to_admin_panel(callback: types.CallbackQuery, state: FSMContext):
-    await state.clear()
-    # тут можно повторить вывод панели или просто ответить кнопкой
-    await callback.message.answer(
-        "🔙 Возврат в админ-панель.",
-        reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]
-            ]
-        )
-    )
-    await callback.answer()
+# 4. Обработка кнопки "назад" (функционал перенесен в основной обработчик)

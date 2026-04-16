@@ -29,12 +29,17 @@ Session = scoped_session(SessionFactory)
 # Базовая модель
 Base = declarative_base()
 
+from contextlib import contextmanager
+
+# ... (предыдущий код до SessionFactory) ...
+
 # Генератор доступа к базе данных
+@contextmanager
 def get_db():
     db = Session()
     try:
         db.execute(text("PRAGMA foreign_keys = ON"))
-        db.expire_all()  # очищаем кэш (важно для бота и Flask)
+        # Убираем expire_all(), так как это замедляет работу и может вызвать проблемы с lazy loading
         yield db
         db.commit()
     except SQLAlchemyError as e:

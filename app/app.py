@@ -61,28 +61,27 @@ def index():
 
 # Фоновая проверка статуса платежа
 def check_payment_status(payment_id, users_data, event_id):
-    logger.info(f"Начало проверки статуса платежа. ID платежа: {payment_id}")
-    while True:
-        try:
-            payment = Payment.find_one(payment_id)
-            logger.info(f"Статус платежа {payment_id}: {payment.status}")
-            if payment.status == 'succeeded':
-                for user_data in users_data:
-                    user = User.query.get(user_data['id'])
-                    registration = Registration(user_id=user.id, event_id=event_id)
-                    db.session.add(registration)
-                event = db.session.get(Event, event_id)
-                if event:
-                    event.current_participants += len(users_data)
-                db.session.commit()
-                logger.info(f"Платеж {payment_id} завершён. Участники добавлены на событие {event_id}")
-                break
-            elif payment.status in ['canceled', 'expired']:
-                logger.warning(f"Платеж {payment_id} отменён или истёк. Статус: {payment.status}")
-                break
-        except Exception as e:
-            logger.error(f"Ошибка при проверке статуса платежа {payment_id}: {e}")
-        time.sleep(30)
+    with app.app_context():
+        logger.info(f"Начало проверки статуса платежа. ID платежа: {payment_id}")
+        while True:
+            try:
+                payment = Payment.find_one(payment_id)
+                if payment.status == 'succeeded':
+                    for user_data in users_data:
+                        user = db.session.get(User, user_data['id'])
+                        if user:
+                            registration = Registration(user_id=user.id, event_id=event_id)
+                            db.session.add(registration)
+                    event = db.session.get(Event, event_id)
+                    if event:
+                        event.current_participants += len(users_data)
+                    db.session.commit()
+                    break
+                elif payment.status in ['canceled', 'expired']:
+                    break
+            except Exception as e:
+                logger.error(f"Ошибка проверки платежа: {e}")
+            time.sleep(30)
 
 @app.route('/event/<int:event_id>/add-participants', methods=['GET', 'POST'])
 def add_participants(event_id):

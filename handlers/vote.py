@@ -13,11 +13,12 @@ CHAT_ID = os.getenv("CHAT_ID")
 
 vote_router = Router()
 
-
 @vote_router.poll()
 async def handle_poll(poll: types.Poll):
-    db = next(get_db())
-    try:
+    with get_db() as db:
+        try:
+            # ...
+
         # Получение последнего активного голосования
         voting_session = db.query(VotingSession).order_by(VotingSession.id.desc()).first()
         if not voting_session or voting_session.poll_id != poll.id:

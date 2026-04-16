@@ -1,5 +1,6 @@
 import logging
 import re
+import html
 from aiogram import types, Router, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.fsm.context import FSMContext
@@ -15,24 +16,25 @@ class RegistrationStates(StatesGroup):
     waiting_for_first_name = State()
     waiting_for_phone_number = State()
 
+import html
 
 @registration_router.callback_query(F.data == 'start_reg')
 async def start_registration(callback: types.CallbackQuery, state: FSMContext):
-    """
-    Начало регистрации, запрос имени
-    """
     user_id = callback.from_user.id
-    db = next(get_db())
-    user = db.query(User).filter_by(id=user_id).first()
-    if user:
-        if user.is_registered:
-            events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_list")
-            user_help = InlineKeyboardButton(text="🆘 Помощь", callback_data="user_help")
-            markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [user_help]])
-            await callback.message.answer(f"❗<b>{user.first_name}, вам не нужна регистрация</b>", reply_markup=markup)
-        else:
-            await state.set_state(RegistrationStates.waiting_for_first_name)
-            await callback.message.answer("Введите ваше имя и фамилию через пробел: ")
+    with get_db() as db:
+        user = db.query(User).filter_by(id=user_id).first()
+        if user:
+            if user.is_registered:
+                # ...
+
+                events_button = InlineKeyboardButton(text="💬 Доступные события", callback_data="events_list")
+                user_help = InlineKeyboardButton(text="🆘 Помощь", callback_data="user_help")
+                markup = InlineKeyboardMarkup(inline_keyboard=[[events_button], [user_help]])
+                safe_name = html.escape(user.first_name or "")
+                await callback.message.answer(f"❗<b>{safe_name}, вам не нужна регистрация</b>", reply_markup=markup)
+            else:
+                await state.set_state(RegistrationStates.waiting_for_first_name)
+                await callback.message.answer("Введите ваше имя и фамилию через пробел: ")
 
 
 @registration_router.message(RegistrationStates.waiting_for_first_name)
@@ -86,25 +88,26 @@ async def process_phone_number(message: types.Message, state: FSMContext):
     last_name = user_data['last_name']
 
     user_id = message.from_user.id
-    db = next(get_db())
-    user = db.query(User).filter_by(id=user_id).first()
+    with get_db() as db:
+        user = db.query(User).filter_by(id=user_id).first()
 
-    try:
-        if user:
-            user.first_name = first_name
-            user.last_name = last_name
-            user.is_registered = True
-            user.phone_number = phone_number
-            db.commit()
-            markup = InlineKeyboardMarkup(
-                inline_keyboard=[[InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]])
-            await message.answer(f"<b>Регистрация завершена, {first_name} {last_name}!\n"
-                                 f"Все функции доступны!</b>", reply_markup=markup)
-        else:
-            await message.answer("Что-то пошло не так...")
+        try:
+            if user:
+                user.first_name = first_name
+                user.last_name = last_name
+                user.is_registered = True
+                user.phone_number = phone_number
+                # db.commit() is handled by context manager
+                markup = InlineKeyboardMarkup(
+                    inline_keyboard=[[InlineKeyboardButton(text="Главное меню", callback_data="main_menu")]])
+                safe_first_name = html.escape(first_name)
+                safe_last_name = html.escape(last_name)
+                await message.answer(f"<b>Регистрация завершена, {safe_first_name} {safe_last_name}!\n"
+                                     f"Все функции доступны!</b>", reply_markup=markup)
+            else:
+                await message.answer("Что-то пошло не так...")
+                await state.clear()
+        except Exception as ex:
+            logger.error(f"Ошибка при регистрации: {ex}")
+        finally:
             await state.clear()
-    except Exception as ex:
-        logger.error(f"Ошибка при регистрации: {ex}")
-    finally:
-        db.close()
-        await state.clear()

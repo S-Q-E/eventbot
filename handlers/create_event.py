@@ -88,6 +88,7 @@ async def ask_user_level(message: types.Message, state: FSMContext):
         await state.set_state(Form.max_participants)
     except ValueError:
         await message.reply("Неверный формат даты. Попробуйте снова в формате ДД/ММ/ГГГГ ЧЧ:ММ.")
+        return
 
     builder = InlineKeyboardBuilder()
     builder.button(text="Смешанный(все уровни игроков)", callback_data="players_level_newbies")
@@ -144,25 +145,24 @@ async def process_price(message: types.Message, state: FSMContext):
 @create_event_router.message(Form.description)
 async def process_max_part(message: types.Message, state: FSMContext):
     await state.update_data(description=message.text)
-    db = next(get_db())
-    categories = db.query(Category).order_by(Category.name).all()
-    db.close()
+    with get_db() as db:
+        categories = db.query(Category).order_by(Category.name).all()
 
-    if not categories:
-        await message.answer("Категории не найдены. Пожалуйста, добавьте категории перед созданием события.")
-        return
-    builder = InlineKeyboardBuilder()
-    for category in categories:
-        builder.button(
-            text=category.name,
-            callback_data=f"event_cat_{category.id}"
+        if not categories:
+            await message.answer("Категории не найдены. Пожалуйста, добавьте категории перед созданием события.")
+            return
+        builder = InlineKeyboardBuilder()
+        for category in categories:
+            builder.button(
+                text=category.name,
+                callback_data=f"event_cat_{category.id}"
+            )
+        builder.adjust(2)
+        await message.answer(
+            "Выберите категорию события:",
+            reply_markup=builder.as_markup()
         )
-    builder.adjust(2)
-    await message.answer(
-        "Выберите категорию события:",
-        reply_markup=builder.as_markup()
-    )
-    await state.set_state(Form.waiting_for_category)
+        await state.set_state(Form.waiting_for_category)
 
 
 @create_event_router.callback_query(Form.waiting_for_category)
@@ -170,21 +170,20 @@ async def adding_to_db(callback: types.CallbackQuery, state: FSMContext):
     cat_id = int(callback.data.split("_")[-1])
     await state.update_data(category_id=cat_id)
     event_data = await state.get_data()
-    db = next(get_db())
-    new_event = Event(
-        name=event_data['name'],
-        description=event_data['description'],
-        address=event_data['address'],
-        event_time=event_data['event_time'],
-        max_participants=int(event_data['max_participants']),
-        price=int(event_data['price']),
-        category_id=int(event_data['category_id']),
-        players_level=event_data['players_level']
-    )
-    db.add(new_event)
-    db.commit()
-    all_events_btn = InlineKeyboardButton(text="Просмотреть все события", callback_data="events_page_1")
-    markup = InlineKeyboardMarkup(inline_keyboard=[[all_events_btn]])
-    await callback.message.reply(f"☑️☑️☑️Готово! Событие <b>{new_event.name}</b> успешно создано!", reply_markup=markup)
-    await state.clear()
-    db.close()
+    with get_db() as db:
+        new_event = Event(
+            name=event_data['name'],
+            description=event_data['description'],
+            address=event_data['address'],
+            event_time=event_data['event_time'],
+            max_participants=int(event_data['max_participants']),
+            price=int(event_data['price']),
+            category_id=int(event_data['category_id']),
+            players_level=event_data['players_level']
+        )
+        db.add(new_event)
+        # commit будет вызван автоматически при выходе из with
+        all_events_btn = InlineKeyboardButton(text="Просмотреть все события", callback_data="events_page_1")
+        markup = InlineKeyboardMarkup(inline_keyboard=[[all_events_btn]])
+        await callback.message.reply(f"☑️☑️☑️Готово! Событие <b>{new_event.name}</b> успешно создано!", reply_markup=markup)
+        await state.clear()
