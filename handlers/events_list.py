@@ -1,5 +1,6 @@
 import os
 import locale
+import html
 from datetime import datetime
 from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -21,9 +22,8 @@ EVENTS_PER_PAGE = 4
 
 @event_list_router.callback_query(F.data == "events_list")
 async def show_categories(callback: types.CallbackQuery):
-    db = next(get_db())
-    categories = db.query(Category).order_by(Category.name).all()
-    db.close()
+    with get_db() as db:
+        categories = db.query(Category).order_by(Category.name).all()
 
     if not categories:
         await callback.message.answer("Категории ещё не созданы.")
@@ -63,15 +63,14 @@ async def list_events_by_category(callback: types.CallbackQuery):
         page = 1
 
     # Получаем и фильтруем события
-    db = next(get_db())
     now = datetime.now()
-    events = (
-        db.query(Event)
-          .filter(Event.category_id == cat_id, Event.event_time > now)
-          .order_by(Event.event_time.asc())
-          .all()
-    )
-    db.close()
+    with get_db() as db:
+        events = (
+            db.query(Event)
+              .filter(Event.category_id == cat_id, Event.event_time > now)
+              .order_by(Event.event_time.asc())
+              .all()
+        )
 
     keyboard = InlineKeyboardBuilder()
 
@@ -97,7 +96,7 @@ async def list_events_by_category(callback: types.CallbackQuery):
     for event in slice_events:
         weekday = get_week_day(event.event_time)
         text = (
-            f"🎉 <b>{event.name}</b>\n"
+            f"🎉 <b>{html.escape(event.name)}</b>\n"
             f"🕒 Дата:<b>{weekday} {event.event_time.strftime('%d %B')}</b>\n"
         )
         btn = types.InlineKeyboardButton(
@@ -161,81 +160,86 @@ async def confirm_cancel_registration(callback_query: types.CallbackQuery):
     """
     event_id = int(callback_query.data.split("_")[-1])
     user_id = callback_query.from_user.id
-    db = next(get_db())
 
     try:
-        registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
-        event = db.query(Event).filter_by(id=event_id).first()
+        with get_db() as db:
+            registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
+            event = db.query(Event).filter_by(id=event_id).first()
 
-        if not event:
-            await callback_query.answer("Событие не найдено.")
-            return
+            if not event:
+                await callback_query.answer("Событие не найдено.")
+                return
 
-        if registration:
-            await callback_query.bot.send_message(
-                ADMIN,
-                f"Пользователь {registration.user.first_name} {registration.user.last_name} отменил запись на событие {event.name}"
-            )
-            await callback_query.bot.send_message(
-                ADMIN_2,
-                f"Пользователь {registration.user.first_name} {registration.user.last_name} отменил запись на событие {event.name}"
-            )
+            if registration:
+                user_name = f"{html.escape(registration.user.first_name or '')} {html.escape(registration.user.last_name or '')}".strip()
+                await callback_query.bot.send_message(
+                    ADMIN,
+                    f"Пользователь {user_name} отменил запись на событие {html.escape(event.name)}",
+                    parse_mode="HTML"
+                )
+                await callback_query.bot.send_message(
+                    ADMIN_2,
+                    f"Пользователь {user_name} отменил запись на событие {html.escape(event.name)}",
+                    parse_mode="HTML"
+                )
 
-            db.delete(registration)
-            event.current_participants -= 1
-            db.commit()
+                db.delete(registration)
+                event.current_participants -= 1
+                # db.commit() is automatic
 
-            await callback_query.message.edit_text("Вы успешно отменили регистрацию на это событие.")
+                await callback_query.message.edit_text("Вы успешно отменили регистрацию на это событие.")
 
-            # Уведомляем других участников
-            registrations = db.query(Registration).filter_by(event_id=event_id).all()
-            for reg in registrations:
-                try:
-                    go_to_event = InlineKeyboardButton(
-                        text="Перейти к событию ➡️",
-                        callback_data=f"details_{event_id}"
-                    )
-                    markup = InlineKeyboardMarkup(inline_keyboard=[[go_to_event]])
+                # Уведомляем других участников
+                registrations = db.query(Registration).filter_by(event_id=event_id).all()
+                for reg in registrations:
+                    try:
+                        go_to_event = InlineKeyboardButton(
+                            text="Перейти к событию ➡️",
+                            callback_data=f"details_{event_id}"
+                        )
+                        markup = InlineKeyboardMarkup(inline_keyboard=[[go_to_event]])
 
-                    await callback_query.bot.send_message(
-                        chat_id=reg.user_id,
-                        text=f"⚠️ Освободилось место на событие {event.name}! Спешите зарегистрироваться!",
-                        reply_markup=markup
-                    )
-                except TelegramAPIError as e:
-                    print(f"Ошибка отправки уведомления пользователю {reg.user_id}: {e}")
+                        await callback_query.bot.send_message(
+                            chat_id=reg.user_id,
+                            text=f"⚠️ Освободилось место на событие {html.escape(event.name)}! Спешите зарегистрироваться!",
+                            reply_markup=markup,
+                            parse_mode="HTML"
+                        )
+                    except TelegramAPIError as e:
+                        print(f"Ошибка отправки уведомления пользователю {reg.user_id}: {e}")
 
-        else:
-            await callback_query.answer("Вы не были записаны на это событие.")
+            else:
+                await callback_query.answer("Вы не были записаны на это событие.")
     except Exception as e:
         print(f"Ошибка при отмене регистрации: {e}")
         await callback_query.message.answer("Произошла ошибка при отмене регистрации.")
-    finally:
-        db.close()
 
 
 @event_list_router.callback_query(F.data.startswith("back_to_event_list"))
 async def back_to_event_list(callback: types.CallbackQuery):
     event_id = int(callback.data.split("_")[-1])
-    db = next(get_db())
-    event = db.query(Event).filter_by(id=event_id).first()
-    date = event.event_time
-    weekday = get_week_day(date)
-    if not event:
-        await callback.answer("Событие не найдено!", show_alert=True)
-        return
+    with get_db() as db:
+        event = db.query(Event).filter_by(id=event_id).first()
+        if not event:
+            await callback.answer("Событие не найдено!", show_alert=True)
+            return
+        date = event.event_time
+        weekday = get_week_day(date)
+        event_name = html.escape(event.name)
+        event_date = event.event_time.strftime('%d %B')
 
-    markup = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="📄 Подробнее",
-                callback_data=f"details_{event.id}"
-            )
-        ]
-    ])
-    await callback.message.edit_text(
-        f"🎉 <b>{event.name}</b>\n"
-        f"🕒 <b>Дата:</b> {weekday} {event.event_time.strftime('%d %B')}\n",
-        reply_markup=markup
-    )
+        markup = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="📄 Подробнее",
+                    callback_data=f"details_{event.id}"
+                )
+            ]
+        ])
+        await callback.message.edit_text(
+            f"🎉 <b>{event_name}</b>\n"
+            f"🕒 <b>Дата:</b> {weekday} {event_date}\n",
+            reply_markup=markup,
+            parse_mode="HTML"
+        )
 

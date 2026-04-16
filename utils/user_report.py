@@ -4,8 +4,7 @@ import datetime
 
 
 def generate_user_report():
-    db = next(get_db())
-    try:
+    with get_db() as db:
         # Получение всех пользователей из БД
         users = db.query(User).all()
 
@@ -27,5 +26,3 @@ def generate_user_report():
         df.to_excel(filename, index=False)
 
         return filename  # Возвращаем путь к файлу
-    finally:
-        db.close()

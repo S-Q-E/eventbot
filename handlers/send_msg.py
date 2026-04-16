@@ -1,4 +1,5 @@
 import logging
+import html
 from aiogram import Router, Bot, types, F
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
@@ -88,17 +89,16 @@ async def broadcast_choose_type(cb: types.CallbackQuery, state: FSMContext):
 
     if choice == "broadcast_by_category":
         # Предлагаем выбрать категорию
-        db = next(get_db())
-        cats = db.query(Category).order_by(Category.name).all()
-        db.close()
-        if not cats:
-            return await cb.message.answer("Категорий нет, добавьте минимум одну.")
-        kb = InlineKeyboardBuilder()
-        for c in cats:
-            kb.button(text=c.name, callback_data=f"broadcast_cat_{c.id}")
-        kb.adjust(2)
-        await cb.message.answer("Выберите категорию для рассылки:", reply_markup=kb.as_markup())
-        return await state.set_state(AdminBroadcast.waiting_for_category)
+        with get_db() as db:
+            cats = db.query(Category).order_by(Category.name).all()
+            if not cats:
+                return await cb.message.answer("Категорий нет, добавьте минимум одну.")
+            kb = InlineKeyboardBuilder()
+            for c in cats:
+                kb.button(text=c.name, callback_data=f"broadcast_cat_{c.id}")
+            kb.adjust(2)
+            await cb.message.answer("Выберите категорию для рассылки:", reply_markup=kb.as_markup())
+            return await state.set_state(AdminBroadcast.waiting_for_category)
 
     # Иначе сразу рассылаем
     await do_broadcast(cb, state, mode=choice)
@@ -124,49 +124,48 @@ async def do_broadcast(cb: types.CallbackQuery, state: FSMContext, mode: str, ca
     event = await get_nearest_event()
     skip_event = event.id if event else None
 
-    db = next(get_db())
-    if mode == "broadcast_admins":
-        users = db.query(User).filter(User.is_admin == True).all()
-    elif mode == "broadcast_all":
-        users = db.query(User).filter(User.is_registered == True).all()
-    elif mode == "broadcast_cat":
-        users = (
-            db.query(User)
-                .filter(User.is_registered == True)
-                .filter(User.interests.any(Category.id == category_id))
-                .all()
-        )
-    else:
-        users = []
+    with get_db() as db:
+        if mode == "broadcast_admins":
+            users = db.query(User).filter(User.is_admin == True).all()
+        elif mode == "broadcast_all":
+            users = db.query(User).filter(User.is_registered == True).all()
+        elif mode == "broadcast_cat":
+            users = (
+                db.query(User)
+                    .filter(User.is_registered == True)
+                    .filter(User.interests.any(Category.id == category_id))
+                    .all()
+            )
+        else:
+            users = []
 
-    for usr in users:
-        try:
-            uid = int(usr.id)
-        except (ValueError, TypeError):
-            logger.warning(f"Пропускаем невалидный user_id={usr.id}")
-            continue
-
-        if skip_event:
-            if db.query(Registration).filter_by(user_id=uid, event_id=skip_event).first():
+        for usr in users:
+            try:
+                uid = int(usr.id)
+            except (ValueError, TypeError):
+                logger.warning(f"Пропускаем невалидный user_id={usr.id}")
                 continue
 
-        reply_markup = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="✅ Да, я смогу", callback_data="events_list")],
-            [InlineKeyboardButton(text="❌ Нет, не смогу", callback_data="cant_attend")]
-        ])
+            if skip_event:
+                if db.query(Registration).filter_by(user_id=uid, event_id=skip_event).first():
+                    continue
 
-        try:
-            if photo:
-                await bot.send_photo(chat_id=uid, photo=photo, caption=text, reply_markup=reply_markup)
-            else:
-                await bot.send_message(chat_id=uid, text=text, reply_markup=reply_markup)
-            sent += 1
-        except TelegramForbiddenError:
-            logger.info(f"Пользователь {uid} заблокировал бота")
-        except Exception as e:
-            logger.error(f"Ошибка при отправке {uid}: {e}")
+            reply_markup = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="✅ Да, я смогу", callback_data="events_list")],
+                [InlineKeyboardButton(text="❌ Нет, не смогу", callback_data="cant_attend")]
+            ])
 
-    db.close()
+            try:
+                if photo:
+                    await bot.send_photo(chat_id=uid, photo=photo, caption=text, reply_markup=reply_markup)
+                else:
+                    await bot.send_message(chat_id=uid, text=text, reply_markup=reply_markup)
+                sent += 1
+            except TelegramForbiddenError:
+                logger.info(f"Пользователь {uid} заблокировал бота")
+            except Exception as e:
+                logger.error(f"Ошибка при отправке {uid}: {e}")
+
     builder = InlineKeyboardBuilder()
     builder.button(text="В админ панель", callback_data="admin_panel")
     await cb.message.answer(f"Рассылка завершена. Отправлено: {sent}.", reply_markup=builder.as_markup())
@@ -187,27 +186,27 @@ class MessageStates(StatesGroup):
 @message_router.callback_query(F.data == "send_priv_message")
 async def start_send_message(callback: types.CallbackQuery, state: FSMContext):
     try:
-        db = next(get_db())
-        users = db.query(User).order_by(User.first_name.asc(), User.last_name.asc()).all()
-        if not users:
-            await callback.message.answer("Список пользователей пуст.")
-            return
+        with get_db() as db:
+            users = db.query(User).order_by(User.first_name.asc(), User.last_name.asc()).all()
+            if not users:
+                await callback.message.answer("Список пользователей пуст.")
+                return
 
-        user_lines = []
-        for user in users:
-            full_name = f"{user.first_name or ''} {user.last_name or ''}".strip()
-            user_line = f"{full_name} — <code>{user.id}</code>"
-            user_lines.append(user_line)
+            user_lines = []
+            for user in users:
+                full_name = html.escape(f"{user.first_name or ''} {user.last_name or ''}".strip())
+                user_line = f"{full_name} — <code>{user.id}</code>"
+                user_lines.append(user_line)
 
-        # Разделим список на части по 50 пользователей
-        chunk_size = 50
-        for i in range(0, len(user_lines), chunk_size):
-            chunk = user_lines[i:i + chunk_size]
-            text = "\n".join(chunk)
-            await callback.message.answer(text)
+            # Разделим список на части по 50 пользователей
+            chunk_size = 50
+            for i in range(0, len(user_lines), chunk_size):
+                chunk = user_lines[i:i + chunk_size]
+                text = "\n".join(chunk)
+                await callback.message.answer(text)
 
-        await callback.message.answer("Введите ID пользователя, которому нужно отправить сообщение:")
-        await state.set_state(MessageStates.waiting_for_user_id)
+            await callback.message.answer("Введите ID пользователя, которому нужно отправить сообщение:")
+            await state.set_state(MessageStates.waiting_for_user_id)
     except Exception as e:
         await callback.message.answer(f"Ошибка при получении списка пользователей: {e}")
 
@@ -216,15 +215,15 @@ async def start_send_message(callback: types.CallbackQuery, state: FSMContext):
 async def get_user_id(message: types.Message, state: FSMContext):
     try:
         user_id = int(message.text)
-        db = next(get_db())
-        user = db.query(User).filter(User.id == user_id).first()
-        if not user:
-            await message.answer("Пользователь с таким ID не найден. Введите ID снова.")
-            return
+        with get_db() as db:
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                await message.answer("Пользователь с таким ID не найден. Введите ID снова.")
+                return
 
-        await state.update_data(user_id=user_id)
-        await message.answer("Введите текст сообщения:")
-        await state.set_state(MessageStates.waiting_for_message_text)
+            await state.update_data(user_id=user_id)
+            await message.answer("Введите текст сообщения:")
+            await state.set_state(MessageStates.waiting_for_message_text)
     except ValueError:
         await message.answer("ID должен быть числом. Попробуйте снова.")
     except Exception as e:
