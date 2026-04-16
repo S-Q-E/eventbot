@@ -140,19 +140,55 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
 import html
 
 async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQuery, bot: Bot):
-    # Вместо бесконечного цикла будем проверять статус платежа ограниченное число раз
-    # В идеале здесь должен быть Webhook, но для фикса заменим на короткий опрос
     try:
-        for _ in range(5): # Проверяем 5 раз с паузой
-            await asyncio.sleep(10)
+        for _ in range(10): # Проверяем 10 раз с паузой 20 сек (около 3 минут)
+            await asyncio.sleep(20)
             payment = Payment.find_one(payment_id)
             if payment.status == "succeeded":
                 with get_db() as db:
                     event = db.query(Event).filter_by(id=event_id).first()
                     user = db.query(User).filter_by(id=user_id).first()
-                    # ... (логика регистрации)
+                    
+                    if not event or not user:
+                        return
+
+                    # Проверяем, не зарегистрирован ли пользователь уже
+                    existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
+                    if existing_registration:
+                        if not existing_registration.is_paid:
+                            existing_registration.is_paid = True
+                            event.current_participants += 1
+                    else:
+                        new_registration = Registration(user_id=user_id, event_id=event_id, is_paid=True)
+                        db.add(new_registration)
+                        event.current_participants += 1
+
+                    db.commit()
+
+                    receipt_info = (
+                        f"📄 Чек об оплате:\n"
+                        f"🎊 Событие: {event.name}\n"
+                        f"📆 Дата события: {event.event_time}\n"
+                        f"🆔 Оплатил: {html.escape(user.first_name)}, {html.escape(user.last_name)}\n"
+                        f"💰 Сумма: {event.price} руб.\n"
+                    )
+
+                    await bot.send_message(ADMIN, receipt_info)
+                    if ADMIN_2:
+                        await bot.send_message(ADMIN_2, receipt_info)
+
+                    await callback.message.answer(
+                        f"Оплата прошла успешно! Вы зарегистрированы на событие <b>{event.name}</b>.\n",
+                        reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
+                            InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
+                        ]])
+                    )
                 return
-        await callback.message.answer("Платеж еще обрабатывается. Вы получите уведомление после подтверждения.")
+            elif payment.status in ["canceled", "expired"]:
+                await callback.message.answer("Оплата была отменена или срок действия платежа истек.")
+                return
+                
+        await callback.message.answer("Платеж еще обрабатывается. Пожалуйста, проверьте статус позже в Личном кабинете.")
     except Exception as e:
         logger.error(f"Ошибка проверки платежа: {e}")
 

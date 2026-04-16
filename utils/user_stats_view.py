@@ -2,7 +2,9 @@ from sqlalchemy import func
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from datetime import datetime, timedelta
 import logging
+import html
 from db.database import User, Registration, Event, get_db
+from utils.get_match_word import get_match_word
 
 
 def get_top_users(db, period: str):
@@ -33,9 +35,6 @@ def get_top_users(db, period: str):
     )
 
 
-import html
-from utils.get_match_word import get_match_word
-
 async def send_stats(callback, period: str):
     with get_db() as db:
         try:
@@ -45,7 +44,15 @@ async def send_stats(callback, period: str):
                 await callback.message.answer("📊 Пока нет статистики игр. Участвуйте в событиях!")
                 return
 
-            # ... (заголовок)
+            # Заголовок
+            titles = {
+                "month": "📊 <b>Топ игроков за месяц:</b>\n\n",
+                "all": "📊 <b>Топ игроков за всё время:</b>\n\n",
+            }
+            stats_text = titles.get(period, titles["all"])
+
+            medals = ["👑", "🥈", "🥉"]
+
             for i, user in enumerate(users[:10], 1):
                 first_name = html.escape(user.first_name or "")
                 last_name = html.escape(user.last_name or "")
@@ -68,23 +75,18 @@ async def send_stats(callback, period: str):
             if current_user_position and current_user_position > 10:
                 games_text = get_match_word(current_user_games)
                 stats_text += f"\n{current_user_position}. Вы — {current_user_games} {games_text}"
-            # ... (остальное)
 
-        # Кнопки переключения
-        markup = InlineKeyboardMarkup(inline_keyboard=[
-            [
-                InlineKeyboardButton(text="🗓 За месяц", callback_data="user_stats_month"),
-                InlineKeyboardButton(text="∞ Всё время", callback_data="user_stats_all"),
-            ],
-            [InlineKeyboardButton(text="🔙 Назад", callback_data="main_menu")]
-        ])
+            # Кнопки переключения
+            markup = InlineKeyboardMarkup(inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="🗓 За месяц", callback_data="user_stats_month"),
+                    InlineKeyboardButton(text="∞ Всё время", callback_data="user_stats_all"),
+                ],
+                [InlineKeyboardButton(text="🔙 Назад", callback_data="main_menu")]
+            ])
 
-        await callback.message.edit_text(stats_text, reply_markup=markup)
+            await callback.message.edit_text(stats_text, reply_markup=markup)
 
-    except Exception as e:
-        logging.error(f"Ошибка при получении статистики: {e}")
-        await callback.message.answer("Произошла ошибка при получении статистики. Попробуйте позже.")
-    finally:
-        db.close()
-
-
+        except Exception as e:
+            logging.error(f"Ошибка при получении статистики: {e}")
+            await callback.message.answer("Произошла ошибка при получении статистики. Попробуйте позже.")
