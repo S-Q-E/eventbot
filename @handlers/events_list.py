@@ -122,10 +122,8 @@ async def list_events_by_category(callback: types.CallbackQuery):
         for event in slice_events:
             weekday = get_week_day(event.event_time)
             text = (
-                f"🎉 <b>{html.escape(event.name)}</b>
-"
-                f"🕒 Дата:<b>{weekday} {event.event_time.strftime('%d %B')}</b>
-"
+                f"🎉 <b>{html.escape(event.name)}</b>"
+                f"🕒 Дата:<b>{weekday} {event.event_time.strftime('%d %B')}</b>"
             )
             btn = types.InlineKeyboardButton(
                 text="📄 Подробнее",
@@ -269,10 +267,8 @@ async def back_to_event_list(callback: types.CallbackQuery):
             ]
         ])
         await callback.message.edit_text(
-            f"🎉 <b>{event_name}</b>
-"
-            f"🕒 <b>Дата:</b> {weekday} {event.event_time.strftime('%d %B')}
-",
+            f"🎉 <b>{event_name}</b>"
+            f"🕒 <b>Дата:</b> {weekday} {event.event_time.strftime('%d %B')}",
             reply_markup=markup,
             parse_mode="HTML"
         )
