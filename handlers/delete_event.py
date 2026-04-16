@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram import Router, types, F
 from db.database import get_db, Event, Registration
+import html
 
 delete_event_router = Router()
 
@@ -32,49 +33,50 @@ async def event_action_markup(event_id):
 
 @delete_event_router.callback_query(F.data == "delete_event_button")
 @delete_event_router.callback_query(F.data.startswith("delete_page_"))
-async def delete_event(callback_query: types.CallbackQuery):
+async def delete_event_list(callback_query: types.CallbackQuery):
     try:
-        page = int(callback_query.data.split("_")[-1])
+        parts = callback_query.data.split("_")
+        page = int(parts[-1]) if len(parts) > 2 else 1
     except ValueError:
         page = 1
 
-    db = next(get_db())
-    events = db.query(Event).order_by(Event.event_time.desc()).all()
+    with get_db() as db:
+        events = db.query(Event).order_by(Event.event_time.desc()).all()
 
-    if not events:
-        await callback_query.message.answer("Нет доступных событий.")
-        return
+        if not events:
+            await callback_query.message.answer("Нет доступных событий.")
+            return
 
-    total_pages = (len(events) + 3 - 1) // 3
-    page = max(1, min(page, total_pages))
-    events_to_show = events[(page - 1) * 3:page * 3]
+        total_pages = (len(events) + 3 - 1) // 3
+        page = max(1, min(page, total_pages))
+        events_to_show = events[(page - 1) * 3:page * 3]
 
-    for event in events_to_show:
-        await callback_query.message.answer(
-            f"🔹 <b>{event.name}</b>\n"
-            f"{event.event_time}\n",
-            reply_markup=await event_action_markup(event_id=event.id),
-            parse_mode="HTML"
-        )
+        for event in events_to_show:
+            safe_name = html.escape(event.name or "")
+            await callback_query.message.answer(
+                f"🔹 <b>{safe_name}</b>\n"
+                f"{event.event_time}\n",
+                reply_markup=await event_action_markup(event_id=event.id),
+                parse_mode="HTML"
+            )
 
-    pagination_buttons = []
-    if page > 1:
-        pagination_buttons.append(
-            InlineKeyboardButton(text="⬅️ Предыдущая", callback_data=f"delete_page_{page - 1}")
-        )
-    if page < total_pages:
-        pagination_buttons.append(
-            InlineKeyboardButton(text="Следующая ➡️", callback_data=f"delete_page_{page + 1}")
-        )
-    pagination_markup = InlineKeyboardMarkup(inline_keyboard=[pagination_buttons])
-    await callback_query.message.answer(f"Страница {page}/{total_pages}", reply_markup=pagination_markup)
+        pagination_buttons = []
+        if page > 1:
+            pagination_buttons.append(
+                InlineKeyboardButton(text="⬅️ Предыдущая", callback_data=f"delete_page_{page - 1}")
+            )
+        if page < total_pages:
+            pagination_buttons.append(
+                InlineKeyboardButton(text="Следующая ➡️", callback_data=f"delete_page_{page + 1}")
+            )
+        pagination_markup = InlineKeyboardMarkup(inline_keyboard=[pagination_buttons])
+        await callback_query.message.answer(f"Страница {page}/{total_pages}", reply_markup=pagination_markup)
 
 
 @delete_event_router.callback_query(F.data.startswith("delete_event_"))
 async def confirm_delete_event(callback_query: types.CallbackQuery):
     event_id = int(callback_query.data.split("_")[-1])
 
-    # Запросим подтверждение перед удалением
     confirm_markup = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="✅ Подтвердить", callback_data=f"confirm_delete_{event_id}"),
@@ -89,34 +91,20 @@ async def confirm_delete_event(callback_query: types.CallbackQuery):
 
 
 @delete_event_router.callback_query(F.data.startswith("confirm_delete_"))
-async def delete_event(callback_query: types.CallbackQuery):
+async def delete_event_confirm(callback_query: types.CallbackQuery):
     await callback_query.message.edit_reply_markup()
     event_id = int(callback_query.data.split("_")[-1])
-    db = next(get_db())
-    event = db.query(Event).filter_by(id=event_id).first()
-    if event:
-        db.query(Registration).filter_by(event_id=event_id).delete()
-        db.delete(event)
-        db.commit()
-        await callback_query.message.answer("Событие успешно удалено.", reply_markup=markup)
-    else:
-        await callback_query.message.answer("Событие не найдено или уже удалено.", reply_markup=markup)
+    with get_db() as db:
+        event = db.query(Event).filter_by(id=event_id).first()
+        if event:
+            db.query(Registration).filter_by(event_id=event_id).delete()
+            db.delete(event)
+            # db.commit() is automatic
+            await callback_query.message.answer("Событие успешно удалено.", reply_markup=markup)
+        else:
+            await callback_query.message.answer("Событие не найдено или уже удалено.", reply_markup=markup)
 
 
 @delete_event_router.callback_query(F.data == "cancel_delete")
 async def cancel_delete(callback_query: types.CallbackQuery):
     await callback_query.message.edit_text("Удаление отменено.", reply_markup=markup)
-
-
-async def event_deletion_markup(event_id):
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="❌ Удалить",
-                    callback_data=f"delete_event_{event_id}"
-                )
-            ]
-        ]
-    )
-

@@ -1,10 +1,10 @@
-import html
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from sqlalchemy.orm import Session, joinedload
+import html
 
 from db.database import get_db, User
 from utils.check_admin import check_admin_rights
@@ -39,8 +39,8 @@ async def admin_panel(callback: types.CallbackQuery):
         InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
     ]])
     if is_admin:
-        safe_username = html.escape(callback.from_user.username or callback.from_user.first_name or "Admin")
-        await callback.message.edit_text(f"<b>Добро пожаловать {safe_username}</b>\n",
+        username = html.escape(callback.from_user.username or "Admin")
+        await callback.message.edit_text(f"<b>Добро пожаловать {username}</b>\n",
                                          reply_markup=markup)
     else:
         await callback.message.edit_text("У вас нет доступа к этой панели.\n"
@@ -81,7 +81,7 @@ async def send_report(callback: types.CallbackQuery):
 async def send_logs(callback: types.CallbackQuery):
     try:
         with open("bot.log", "r") as f:
-            lines = f.readlines()[-20:]  # последние 50 строк
+            lines = f.readlines()[-20:]  # последние 20 строк
             log_chunk = "".join(lines)
             await callback.message.answer(f"<pre>{log_chunk}</pre>")
     except Exception as e:
@@ -90,37 +90,38 @@ async def send_logs(callback: types.CallbackQuery):
 
 @admin_router.callback_query(F.data == "view_user_subscriptions")
 async def view_user_subscriptions(callback: types.CallbackQuery):
-    db: Session = next(get_db())
-    users = db.query(User).options(joinedload(User.interests)).all()
-    db.close()
+    with get_db() as db:
+        users = db.query(User).options(joinedload(User.interests)).all()
 
-    messages = []
-    batch = []
-    max_message_length = 4000
-    current_length = 0
+        messages = []
+        batch = []
+        max_message_length = 4000
+        current_length = 0
 
-    for user in users:
-        username = user.username or f"{user.first_name} {user.last_name}"
-        interests = ", ".join([cat.name for cat in user.interests]) or "Нет подписок"
-        user_info = f"👤 <b>{username}</b>\n📌 Подписки: {interests}\n\n"
-        if current_length + len(user_info) > max_message_length:
+        for user in users:
+            first_name = html.escape(user.first_name or "")
+            last_name = html.escape(user.last_name or "")
+            username = html.escape(user.username or f"{first_name} {last_name}")
+            interests = ", ".join([html.escape(cat.name) for cat in user.interests]) or "Нет подписок"
+            user_info = f"👤 <b>{username}</b>\n📌 Подписки: {interests}\n\n"
+            if current_length + len(user_info) > max_message_length:
+                messages.append("".join(batch))
+                batch = [user_info]
+                current_length = len(user_info)
+            else:
+                batch.append(user_info)
+                current_length += len(user_info)
+
+        if batch:
             messages.append("".join(batch))
-            batch = [user_info]
-            current_length = len(user_info)
-        else:
-            batch.append(user_info)
-            current_length += len(user_info)
 
-    if batch:
-        messages.append("".join(batch))
+        for msg in messages:
+            await callback.message.answer(msg)
 
-    for msg in messages:
-        await callback.message.answer(msg)
-
-    # Кнопка «Назад»
-    keyboard = InlineKeyboardBuilder()
-    keyboard.button(text="🔙 Назад", callback_data="admin_panel")
-    await callback.message.answer("Выберите действие:", reply_markup=keyboard.as_markup())
+        # Кнопка «Назад»
+        keyboard = InlineKeyboardBuilder()
+        keyboard.button(text="🔙 Назад", callback_data="admin_panel")
+        await callback.message.answer("Выберите действие:", reply_markup=keyboard.as_markup())
     await callback.answer()
 
 class ChangeUserLevel(StatesGroup):
@@ -130,37 +131,38 @@ class ChangeUserLevel(StatesGroup):
 # 1. Вывод списка игроков
 @admin_router.callback_query(F.data == "change_users_level")
 async def change_users_level_start(callback: types.CallbackQuery, state: FSMContext):
-    db: Session = next(get_db())
-    users = db.query(User).all()
-    db.close()
+    with get_db() as db:
+        users = db.query(User).all()
 
-    max_msg_length = 3800
-    batch, messages, current_length = [], [], 0
+        max_msg_length = 3800
+        batch, messages, current_length = [], [], 0
 
-    for user in users:
-        username = f"{user.first_name or ''} {user.last_name or ''}".strip() or "Без имени"
-        user_info = f"🧑‍💼 <b>{username}</b> | 🆔 <code>{user.id}</code>\n"
-        if current_length + len(user_info) > max_msg_length:
+        for user in users:
+            first_name = html.escape(user.first_name or "")
+            last_name = html.escape(user.last_name or "")
+            username = f"{first_name} {last_name}".strip() or "Без имени"
+            user_info = f"🧑‍💼 <b>{username}</b> | 🆔 <code>{user.id}</code>\n"
+            if current_length + len(user_info) > max_msg_length:
+                messages.append("".join(batch))
+                batch = [user_info]
+                current_length = len(user_info)
+            else:
+                batch.append(user_info)
+                current_length += len(user_info)
+        if batch:
             messages.append("".join(batch))
-            batch = [user_info]
-            current_length = len(user_info)
-        else:
-            batch.append(user_info)
-            current_length += len(user_info)
-    if batch:
-        messages.append("".join(batch))
 
-    for msg in messages:
-        await callback.message.answer(msg)
+        for msg in messages:
+            await callback.message.answer(msg)
 
-    await callback.message.answer(
-        "✏️ Введите <b>ID</b> пользователя (скопируйте из списка выше), чей уровень хотите изменить:",
-        reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(text="🔙 Назад", callback_data="admin_panel")]
-            ]
+        await callback.message.answer(
+            "✏️ Введите <b>ID</b> пользователя (скопируйте из списка выше), чей уровень хотите изменить:",
+            reply_markup=InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(text="🔙 Назад", callback_data="admin_panel")]
+                ]
+            )
         )
-    )
     await state.set_state(ChangeUserLevel.waiting_for_user_id)
     await callback.answer()
 
@@ -180,70 +182,69 @@ async def ask_for_level(message: types.Message, state: FSMContext):
         return
 
     user_id = int(message.text)
-    db: Session = next(get_db())
-    user = db.query(User).filter(User.id == user_id).first()
-    db.close()
+    with get_db() as db:
+        user = db.query(User).filter(User.id == user_id).first()
 
-    if not user:
-        await message.answer(
-            "❌ Пользователь не найден. Попробуйте еще раз.",
-            reply_markup=InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [InlineKeyboardButton(text="🔙 Назад", callback_data="admin_panel")]
-                ]
+        if not user:
+            await message.answer(
+                "❌ Пользователь не найден. Попробуйте еще раз.",
+                reply_markup=InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [InlineKeyboardButton(text="🔙 Назад", callback_data="admin_panel")]
+                    ]
+                )
             )
-        )
-        return
+            return
 
-    await state.update_data(user_id=user_id)
-    kb = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="🌱 Новичок", callback_data="set_level:Новичок")],
-            [InlineKeyboardButton(text="🏅 Любитель", callback_data="set_level:Любитель")],
-            [InlineKeyboardButton(text="👑 Профи", callback_data="set_level:Профи")],
-            [InlineKeyboardButton(text="🔙 Назад", callback_data="change_users_level")],
-        ]
-    )
-    await message.answer(
-        f"Выберите новый уровень для <b>{user.first_name or ''} {user.last_name or ''}</b> (🆔 <code>{user.id}</code>):",
-        reply_markup=kb
-    )
+        await state.update_data(user_id=user_id)
+        kb = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="🌱 Новичок", callback_data="set_level:Новичок")],
+                [InlineKeyboardButton(text="🏅 Любитель", callback_data="set_level:Любитель")],
+                [InlineKeyboardButton(text="👑 Профи", callback_data="set_level:Профи")],
+                [InlineKeyboardButton(text="🔙 Назад", callback_data="change_users_level")],
+            ]
+        )
+        first_name = html.escape(user.first_name or "")
+        last_name = html.escape(user.last_name or "")
+        await message.answer(
+            f"Выберите новый уровень для <b>{first_name} {last_name}</b> (🆔 <code>{user.id}</code>):",
+            reply_markup=kb
+        )
     await state.set_state(ChangeUserLevel.waiting_for_level_choice)
 
 
 # 3. Обработка выбора уровня
 @admin_router.callback_query(ChangeUserLevel.waiting_for_level_choice, F.data.startswith("set_level:"))
-async def set_user_level(callback: types.CallbackQuery, state: FSMContext):
+async def set_user_level_confirm(callback: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     user_id = data.get("user_id")
     level = callback.data.split(":", 1)[1]
 
-    db: Session = next(get_db())
-    user = db.query(User).filter(User.id == user_id).first()
-    if user:
-        old_level = user.user_level or "Не установлен"
-        user.user_level = level
-        db.commit()
-        name = f"{user.first_name or ''} {user.last_name or ''}".strip()
-        await callback.message.answer(
-            f"✅ Уровень игрока <b>{name}</b> (🆔 <code>{user.id}</code>) "
-            f"успешно изменён с <b>{old_level}</b> на <b>{level}</b>! 🎉",
-            reply_markup=InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [InlineKeyboardButton(text="🔙 Назад в админ-панель", callback_data="admin_panel")]
-                ]
+    with get_db() as db:
+        user = db.query(User).filter(User.id == user_id).first()
+        if user:
+            old_level = user.user_level or "Не установлен"
+            user.user_level = level
+            # db.commit() automatic
+            first_name = html.escape(user.first_name or "")
+            last_name = html.escape(user.last_name or "")
+            name = f"{first_name} {last_name}".strip()
+            await callback.message.answer(
+                f"✅ Уровень игрока <b>{name}</b> (🆔 <code>{user.id}</code>) "
+                f"успешно изменён с <b>{old_level}</b> на <b>{level}</b>! 🎉",
+                reply_markup=InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [InlineKeyboardButton(text="🔙 Назад в админ-панель", callback_data="admin_panel")]
+                    ]
+                )
             )
-        )
-    else:
-        await callback.message.answer("❌ Пользователь не найден.",
-                                     reply_markup=InlineKeyboardMarkup(
-                                         inline_keyboard=[
-                                             [InlineKeyboardButton(text="🔙 Назад", callback_data="admin_panel")]
-                                         ]
-                                     ))
-    db.close()
+        else:
+            await callback.message.answer("❌ Пользователь не найден.",
+                                         reply_markup=InlineKeyboardMarkup(
+                                             inline_keyboard=[
+                                                 [InlineKeyboardButton(text="🔙 Назад", callback_data="admin_panel")]
+                                             ]
+                                         ))
     await state.clear()
     await callback.answer()
-
-
-# 4. Обработка кнопки "назад" (функционал перенесен в основной обработчик)
