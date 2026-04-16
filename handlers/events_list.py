@@ -1,6 +1,7 @@
 import os
 import locale
 import html
+import logging
 from datetime import datetime
 from aiogram import Router, types, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -209,7 +210,6 @@ async def confirm_cancel_registration(callback_query: types.CallbackQuery):
                         )
                     except TelegramAPIError as e:
                         logging.error(f"Ошибка отправки уведомления пользователю {reg.user_id}: {e}")
-
             else:
                 await callback_query.answer("Вы не были записаны на это событие.")
     except Exception as e:
