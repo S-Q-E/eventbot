@@ -14,6 +14,7 @@ ENV LC_ALL=ru_RU.UTF-8
 
 COPY . /app
 
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Делаем скрипт запуска исполняемым и исправляем окончания строк
