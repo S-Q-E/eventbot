@@ -16,4 +16,10 @@ COPY . /app
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python", "bot.py"]
+# Делаем скрипт запуска исполняемым и исправляем окончания строк
+RUN sed -i 's/\r$//' start.sh && chmod +x start.sh
+
+# Открываем порт для Flask
+EXPOSE 80
+
+CMD ["./start.sh"]

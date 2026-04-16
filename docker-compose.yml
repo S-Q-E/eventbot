@@ -6,6 +6,8 @@ services:
     restart: always
     env_file:
       - .env
+    ports:
+      - "80:80"
     volumes:
-      - .:/eventbot
-    command: python bot.py
+      - .:/app
+    # command удален, чтобы использовался CMD из Dockerfile (start.sh)
