@@ -25,23 +25,23 @@ async def show_categories(callback: types.CallbackQuery):
     with get_db() as db:
         categories = db.query(Category).order_by(Category.name).all()
 
-    if not categories:
-        await callback.message.answer("Категории ещё не созданы.")
-        return
+        if not categories:
+            await callback.message.answer("Категории ещё не созданы.")
+            return
 
-    builder = InlineKeyboardBuilder()
-    for cat in categories:
-        builder.button(
-            text=cat.name,
-            callback_data=f"filter_cat_{cat.id}"
+        builder = InlineKeyboardBuilder()
+        for cat in categories:
+            builder.button(
+                text=cat.name,
+                callback_data=f"filter_cat_{cat.id}"
+            )
+        builder.button(text="Главное меню", callback_data="main_menu")
+        builder.adjust(2)  # по 2 кнопки в ряд
+
+        await callback.message.answer(
+            "📂 Выберите категорию:",
+            reply_markup=builder.as_markup()
         )
-    builder.button(text="Главное меню", callback_data="main_menu")
-    builder.adjust(2)  # по 2 кнопки в ряд
-
-    await callback.message.answer(
-        "📂 Выберите категорию:",
-        reply_markup=builder.as_markup()
-    )
 
 
 @event_list_router.callback_query(F.data.startswith("filter_cat_"))
@@ -72,65 +72,65 @@ async def list_events_by_category(callback: types.CallbackQuery):
               .all()
         )
 
-    keyboard = InlineKeyboardBuilder()
+        keyboard = InlineKeyboardBuilder()
 
-    if not events:
-        keyboard.button(
+        if not events:
+            keyboard.button(
+                text="🔙 Категории",
+                callback_data="events_list")
+            await callback.message.edit_text("События в этой категории отсутствуют.", reply_markup=keyboard.as_markup())
+            return
+
+        # Пагинация
+        total_pages = (len(events) + EVENTS_PER_PAGE - 1) // EVENTS_PER_PAGE
+        page = max(1, min(page, total_pages))
+        start = (page - 1) * EVENTS_PER_PAGE
+        slice_events = events[start:start + EVENTS_PER_PAGE]
+
+        try:
+            locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
+        except locale.Error:
+            # Если локаль не найдена, попробуйте другую, например 'Russian'.
+            locale.setlocale(locale.LC_TIME, 'Russian')
+        
+        # Отправляем каждое событие в отдельном сообщении
+        for event in slice_events:
+            weekday = get_week_day(event.event_time)
+            text = (
+                f"🎉 <b>{html.escape(event.name)}</b>\n"
+                f"🕒 Дата:<b>{weekday} {event.event_time.strftime('%d %B')}</b>\n"
+            )
+            btn = types.InlineKeyboardButton(
+                text="📄 Подробнее",
+                callback_data=f"details_{event.id}"
+            )
+            await callback.message.answer(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=[[btn]]), parse_mode="HTML")
+
+        # Строим клавиатуру пагинации + кнопка «Назад к категориям»
+        kb_builder = InlineKeyboardBuilder()
+        if page > 1:
+            kb_builder.button(
+                text="⬅️ Предыдущая",
+                callback_data=f"filter_cat_{cat_id}_{page - 1}"
+            )
+        if page < total_pages:
+            kb_builder.button(
+                text="Следующая ➡️",
+                callback_data=f"filter_cat_{cat_id}_{page + 1}"
+            )
+        # Кнопка возврата к списку категорий
+        kb_builder.button(
             text="🔙 Категории",
-            callback_data="events_list")
-        await callback.message.edit_text("События в этой категории отсутствуют.", reply_markup=keyboard.as_markup())
-        return
-
-    # Пагинация
-    total_pages = (len(events) + EVENTS_PER_PAGE - 1) // EVENTS_PER_PAGE
-    page = max(1, min(page, total_pages))
-    start = (page - 1) * EVENTS_PER_PAGE
-    slice_events = events[start:start + EVENTS_PER_PAGE]
-
-    try:
-        locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
-    except locale.Error:
-        # Если локаль не найдена, попробуйте другую, например 'Russian'.
-        locale.setlocale(locale.LC_TIME, 'Russian')
-    # Отправляем каждое событие в отдельном сообщении
-    for event in slice_events:
-        weekday = get_week_day(event.event_time)
-        text = (
-            f"🎉 <b>{html.escape(event.name)}</b>\n"
-            f"🕒 Дата:<b>{weekday} {event.event_time.strftime('%d %B')}</b>\n"
+            callback_data="events_list"
         )
-        btn = types.InlineKeyboardButton(
-            text="📄 Подробнее",
-            callback_data=f"details_{event.id}"
-        )
-        await callback.message.answer(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=[[btn]]))
+        # Разместим навигацию в одну строку
+        kb_builder.adjust(3)
 
-    # Строим клавиатуру пагинации + кнопка «Назад к категориям»
-    kb_builder = InlineKeyboardBuilder()
-    nav_buttons = []
-    if page > 1:
-        kb_builder.button(
-            text="⬅️ Предыдущая",
-            callback_data=f"filter_cat_{cat_id}_{page - 1}"
+        # Финальное сообщение с навигацией
+        await callback.message.answer(
+            f"Страница {page}/{total_pages}",
+            reply_markup=kb_builder.as_markup()
         )
-    if page < total_pages:
-        kb_builder.button(
-            text="Следующая ➡️",
-            callback_data=f"filter_cat_{cat_id}_{page + 1}"
-        )
-    # Кнопка возврата к списку категорий
-    kb_builder.button(
-        text="🔙 Категории",
-        callback_data="events_list"
-    )
-    # Разместим навигацию в одну строку
-    kb_builder.adjust(3)
-
-    # Финальное сообщение с навигацией
-    await callback.message.answer(
-        f"Страница {page}/{total_pages}",
-        reply_markup=kb_builder.as_markup()
-    )
 
 
 @event_list_router.callback_query(F.data.startswith("cancel_registration_"))
@@ -149,7 +149,8 @@ async def cancel_registration(callback_query: types.CallbackQuery):
 
     await callback_query.message.edit_text(
         "Вы уверены, что хотите отменить регистрацию на это событие?",
-        reply_markup=confirmation_markup
+        reply_markup=confirmation_markup,
+        parse_mode="HTML"
     )
 
 
@@ -177,11 +178,12 @@ async def confirm_cancel_registration(callback_query: types.CallbackQuery):
                     f"Пользователь {user_name} отменил запись на событие {html.escape(event.name)}",
                     parse_mode="HTML"
                 )
-                await callback_query.bot.send_message(
-                    ADMIN_2,
-                    f"Пользователь {user_name} отменил запись на событие {html.escape(event.name)}",
-                    parse_mode="HTML"
-                )
+                if ADMIN_2:
+                    await callback_query.bot.send_message(
+                        ADMIN_2,
+                        f"Пользователь {user_name} отменил запись на событие {html.escape(event.name)}",
+                        parse_mode="HTML"
+                    )
 
                 db.delete(registration)
                 event.current_participants -= 1
@@ -206,12 +208,12 @@ async def confirm_cancel_registration(callback_query: types.CallbackQuery):
                             parse_mode="HTML"
                         )
                     except TelegramAPIError as e:
-                        print(f"Ошибка отправки уведомления пользователю {reg.user_id}: {e}")
+                        logging.error(f"Ошибка отправки уведомления пользователю {reg.user_id}: {e}")
 
             else:
                 await callback_query.answer("Вы не были записаны на это событие.")
     except Exception as e:
-        print(f"Ошибка при отмене регистрации: {e}")
+        logging.error(f"Ошибка при отмене регистрации: {e}")
         await callback_query.message.answer("Произошла ошибка при отмене регистрации.")
 
 
@@ -242,4 +244,3 @@ async def back_to_event_list(callback: types.CallbackQuery):
             reply_markup=markup,
             parse_mode="HTML"
         )
-
