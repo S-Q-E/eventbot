@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN sed -i 's/\r$//' start.sh && chmod +x start.sh
 
 # Открываем порт для Flask
-EXPOSE 80
+EXPOSE 8000
 
 # Запускаем через bash, чтобы обойти проблемы с правами доступа при монтировании томов
 CMD ["/bin/bash", "start.sh"]
