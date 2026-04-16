@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y locales \
 # 👉 Устанавливаем переменные окружения
 ENV LANG=ru_RU.UTF-8
 ENV LC_ALL=ru_RU.UTF-8
-
+ENV TZ=Europe/Moscow
+RUN apt-get update && apt-get install -y tzdata
 COPY . /app
 
 RUN pip install --no-cache-dir -r requirements.txt
