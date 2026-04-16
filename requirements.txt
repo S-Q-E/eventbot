@@ -1,4 +1,4 @@
-﻿aiofiles==24.1.0
+aiofiles==24.1.0
 aiogram==3.13.1
 aiohappyeyeballs==2.4.3
 aiohttp==3.10.10
@@ -38,9 +38,11 @@ wrapt==1.16.0
 yarl==1.15.5
 yookassa==3.4.1
 pandas~=2.2.3
-pytesseract~=0.3.13
 pillow~=11.0.0
 APScheduler~=3.11.0
 flask~=3.1.0
+flask-sqlalchemy
+flask-migrate
+flask-admin
 openpyxl
-aiogram-widgets
+aiogram_widgets
