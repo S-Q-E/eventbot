@@ -1,5 +1,3 @@
-#!/bin/bash
-
 FROM python:3.10-slim
 
 WORKDIR /app
@@ -16,13 +14,13 @@ ENV LC_ALL=ru_RU.UTF-8
 
 COPY . /app
 
-COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Делаем скрипт запуска исполняемым и исправляем окончания строк
+# Исправляем окончания строк (важно для Windows) и даем права (на всякий случай)
 RUN sed -i 's/\r$//' start.sh && chmod +x start.sh
 
 # Открываем порт для Flask
 EXPOSE 80
 
-CMD ["./start.sh"]
+# Запускаем через bash, чтобы обойти проблемы с правами доступа при монтировании томов
+CMD ["/bin/bash", "start.sh"]

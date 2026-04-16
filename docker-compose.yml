@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   bot:
     build: .
@@ -10,4 +9,3 @@ services:
       - "80:80"
     volumes:
       - .:/app
-    # command удален, чтобы использовался CMD из Dockerfile (start.sh)
