@@ -8,7 +8,7 @@ import logging
 event_detail_router = Router()
 
 
-@event_detail_router.callback_query(F.data.startswith("event_"))
+@event_detail_router.callback_query(F.data.startswith("details_"))
 async def show_event_details(callback: types.CallbackQuery):
     event_id = int(callback.data.split("_")[1])
     try:
