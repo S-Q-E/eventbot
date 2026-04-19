@@ -1,0 +1,9 @@
+{
+    "cursor.composer.shouldAllowCustomModes": true,
+    "terminal.integrated.suggest.providers": {
+        
+
+        "terminal-suggest": true,
+        "pwsh-shell-integration": true
+    }
+}

@@ -3,3 +3,13 @@ events.db
 bot.log
 user_avatars
 app.log
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.xlsx
+*.csv
+log.txt
+
