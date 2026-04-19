@@ -21,7 +21,7 @@ async def delete_user_from_event_start(callback: types.CallbackQuery, state: FSM
     with get_db() as db:
         registered_user_ids = [
             row[0]
-            for row in db.query(Registration.user_id)
+            for row in db.query(Registration)
             .filter_by(event_id=event_id)
             .order_by(Registration.user_id)
             .all()
@@ -30,7 +30,7 @@ async def delete_user_from_event_start(callback: types.CallbackQuery, state: FSM
     await callback.message.answer("Введите ID пользователя, которого хотите удалить из события:")
 
     if registered_user_ids:
-        users_text = "\n".join(f"<code>{user_id}</code>" for user_id in registered_user_ids)
+        users_text = "\n".join(f"{user.first_name} {user.last_name}<code>{user.id}</code>" for user in registered_user_ids)
         await callback.message.answer(
             "Пользователи, записанные на событие (ID):\n"
             f"{users_text}"
