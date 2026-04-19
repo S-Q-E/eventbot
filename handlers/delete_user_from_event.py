@@ -30,14 +30,14 @@ async def delete_user_from_event_start(callback: types.CallbackQuery, state: FSM
     await callback.message.answer("Введите ID пользователя, которого хотите удалить из события:")
 
     if registered_users:
-        users_text = "\n".join(
-            (
+        users_lines = []
+        for first_name, last_name, user_id in registered_users:
+            full_name = (
                 f"{html.escape((first_name or '').strip() or 'Без имени')} "
-                f"{html.escape((last_name or '').strip())}".strip()
-                f" - <code>{user_id}</code>"
-            )
-            for first_name, last_name, user_id in registered_users
-        )
+                f"{html.escape((last_name or '').strip())}"
+            ).strip()
+            users_lines.append(f"{full_name} - <code>{user_id}</code>")
+        users_text = "\n".join(users_lines)
         await callback.message.answer(
             "Пользователи, записанные на событие:\n"
             f"{users_text}"
