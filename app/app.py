@@ -146,4 +146,6 @@ admin.add_view(ModelView(Event, db.session))
 admin.add_view(ModelView(Category, db.session))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+    host = os.getenv("FLASK_HOST", "0.0.0.0")
+    port = int(os.getenv("FLASK_PORT", "8000"))
+    app.run(host=host, port=port)
