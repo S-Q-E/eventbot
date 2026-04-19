@@ -22,8 +22,6 @@ YOOKASSA_API_KEY = os.getenv("YOOKASSA_API_KEY")
 logger = logging.getLogger(__name__)
 event_join_router = Router()
 
-USER_LEVELS = ["РќРѕРІРёС‡РѕРє", "Р›СЋР±РёС‚РµР»СЊ", "РџСЂРѕС„Рё"]
-
 
 def _configure_yookassa() -> bool:
     if not YOOKASSA_SHOP_ID or not YOOKASSA_API_KEY:
@@ -48,7 +46,7 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
     try:
         event_id = int(callback_query.data.split("join_")[1])
     except (IndexError, ValueError):
-        await callback_query.message.answer("РћС€РёР±РєР°: РЅРµРІРµСЂРЅС‹Р№ С„РѕСЂРјР°С‚ РґР°РЅРЅС‹С… СЃРѕР±С‹С‚РёСЏ.")
+        await callback_query.message.answer("Ошибка: неверный формат данных события.")
         return
 
     user_id = callback_query.from_user.id
@@ -59,48 +57,49 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
     with get_db() as db:
         event = db.query(Event).filter_by(id=event_id).first()
         if not event:
-            await callback_query.message.answer("РЎРѕР±С‹С‚РёРµ РЅРµ РЅР°Р№РґРµРЅРѕ.")
+            await callback_query.message.answer("Событие не найдено.")
             return
+
         event_name = event.name or ""
         event_price = event.price or 0
 
         user = db.query(User).filter_by(id=user_id).first()
         if not user or not user.is_registered:
             await callback_query.message.answer(
-                "Р§С‚РѕР±С‹ Р·Р°РїРёСЃР°С‚СЊСЃСЏ РЅР° РёРіСЂСѓ, СЃРЅР°С‡Р°Р»Р° Р·Р°РІРµСЂС€РёС‚Рµ СЂРµРіРёСЃС‚СЂР°С†РёСЋ.",
+                "Чтобы записаться на игру, сначала завершите регистрацию.",
                 reply_markup=InlineKeyboardMarkup(
-                    inline_keyboard=[[InlineKeyboardButton(text="РџСЂРѕР№С‚Рё СЂРµРіРёСЃС‚СЂР°С†РёСЋ", callback_data="start_reg")]]
+                    inline_keyboard=[[InlineKeyboardButton(text="Пройти регистрацию", callback_data="start_reg")]]
                 )
             )
             return
 
         if event.current_participants >= event.max_participants:
-            await callback_query.message.answer("Р’СЃРµ РјРµСЃС‚Р° Р·Р°РЅСЏС‚С‹. Р‘СѓРґРµРј Р¶РґР°С‚СЊ РІР°СЃ РІ СЃР»РµРґСѓСЋС‰РёР№ СЂР°Р·!")
+            await callback_query.message.answer("Все места заняты. Будем ждать вас в следующий раз!")
             return
 
         existing_registration = db.query(Registration).filter_by(user_id=user_id, event_id=event_id).first()
         if existing_registration:
             if existing_registration.is_paid:
                 await callback_query.message.answer(
-                    f"Р’С‹ СѓР¶Рµ Р·Р°РїРёСЃР°РЅС‹ РЅР° СЃРѕР±С‹С‚РёРµ <b>{html.escape(event.name or '')}</b>.",
+                    f"Вы уже записаны на событие <b>{html.escape(event.name or '')}</b>.",
                     parse_mode="HTML"
                 )
             else:
                 await callback_query.message.answer(
-                    "РЈ РІР°СЃ РµСЃС‚СЊ РЅРµР·Р°РІРµСЂС€С‘РЅРЅР°СЏ РѕРїР»Р°С‚Р° РїРѕ СЌС‚РѕРјСѓ СЃРѕР±С‹С‚РёСЋ. РџСЂРѕРІРµСЂСЊС‚Рµ СЃС‚Р°С‚СѓСЃ РїР»Р°С‚РµР¶Р°."
+                    "У вас есть незавершённая оплата по этому событию. Проверьте статус платежа."
                 )
             return
 
-        user_level = user.user_level or "РќРѕРІРёС‡РѕРє"
-        event_level = event.players_level or "РЎРјРµС€Р°РЅРЅС‹Р№"
+        user_level = user.user_level or "Новичок"
+        event_level = event.players_level or "Смешанный"
 
-        if event_level == "Р›СЋР±РёС‚РµР»Рё Рё РїСЂРѕС„Рё" and user_level == "РќРѕРІРёС‡РѕРє":
+        if event_level == "Любители и профи" and user_level == "Новичок":
             markup = InlineKeyboardMarkup(
-                inline_keyboard=[[InlineKeyboardButton(text="РќР°Р·Р°Рґ", callback_data="events_list")]]
+                inline_keyboard=[[InlineKeyboardButton(text="Назад", callback_data="events_list")]]
             )
             await callback_query.message.answer(
-                "вљ пёЏ Р’Р°С€ СѓСЂРѕРІРµРЅСЊ: <b>РќРѕРІРёС‡РѕРє</b>.\n"
-                "Р­С‚Рѕ СЃРѕР±С‹С‚РёРµ С‚РѕР»СЊРєРѕ РґР»СЏ <b>Р›СЋР±РёС‚РµР»РµР№ Рё РџСЂРѕС„Рё</b>.",
+                "⚠️ Ваш уровень: <b>Новичок</b>.\n"
+                "Это событие только для <b>Любителей и Профи</b>.",
                 reply_markup=markup,
                 parse_mode="HTML"
             )
@@ -114,12 +113,12 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
             user.user_games += 1
 
             await callback_query.message.answer(
-                f"вњ… Р’С‹ СѓСЃРїРµС€РЅРѕ Р·Р°РїРёСЃР°РЅС‹ РЅР° СЃРѕР±С‹С‚РёРµ <b>{html.escape(event.name or '')}</b>.\n"
-                f"рџ“… Р”Р°С‚Р°: <b>{_format_event_datetime(event.event_time)}</b>\n"
-                f"рџ“Ќ РђРґСЂРµСЃ: <b>{html.escape(event.address or '-')}</b>\n"
-                f"рџ‘Ґ РЈС‡Р°СЃС‚РЅРёРєРѕРІ: <b>{event.current_participants}/{event.max_participants}</b>",
+                f"✅ Вы успешно записаны на событие <b>{html.escape(event.name or '')}</b>.\n"
+                f"📅 Дата: <b>{_format_event_datetime(event.event_time)}</b>\n"
+                f"📍 Адрес: <b>{html.escape(event.address or '-')}</b>\n"
+                f"👥 Участников: <b>{event.current_participants}/{event.max_participants}</b>",
                 reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
-                    InlineKeyboardButton(text="Р“Р»Р°РІРЅРѕРµ РјРµРЅСЋ", callback_data="main_menu")
+                    InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
                 ]]),
                 parse_mode="HTML"
             )
@@ -127,7 +126,7 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
 
     if not _configure_yookassa():
         await callback_query.message.answer(
-            "РЎРµР№С‡Р°СЃ РЅРµРґРѕСЃС‚СѓРїРЅР° РѕРЅР»Р°Р№РЅ-РѕРїР»Р°С‚Р°. РќР°РїРёС€РёС‚Рµ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСѓ, Рё РјС‹ РїРѕРјРѕР¶РµРј Р·Р°РІРµСЂС€РёС‚СЊ Р·Р°РїРёСЃСЊ."
+            "Сейчас недоступна онлайн-оплата. Напишите администратору, и мы поможем завершить запись."
         )
         return
 
@@ -137,25 +136,25 @@ async def join_event(callback_query: types.CallbackQuery, bot: Bot):
             "payment_method_data": {"type": "sbp"},
             "confirmation": {"type": "redirect", "return_url": "https://t.me/GuruEvent_bot/"},
             "capture": True,
-            "description": f"РћРїР»Р°С‚Р° СѓС‡Р°СЃС‚РёСЏ РІ СЃРѕР±С‹С‚РёРё {event_name}",
+            "description": f"Оплата участия в событии {event_name}",
             "metadata": {"user_id": user_id, "event_id": event_id},
         })
 
         confirmation_url = payment.confirmation.confirmation_url
-        pay_btn = InlineKeyboardButton(text="рџ’і РћРїР»Р°С‚РёС‚СЊ", url=confirmation_url)
+        pay_btn = InlineKeyboardButton(text="💳 Оплатить", url=confirmation_url)
         markup = InlineKeyboardMarkup(inline_keyboard=[[pay_btn]])
 
         await callback_query.message.answer(
-            f"Р”Р»СЏ Р·Р°РїРёСЃРё РЅР° <b>{html.escape(event_name)}</b> РѕРїР»Р°С‚РёС‚Рµ СѓС‡Р°СЃС‚РёРµ РїРѕ РєРЅРѕРїРєРµ РЅРёР¶Рµ.\n"
-            f"рџ’° РЎС‚РѕРёРјРѕСЃС‚СЊ: <b>{event_price} СЂСѓР±.</b>",
+            f"Для записи на <b>{html.escape(event_name)}</b> оплатите участие по кнопке ниже.\n"
+            f"💰 Стоимость: <b>{event_price} руб.</b>",
             reply_markup=markup,
             parse_mode="HTML"
         )
 
         await check_payment(payment.id, event_id, user_id, callback_query, bot)
     except Exception as e:
-        logger.exception("РћС€РёР±РєР° РїСЂРё СЃРѕР·РґР°РЅРёРё РїР»Р°С‚РµР¶Р°: %s", e)
-        await callback_query.message.answer("РћС€РёР±РєР° РїСЂРё СЃРѕР·РґР°РЅРёРё РїР»Р°С‚РµР¶Р°. РџРѕРїСЂРѕР±СѓР№С‚Рµ РїРѕР·Р¶Рµ.")
+        logger.exception("Ошибка при создании платежа: %s", e)
+        await callback_query.message.answer("Ошибка при создании платежа. Попробуйте позже.")
 
 
 async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQuery, bot: Bot):
@@ -185,14 +184,14 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
 
                     payer_name = f"{user.first_name or ''} {user.last_name or ''}".strip()
                     receipt_info = (
-                        "рџ“„ РљРІРёС‚Р°РЅС†РёСЏ РѕР± РѕРїР»Р°С‚Рµ\n"
-                        f"рџЋ‰ РЎРѕР±С‹С‚РёРµ: {html.escape(event.name or '')}\n"
-                        f"рџ“… Р”Р°С‚Р° Рё РІСЂРµРјСЏ: {_format_event_datetime(event.event_time)}\n"
-                        f"рџ“Ќ РђРґСЂРµСЃ: {html.escape(event.address or '-')}\n"
-                        f"рџ†” ID СѓС‡Р°СЃС‚РЅРёРєР°: <code>{user.id}</code>\n"
-                        f"рџ‘¤ РЈС‡Р°СЃС‚РЅРёРє: {html.escape(payer_name or 'Р‘РµР· РёРјРµРЅРё')}\n"
-                        f"рџ“ћ РўРµР»РµС„РѕРЅ: {html.escape(user.phone_number or '-')}\n"
-                        f"рџ’° РЎСѓРјРјР°: {event.price} СЂСѓР±."
+                        "📄 Квитанция об оплате\n"
+                        f"🎉 Событие: {html.escape(event.name or '')}\n"
+                        f"📅 Дата и время: {_format_event_datetime(event.event_time)}\n"
+                        f"📍 Адрес: {html.escape(event.address or '-')}\n"
+                        f"🆔 ID участника: <code>{user.id}</code>\n"
+                        f"👤 Участник: {html.escape(payer_name or 'Без имени')}\n"
+                        f"📞 Телефон: {html.escape(user.phone_number or '-')}\n"
+                        f"💰 Сумма: {event.price} руб."
                     )
 
                     if ADMIN:
@@ -201,23 +200,23 @@ async def check_payment(payment_id, event_id, user_id, callback: types.CallbackQ
                         await bot.send_message(ADMIN_2, receipt_info, parse_mode="HTML")
 
                     await callback.message.answer(
-                        f"вњ… РћРїР»Р°С‚Р° РїСЂРѕС€Р»Р° СѓСЃРїРµС€РЅРѕ.\n"
-                        f"Р’С‹ Р·Р°РїРёСЃР°РЅС‹ РЅР° СЃРѕР±С‹С‚РёРµ <b>{html.escape(event.name or '')}</b>.\n"
-                        f"рџ“… Р”Р°С‚Р°: <b>{_format_event_datetime(event.event_time)}</b>",
+                        f"✅ Оплата прошла успешно.\n"
+                        f"Вы записаны на событие <b>{html.escape(event.name or '')}</b>.\n"
+                        f"📅 Дата: <b>{_format_event_datetime(event.event_time)}</b>",
                         reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
-                            InlineKeyboardButton(text="Р“Р»Р°РІРЅРѕРµ РјРµРЅСЋ", callback_data="main_menu")
+                            InlineKeyboardButton(text="Главное меню", callback_data="main_menu")
                         ]]),
                         parse_mode="HTML"
                     )
                 return
 
             if payment.status in ["canceled", "expired"]:
-                await callback.message.answer("РћРїР»Р°С‚Р° Р±С‹Р»Р° РѕС‚РјРµРЅРµРЅР° РёР»Рё СЃСЂРѕРє РґРµР№СЃС‚РІРёСЏ РїР»Р°С‚РµР¶Р° РёСЃС‚С‘Рє.")
+                await callback.message.answer("Оплата была отменена или срок действия платежа истёк.")
                 return
 
-        await callback.message.answer("РџР»Р°С‚С‘Р¶ РµС‰С‘ РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚СЃСЏ. РџСЂРѕРІРµСЂСЊС‚Рµ СЃС‚Р°С‚СѓСЃ С‡СѓС‚СЊ РїРѕР·Р¶Рµ.")
+        await callback.message.answer("Платёж ещё обрабатывается. Проверьте статус чуть позже.")
     except Exception as e:
-        logger.error("РћС€РёР±РєР° РїСЂРѕРІРµСЂРєРё РїР»Р°С‚РµР¶Р°: %s", e)
+        logger.error("Ошибка проверки платежа: %s", e)
 
 
 @event_join_router.callback_query(F.data.startswith("cancel_registration_"))
@@ -230,14 +229,14 @@ async def cancel_registration(callback_query: types.CallbackQuery):
         event = db.query(Event).filter_by(id=event_id).first()
 
         if not registration or not event:
-            await callback_query.answer("Р’С‹ РЅРµ Р±С‹Р»Рё Р·Р°РїРёСЃР°РЅС‹ РЅР° СЌС‚Рѕ СЃРѕР±С‹С‚РёРµ.")
+            await callback_query.answer("Вы не были записаны на это событие.")
             return
 
         user_name = f"{html.escape(registration.user.first_name or '')} {html.escape(registration.user.last_name or '')}".strip()
         if ADMIN:
             await callback_query.bot.send_message(
                 ADMIN,
-                f"РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ {user_name} РѕС‚РјРµРЅРёР» СЂРµРіРёСЃС‚СЂР°С†РёСЋ РЅР° СЃРѕР±С‹С‚РёРµ {html.escape(event.name or '')}",
+                f"Пользователь {user_name} отменил регистрацию на событие {html.escape(event.name or '')}",
                 parse_mode="HTML"
             )
 
@@ -246,7 +245,7 @@ async def cancel_registration(callback_query: types.CallbackQuery):
         if event.current_participants < 0:
             event.current_participants = 0
 
-    await callback_query.message.answer("Р’С‹ СѓСЃРїРµС€РЅРѕ РѕС‚РјРµРЅРёР»Рё СЂРµРіРёСЃС‚СЂР°С†РёСЋ РЅР° СЌС‚Рѕ СЃРѕР±С‹С‚РёРµ.")
+    await callback_query.message.answer("Вы успешно отменили регистрацию на это событие.")
 
 
 @event_join_router.callback_query(F.data.startswith("force_join_"))
@@ -258,11 +257,11 @@ async def force_join(callback: types.CallbackQuery, bot: Bot):
         event = db.query(Event).filter_by(id=event_id).first()
 
     if not user or not event:
-        await callback.message.answer("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РёР»Рё СЃРѕР±С‹С‚РёРµ РЅРµ РЅР°Р№РґРµРЅС‹.")
+        await callback.message.answer("Пользователь или событие не найдены.")
         return
 
     if not _configure_yookassa():
-        await callback.message.answer("РЎРµСЂРІРёСЃ РѕРЅР»Р°Р№РЅ-РѕРїР»Р°С‚С‹ РЅРµРґРѕСЃС‚СѓРїРµРЅ.")
+        await callback.message.answer("Сервис онлайн-оплаты недоступен.")
         return
 
     try:
@@ -271,28 +270,28 @@ async def force_join(callback: types.CallbackQuery, bot: Bot):
             "payment_method_data": {"type": "sbp"},
             "confirmation": {"type": "redirect", "return_url": "https://t.me/GuruEvent_bot/"},
             "capture": True,
-            "description": f"РћРїР»Р°С‚Р° СѓС‡Р°СЃС‚РёСЏ РІ СЃРѕР±С‹С‚РёРё {event.name}",
+            "description": f"Оплата участия в событии {event.name}",
             "metadata": {"user_id": user.id, "event_id": event_id},
         })
         confirmation_url = payment.confirmation.confirmation_url
-        pay_btn = InlineKeyboardButton(text="рџ’і РћРїР»Р°С‚РёС‚СЊ", url=confirmation_url)
+        pay_btn = InlineKeyboardButton(text="💳 Оплатить", url=confirmation_url)
         markup = InlineKeyboardMarkup(inline_keyboard=[[pay_btn]])
 
         await callback.message.answer(
-            "РћРїР»Р°С‚РёС‚Рµ СѓС‡Р°СЃС‚РёРµ, РЅР°Р¶Р°РІ РєРЅРѕРїРєСѓ РЅРёР¶Рµ:",
+            "Оплатите участие, нажав кнопку ниже:",
             reply_markup=markup
         )
         await check_payment(payment.id, event_id, user.id, callback, bot)
     except Exception as e:
-        logger.exception("РћС€РёР±РєР° РїСЂРё СЃРѕР·РґР°РЅРёРё РїР»Р°С‚РµР¶Р°: %s", e)
-        await callback.message.answer("РћС€РёР±РєР° РїСЂРё СЃРѕР·РґР°РЅРёРё РїР»Р°С‚РµР¶Р°. РџРѕРїСЂРѕР±СѓР№С‚Рµ РїРѕР·Р¶Рµ.")
+        logger.exception("Ошибка при создании платежа: %s", e)
+        await callback.message.answer("Ошибка при создании платежа. Попробуйте позже.")
 
 
 @event_join_router.callback_query(F.data == "cancel_join")
 async def cancel_join(callback: types.CallbackQuery):
     builder = InlineKeyboardBuilder()
-    builder.button(text="РќР°Р·Р°Рґ", callback_data="main_menu")
+    builder.button(text="Назад", callback_data="main_menu")
     await callback.message.answer(
-        "вќЊ Р—Р°РїРёСЃСЊ РѕС‚РјРµРЅРµРЅР°. Р’С‹ РІСЃРµРіРґР° РјРѕР¶РµС‚Рµ РІС‹Р±СЂР°С‚СЊ РґСЂСѓРіРѕРµ СЃРѕР±С‹С‚РёРµ!",
+        "❌ Запись отменена. Вы всегда можете выбрать другое событие!",
         reply_markup=builder.as_markup()
     )
