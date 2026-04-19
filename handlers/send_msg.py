@@ -1,4 +1,4 @@
-import logging
+﻿import logging
 import html
 from datetime import datetime
 
@@ -32,7 +32,7 @@ class AdminBroadcast(StatesGroup):
 @message_router.callback_query(F.data == "send_to_users")
 async def cmd_broadcast_start(cb: types.CallbackQuery, state: FSMContext):
     await cb.message.edit_reply_markup()
-    await cb.message.answer("Введите текст рассылки:")
+    await cb.message.answer("Р’РІРµРґРёС‚Рµ С‚РµРєСЃС‚ СЂР°СЃСЃС‹Р»РєРё:")
     await state.set_state(AdminBroadcast.waiting_for_text)
     await cb.answer()
 
@@ -41,17 +41,17 @@ async def cmd_broadcast_start(cb: types.CallbackQuery, state: FSMContext):
 async def broadcast_input_text(msg: types.Message, state: FSMContext):
     text = (msg.text or "").strip()
     if not text:
-        await msg.answer("Текст не может быть пустым. Введите его ещё раз:")
+        await msg.answer("РўРµРєСЃС‚ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј. Р’РІРµРґРёС‚Рµ РµРіРѕ РµС‰С‘ СЂР°Р·:")
         return
 
     await state.update_data(text=text)
 
     kb = InlineKeyboardBuilder()
-    kb.button(text="✅ Подтвердить текст", callback_data="confirm_text")
-    kb.button(text="✏️ Редактировать", callback_data="edit_text")
+    kb.button(text="вњ… РџРѕРґС‚РІРµСЂРґРёС‚СЊ С‚РµРєСЃС‚", callback_data="confirm_text")
+    kb.button(text="вњЏпёЏ Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ", callback_data="edit_text")
     kb.adjust(2)
 
-    await msg.answer(f"Предпросмотр текста:\n\n{text}", reply_markup=kb.as_markup())
+    await msg.answer(f"РџСЂРµРґРїСЂРѕСЃРјРѕС‚СЂ С‚РµРєСЃС‚Р°:\n\n{text}", reply_markup=kb.as_markup())
     await state.set_state(AdminBroadcast.waiting_for_text_confirm)
 
 
@@ -60,7 +60,7 @@ async def broadcast_confirm_text(cb: types.CallbackQuery, state: FSMContext):
     await cb.answer()
 
     if cb.data == "edit_text":
-        await cb.message.answer("Введите текст заново:")
+        await cb.message.answer("Р’РІРµРґРёС‚Рµ С‚РµРєСЃС‚ Р·Р°РЅРѕРІРѕ:")
         await state.set_state(AdminBroadcast.waiting_for_text)
         return
 
@@ -68,11 +68,11 @@ async def broadcast_confirm_text(cb: types.CallbackQuery, state: FSMContext):
         return
 
     skip_kb = ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text="Пропустить")]],
+        keyboard=[[KeyboardButton(text="РџСЂРѕРїСѓСЃС‚РёС‚СЊ")]],
         resize_keyboard=True,
         one_time_keyboard=True,
     )
-    await cb.message.answer("Отправьте фото или нажмите «Пропустить».", reply_markup=skip_kb)
+    await cb.message.answer("РћС‚РїСЂР°РІСЊС‚Рµ С„РѕС‚Рѕ РёР»Рё РЅР°Р¶РјРёС‚Рµ В«РџСЂРѕРїСѓСЃС‚РёС‚СЊВ».", reply_markup=skip_kb)
     await state.set_state(AdminBroadcast.waiting_for_photo)
 
 
@@ -80,23 +80,23 @@ async def broadcast_confirm_text(cb: types.CallbackQuery, state: FSMContext):
 async def broadcast_input_photo(msg: types.Message, state: FSMContext):
     if msg.photo:
         await state.update_data(photo=msg.photo[-1].file_id)
-    elif (msg.text or "").strip().lower() == "пропустить":
+    elif (msg.text or "").strip().lower() == "РїСЂРѕРїСѓСЃС‚РёС‚СЊ":
         await state.update_data(photo=None)
     else:
-        await msg.answer("Отправьте фото или нажмите «Пропустить».")
+        await msg.answer("РћС‚РїСЂР°РІСЊС‚Рµ С„РѕС‚Рѕ РёР»Рё РЅР°Р¶РјРёС‚Рµ В«РџСЂРѕРїСѓСЃС‚РёС‚СЊВ».")
         return
 
     kb = InlineKeyboardBuilder()
-    kb.button(text="Всем администраторам", callback_data="broadcast_admins")
-    kb.button(text="Всем пользователям", callback_data="broadcast_all")
-    kb.button(text="По категории", callback_data="broadcast_by_category")
+    kb.button(text="Р’СЃРµРј Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР°Рј", callback_data="broadcast_admins")
+    kb.button(text="Р’СЃРµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРј", callback_data="broadcast_all")
+    kb.button(text="РџРѕ РєР°С‚РµРіРѕСЂРёРё", callback_data="broadcast_by_category")
     kb.adjust(1)
 
     await msg.answer(
-        "Выберите способ рассылки:",
+        "Р’С‹Р±РµСЂРёС‚Рµ СЃРїРѕСЃРѕР± СЂР°СЃСЃС‹Р»РєРё:",
         reply_markup=kb.as_markup()
     )
-    await msg.answer("Режим выбран. Можно убрать клавиатуру.", reply_markup=ReplyKeyboardRemove())
+    await msg.answer("Р РµР¶РёРј РІС‹Р±СЂР°РЅ. РњРѕР¶РЅРѕ СѓР±СЂР°С‚СЊ РєР»Р°РІРёР°С‚СѓСЂСѓ.", reply_markup=ReplyKeyboardRemove())
     await state.set_state(AdminBroadcast.waiting_for_send_choice)
 
 
@@ -110,14 +110,14 @@ async def broadcast_choose_type(cb: types.CallbackQuery, state: FSMContext):
                 cat_items = [(cat.id, cat.name) for cat in cats]
 
             if not cat_items:
-                await cb.message.answer("Категорий нет, добавьте минимум одну.")
+                await cb.message.answer("РљР°С‚РµРіРѕСЂРёР№ РЅРµС‚, РґРѕР±Р°РІСЊС‚Рµ РјРёРЅРёРјСѓРј РѕРґРЅСѓ.")
                 return
 
             kb = InlineKeyboardBuilder()
             for category_id, category_name in cat_items:
                 kb.button(text=category_name, callback_data=f"broadcast_cat_{category_id}")
             kb.adjust(2)
-            await cb.message.answer("Выберите категорию для рассылки:", reply_markup=kb.as_markup())
+            await cb.message.answer("Р’С‹Р±РµСЂРёС‚Рµ РєР°С‚РµРіРѕСЂРёСЋ РґР»СЏ СЂР°СЃСЃС‹Р»РєРё:", reply_markup=kb.as_markup())
             await state.set_state(AdminBroadcast.waiting_for_category)
             return
 
@@ -126,8 +126,8 @@ async def broadcast_choose_type(cb: types.CallbackQuery, state: FSMContext):
 
         await do_broadcast(cb, state, mode=cb.data)
     except Exception as exc:
-        logger.exception("Ошибка на этапе выбора типа рассылки: %s", exc)
-        await cb.message.answer("Произошла ошибка при выборе типа рассылки. Попробуйте снова.")
+        logger.exception("РћС€РёР±РєР° РЅР° СЌС‚Р°РїРµ РІС‹Р±РѕСЂР° С‚РёРїР° СЂР°СЃСЃС‹Р»РєРё: %s", exc)
+        await cb.message.answer("РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° РїСЂРё РІС‹Р±РѕСЂРµ С‚РёРїР° СЂР°СЃСЃС‹Р»РєРё. РџРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°.")
 
 
 @message_router.callback_query(AdminBroadcast.waiting_for_category)
@@ -136,14 +136,14 @@ async def broadcast_by_category(cb: types.CallbackQuery, state: FSMContext):
     try:
         cat_id = int(cb.data.split("_")[-1])
     except (TypeError, ValueError):
-        await cb.message.answer("Некорректная категория.")
+        await cb.message.answer("РќРµРєРѕСЂСЂРµРєС‚РЅР°СЏ РєР°С‚РµРіРѕСЂРёСЏ.")
         return
 
     try:
         await do_broadcast(cb, state, mode="broadcast_cat", category_id=cat_id)
     except Exception as exc:
-        logger.exception("Ошибка при рассылке по категории: %s", exc)
-        await cb.message.answer("Произошла ошибка при запуске рассылки по категории.")
+        logger.exception("РћС€РёР±РєР° РїСЂРё СЂР°СЃСЃС‹Р»РєРµ РїРѕ РєР°С‚РµРіРѕСЂРёРё: %s", exc)
+        await cb.message.answer("РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° РїСЂРё Р·Р°РїСѓСЃРєРµ СЂР°СЃСЃС‹Р»РєРё РїРѕ РєР°С‚РµРіРѕСЂРёРё.")
 
 
 async def do_broadcast(cb: types.CallbackQuery, state: FSMContext, mode: str, category_id: int | None = None):
@@ -163,62 +163,74 @@ async def do_broadcast(cb: types.CallbackQuery, state: FSMContext, mode: str, ca
         )
 
         if mode == "broadcast_admins":
-            users = db.query(User).filter(User.is_admin == True).all()
+            user_id_rows = db.query(User.id).filter(User.is_admin.is_(True)).all()
         elif mode == "broadcast_all":
-            users = db.query(User).filter(User.is_registered == True).all()
+            user_id_rows = db.query(User.id).filter(User.is_registered.is_(True)).all()
         elif mode == "broadcast_cat":
-            users = (
-                db.query(User)
-                .filter(User.is_registered == True)
+            user_id_rows = (
+                db.query(User.id)
+                .filter(User.is_registered.is_(True))
                 .filter(User.interests.any(Category.id == category_id))
                 .all()
             )
         else:
-            users = []
+            user_id_rows = []
 
-        for user in users:
-            uid = int(user.id)
-
-            if skip_event_id and db.query(Registration).filter_by(user_id=uid, event_id=skip_event_id).first():
-                continue
-
-            reply_markup = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="✅ Да, я смогу", callback_data="events_list")],
-                [InlineKeyboardButton(text="❌ Нет, не смогу", callback_data="cant_attend")],
-            ])
-
+        user_ids = []
+        for (raw_uid,) in user_id_rows:
             try:
-                if photo:
-                    await bot.send_photo(
-                        chat_id=uid,
-                        photo=photo,
-                        caption=text,
-                        parse_mode=None,
-                        reply_markup=reply_markup,
-                    )
-                else:
-                    await bot.send_message(
-                        chat_id=uid,
-                        text=text,
-                        parse_mode=None,
-                        reply_markup=reply_markup,
-                    )
-                sent += 1
-            except TelegramForbiddenError:
-                logger.info("Пользователь %s заблокировал бота", uid)
-            except Exception as exc:
-                logger.error("Ошибка отправки пользователю %s: %s", uid, exc)
+                user_ids.append(int(raw_uid))
+            except (ValueError, TypeError):
+                logger.warning(f"Пропускаем невалидный user_id={raw_uid}")
+
+        if skip_event_id and user_ids:
+            registered_rows = (
+                db.query(Registration.user_id)
+                .filter(Registration.event_id == skip_event_id)
+                .filter(Registration.user_id.in_(user_ids))
+                .all()
+            )
+            skip_user_ids = {int(uid) for (uid,) in registered_rows if uid is not None}
+            user_ids = [uid for uid in user_ids if uid not in skip_user_ids]
+
+    reply_markup = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="✅ Да, я смогу", callback_data="events_list")],
+        [InlineKeyboardButton(text="❌ Нет, не смогу", callback_data="cant_attend")],
+    ])
+
+    for uid in user_ids:
+        try:
+            if photo:
+                await bot.send_photo(
+                    chat_id=uid,
+                    photo=photo,
+                    caption=text,
+                    parse_mode=None,
+                    reply_markup=reply_markup,
+                )
+            else:
+                await bot.send_message(
+                    chat_id=uid,
+                    text=text,
+                    parse_mode=None,
+                    reply_markup=reply_markup,
+                )
+            sent += 1
+        except TelegramForbiddenError:
+            logger.info("Пользователь %s заблокировал бота", uid)
+        except Exception as exc:
+            logger.error("Ошибка отправки пользователю %s: %s", uid, exc)
 
     builder = InlineKeyboardBuilder()
-    builder.button(text="В админ панель", callback_data="admin_panel")
-    await cb.message.answer(f"Рассылка завершена. Отправлено: {sent}.", reply_markup=builder.as_markup())
+    builder.button(text="Р’ Р°РґРјРёРЅ РїР°РЅРµР»СЊ", callback_data="admin_panel")
+    await cb.message.answer(f"Р Р°СЃСЃС‹Р»РєР° Р·Р°РІРµСЂС€РµРЅР°. РћС‚РїСЂР°РІР»РµРЅРѕ: {sent}.", reply_markup=builder.as_markup())
     await state.clear()
 
 
 @message_router.callback_query(F.data == "cant_attend")
 async def handle_cant_attend(cb: types.CallbackQuery):
     await cb.answer()
-    await cb.message.answer("Жаль, ждём тебя на следующей игре.")
+    await cb.message.answer("Р–Р°Р»СЊ, Р¶РґС‘Рј С‚РµР±СЏ РЅР° СЃР»РµРґСѓСЋС‰РµР№ РёРіСЂРµ.")
 
 
 class MessageStates(StatesGroup):
@@ -234,20 +246,20 @@ async def start_send_message(callback: types.CallbackQuery, state: FSMContext):
             user_lines = []
             for user in users:
                 full_name = html.escape(f"{user.first_name or ''} {user.last_name or ''}".strip())
-                user_lines.append(f"{full_name} — <code>{user.id}</code>")
+                user_lines.append(f"{full_name} вЂ” <code>{user.id}</code>")
 
         if not user_lines:
-            await callback.message.answer("Список пользователей пуст.")
+            await callback.message.answer("РЎРїРёСЃРѕРє РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ РїСѓСЃС‚.")
             return
 
         chunk_size = 50
         for i in range(0, len(user_lines), chunk_size):
             await callback.message.answer("\n".join(user_lines[i:i + chunk_size]), parse_mode="HTML")
 
-        await callback.message.answer("Введите ID пользователя, которому нужно отправить сообщение:")
+        await callback.message.answer("Р’РІРµРґРёС‚Рµ ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ, РєРѕС‚РѕСЂРѕРјСѓ РЅСѓР¶РЅРѕ РѕС‚РїСЂР°РІРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ:")
         await state.set_state(MessageStates.waiting_for_user_id)
     except Exception as e:
-        await callback.message.answer(f"Ошибка при получении списка пользователей: {e}")
+        await callback.message.answer(f"РћС€РёР±РєР° РїСЂРё РїРѕР»СѓС‡РµРЅРёРё СЃРїРёСЃРєР° РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№: {e}")
 
 
 @message_router.message(MessageStates.waiting_for_user_id)
@@ -255,18 +267,18 @@ async def get_user_id(message: types.Message, state: FSMContext):
     try:
         user_id = int(message.text)
     except (TypeError, ValueError):
-        await message.answer("ID должен быть числом. Попробуйте снова.")
+        await message.answer("ID РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ С‡РёСЃР»РѕРј. РџРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°.")
         return
 
     with get_db() as db:
         user = db.query(User).filter(User.id == user_id).first()
 
     if not user:
-        await message.answer("Пользователь с таким ID не найден. Введите ID снова.")
+        await message.answer("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ СЃ С‚Р°РєРёРј ID РЅРµ РЅР°Р№РґРµРЅ. Р’РІРµРґРёС‚Рµ ID СЃРЅРѕРІР°.")
         return
 
     await state.update_data(user_id=user_id)
-    await message.answer("Введите текст сообщения:")
+    await message.answer("Р’РІРµРґРёС‚Рµ С‚РµРєСЃС‚ СЃРѕРѕР±С‰РµРЅРёСЏ:")
     await state.set_state(MessageStates.waiting_for_message_text)
 
 
@@ -277,10 +289,10 @@ async def send_message_to_user(message: types.Message, state: FSMContext):
 
     try:
         builder = InlineKeyboardBuilder()
-        builder.button(text="Назад", callback_data="admin_panel")
+        builder.button(text="РќР°Р·Р°Рґ", callback_data="admin_panel")
         await message.bot.send_message(chat_id=user_id, text=message.text or "", parse_mode=None, reply_markup=builder.as_markup())
-        await message.answer("Сообщение успешно отправлено.")
+        await message.answer("РЎРѕРѕР±С‰РµРЅРёРµ СѓСЃРїРµС€РЅРѕ РѕС‚РїСЂР°РІР»РµРЅРѕ.")
     except Exception as e:
-        await message.answer(f"Не удалось отправить сообщение: {e}")
+        await message.answer(f"РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РїСЂР°РІРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ: {e}")
 
     await state.clear()
