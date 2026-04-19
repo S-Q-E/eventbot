@@ -1,10 +1,10 @@
-import logging
-import html
+﻿import html
 from aiogram import Router, types, F
 from db.database import get_db, User, Registration, Event
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
 
 delete_user_from_event_router = Router()
 
@@ -17,7 +17,29 @@ class ManualDeleting(StatesGroup):
 async def delete_user_from_event_start(callback: types.CallbackQuery, state: FSMContext):
     event_id = int(callback.data.split("_")[-1])
     await state.update_data(event_id=event_id)
-    await callback.message.answer("Введите ID пользователя, которого хотите удалить из события:")
+
+    with get_db() as db:
+        registered_user_ids = [
+            row[0]
+            for row in db.query(Registration.user_id)
+            .filter_by(event_id=event_id)
+            .order_by(Registration.user_id)
+            .all()
+        ]
+
+    if registered_user_ids:
+        users_text = ", ".join(f"<code>{user_id}</code>" for user_id in registered_user_ids)
+        prompt_text = (
+            "Введите ID пользователя, которого хотите удалить из события:\n"
+            f"Пользователи, записанные на событие (ID):{users_text}"
+        )
+    else:
+        prompt_text = (
+            "Введите ID пользователя, которого хотите удалить из события:\n"
+            "На это событие пока никто не записан."
+        )
+
+    await callback.message.answer(prompt_text)
     await state.set_state(ManualDeleting.waiting_for_user_id)
 
 
@@ -50,8 +72,12 @@ async def process_user_id_for_delete(message: types.Message, state: FSMContext):
         last_name = html.escape(user.last_name if user else "")
         event_name = html.escape(event.name if event else "Неизвестное событие")
 
-        await message.answer(f"Пользователь <b>{first_name} {last_name}</b> успешно удален из события <b>{event_name}</b>.",
-                             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
-                                 InlineKeyboardButton(text="Назад в админку", callback_data="admin_panel")
-                             ]]))
+        await message.answer(
+            f"Пользователь <b>{first_name} {last_name}</b> успешно удален из события <b>{event_name}</b>.",
+            reply_markup=InlineKeyboardMarkup(
+                inline_keyboard=[[
+                    InlineKeyboardButton(text="Назад в админку", callback_data="admin_panel")
+                ]]
+            ),
+        )
     await state.clear()
