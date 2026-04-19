@@ -19,18 +19,32 @@ async def delete_user_from_event_start(callback: types.CallbackQuery, state: FSM
     await state.update_data(event_id=event_id)
 
     with get_db() as db:
-        registered_user_ids = db.query(Registration).filter_by(event_id=event_id).order_by(Registration.user_id).all()
+        registered_users = (
+            db.query(User.first_name, User.last_name, User.id)
+            .join(Registration, Registration.user_id == User.id)
+            .filter(Registration.event_id == event_id)
+            .order_by(User.id)
+            .all()
+        )
 
     await callback.message.answer("Введите ID пользователя, которого хотите удалить из события:")
 
-    if registered_user_ids:
-        users_text = "\n".join(f"{user.first_name} {user.last_name}<code>{user.id}</code>" for user in registered_user_ids)
+    if registered_users:
+        users_text = "\n".join(
+            (
+                f"{html.escape((first_name or '').strip() or 'Без имени')} "
+                f"{html.escape((last_name or '').strip())}".strip()
+                f" - <code>{user_id}</code>"
+            )
+            for first_name, last_name, user_id in registered_users
+        )
         await callback.message.answer(
-            "Пользователи, записанные на событие (ID):\n"
+            "Пользователи, записанные на событие:\n"
             f"{users_text}"
         )
     else:
         await callback.message.answer("На это событие пока никто не записан.")
+
     await state.set_state(ManualDeleting.waiting_for_user_id)
 
 
