@@ -27,19 +27,16 @@ async def delete_user_from_event_start(callback: types.CallbackQuery, state: FSM
             .all()
         ]
 
+    await callback.message.answer("Введите ID пользователя, которого хотите удалить из события:")
+
     if registered_user_ids:
-        users_text = ", ".join(f"<code>{user_id}</code>" for user_id in registered_user_ids)
-        prompt_text = (
-            "Введите ID пользователя, которого хотите удалить из события:\n"
-            f"Пользователи, записанные на событие (ID):{users_text}"
+        users_text = "\n".join(f"<code>{user_id}</code>" for user_id in registered_user_ids)
+        await callback.message.answer(
+            "Пользователи, записанные на событие (ID):\n"
+            f"{users_text}"
         )
     else:
-        prompt_text = (
-            "Введите ID пользователя, которого хотите удалить из события:\n"
-            "На это событие пока никто не записан."
-        )
-
-    await callback.message.answer(prompt_text)
+        await callback.message.answer("На это событие пока никто не записан.")
     await state.set_state(ManualDeleting.waiting_for_user_id)
 
 
