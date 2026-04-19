@@ -84,6 +84,9 @@ async def process_time(message: types.Message, state: FSMContext):
 async def ask_user_level(message: types.Message, state: FSMContext):
     try:
         event_time = datetime.strptime(message.text, '%d/%m/%Y %H:%M')
+        if event_time <= datetime.now():
+            await message.reply("Неверная дата: событие не может быть в прошлом. Попробуйте снова в формате ДД/ММ/ГГГГ ЧЧ:ММ.")
+            return
         await state.update_data(event_time=event_time)
         await state.set_state(Form.max_participants)
     except ValueError:

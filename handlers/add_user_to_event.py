@@ -49,11 +49,12 @@ async def show_users_ids(callback: types.CallbackQuery, state: FSMContext):
             .order_by(asc(User.first_name), asc(User.last_name))
             .all()
         )
+        user_rows = [
+            f"▪️ {html.escape(user.first_name or '')} {html.escape(user.last_name or '')} — ID: <code>{user.id}</code>"
+            for user in all_users
+        ]
 
-    user_list = "\n".join(
-        f"▪️ {html.escape(user.first_name or '')} {html.escape(user.last_name or '')} — ID: <code>{user.id}</code>"
-        for user in all_users
-    ) or "Нет зарегистрированных пользователей."
+    user_list = "\n".join(user_rows) or "Нет зарегистрированных пользователей."
 
     for chunk in split_message(user_list):
         await callback.message.answer(chunk, parse_mode="HTML")

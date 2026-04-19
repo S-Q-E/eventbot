@@ -1,5 +1,6 @@
 import logging
 import html
+from datetime import datetime
 
 from aiogram import Router, types, F
 from aiogram.fsm.state import StatesGroup, State
@@ -14,8 +15,7 @@ from aiogram.types import (
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from db.database import get_db, User, Registration, Category
-from utils.get_nearest_events import get_nearest_event
+from db.database import get_db, User, Registration, Category, Event
 
 logger = logging.getLogger(__name__)
 message_router = Router()
@@ -103,28 +103,31 @@ async def broadcast_input_photo(msg: types.Message, state: FSMContext):
 @message_router.callback_query(AdminBroadcast.waiting_for_send_choice)
 async def broadcast_choose_type(cb: types.CallbackQuery, state: FSMContext):
     await cb.answer()
+    try:
+        if cb.data == "broadcast_by_category":
+            with get_db() as db:
+                cats = db.query(Category).order_by(Category.name).all()
+                cat_items = [(cat.id, cat.name) for cat in cats]
 
-    if cb.data == "broadcast_by_category":
-        with get_db() as db:
-            cats = db.query(Category).order_by(Category.name).all()
-            cat_items = [(cat.id, cat.name) for cat in cats]
+            if not cat_items:
+                await cb.message.answer("Категорий нет, добавьте минимум одну.")
+                return
 
-        if not cat_items:
-            await cb.message.answer("Категорий нет, добавьте минимум одну.")
+            kb = InlineKeyboardBuilder()
+            for category_id, category_name in cat_items:
+                kb.button(text=category_name, callback_data=f"broadcast_cat_{category_id}")
+            kb.adjust(2)
+            await cb.message.answer("Выберите категорию для рассылки:", reply_markup=kb.as_markup())
+            await state.set_state(AdminBroadcast.waiting_for_category)
             return
 
-        kb = InlineKeyboardBuilder()
-        for category_id, category_name in cat_items:
-            kb.button(text=category_name, callback_data=f"broadcast_cat_{category_id}")
-        kb.adjust(2)
-        await cb.message.answer("Выберите категорию для рассылки:", reply_markup=kb.as_markup())
-        await state.set_state(AdminBroadcast.waiting_for_category)
-        return
+        if cb.data not in {"broadcast_admins", "broadcast_all"}:
+            return
 
-    if cb.data not in {"broadcast_admins", "broadcast_all"}:
-        return
-
-    await do_broadcast(cb, state, mode=cb.data)
+        await do_broadcast(cb, state, mode=cb.data)
+    except Exception as exc:
+        logger.exception("Ошибка на этапе выбора типа рассылки: %s", exc)
+        await cb.message.answer("Произошла ошибка при выборе типа рассылки. Попробуйте снова.")
 
 
 @message_router.callback_query(AdminBroadcast.waiting_for_category)
@@ -136,7 +139,11 @@ async def broadcast_by_category(cb: types.CallbackQuery, state: FSMContext):
         await cb.message.answer("Некорректная категория.")
         return
 
-    await do_broadcast(cb, state, mode="broadcast_cat", category_id=cat_id)
+    try:
+        await do_broadcast(cb, state, mode="broadcast_cat", category_id=cat_id)
+    except Exception as exc:
+        logger.exception("Ошибка при рассылке по категории: %s", exc)
+        await cb.message.answer("Произошла ошибка при запуске рассылки по категории.")
 
 
 async def do_broadcast(cb: types.CallbackQuery, state: FSMContext, mode: str, category_id: int | None = None):
@@ -146,10 +153,15 @@ async def do_broadcast(cb: types.CallbackQuery, state: FSMContext, mode: str, ca
     bot = cb.bot
     sent = 0
 
-    event = await get_nearest_event()
-    skip_event_id = event.id if event else None
-
     with get_db() as db:
+        skip_event_id = (
+            db.query(Event.id)
+            .filter(Event.event_time >= datetime.utcnow())
+            .order_by(Event.event_time.asc())
+            .limit(1)
+            .scalar()
+        )
+
         if mode == "broadcast_admins":
             users = db.query(User).filter(User.is_admin == True).all()
         elif mode == "broadcast_all":
