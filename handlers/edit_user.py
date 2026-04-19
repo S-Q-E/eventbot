@@ -100,14 +100,17 @@ async def edit_user(callback_query: types.CallbackQuery, state: FSMContext):
     try:
         with get_db() as db:
             all_users = db.query(User).order_by(asc(User.first_name), asc(User.last_name)).all()
+            if not all_users:
+                await callback_query.message.answer("Нет доступных пользователей")
+                return
 
-        if not all_users:
-            await callback_query.message.answer("Нет доступных пользователей")
-            return
+            # Готовим plain-данные внутри активной сессии, чтобы избежать DetachedInstanceError
+            user_lines = [
+                f"▪️ {user.first_name or ''} {user.last_name or ''} ID: <code>{user.id}</code>"
+                for user in all_users
+            ]
 
-        user_list = "\n".join(
-            f"▪️ {user.first_name} {user.last_name} ID: <code>{user.id}</code>" for user in all_users
-        )
+        user_list = "\n".join(user_lines)
 
         await callback_query.message.answer(
             "Введите <b>ID и НОВОЕ имя и фамилию</b> пользователя через пробел.\n"
