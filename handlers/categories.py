@@ -84,8 +84,9 @@ async def process_del_cat(call: CallbackQuery):
 async def manage_categories_handler(callback: CallbackQuery):
     with get_db() as db:
         categories = db.query(Category).order_by(Category.name).all()
+        category_items = [(category.id, category.name) for category in categories]
 
-    if not categories:
+    if not category_items:
         builder = InlineKeyboardBuilder()
         builder.button(
             text="➕ Добавить категорию",
@@ -99,10 +100,10 @@ async def manage_categories_handler(callback: CallbackQuery):
         await callback.message.answer("Список категорий пуст.", reply_markup=builder.as_markup())
         return
     builder = InlineKeyboardBuilder()
-    for category in categories:
+    for category_id, category_name in category_items:
         builder.button(
-            text=f"🗑️ Удалить «{category.name}»",
-            callback_data=f"del_cat_{category.id}"
+            text=f"🗑️ Удалить «{category_name}»",
+            callback_data=f"del_cat_{category_id}"
         )
     builder.button(
         text="➕ Добавить категорию",

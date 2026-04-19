@@ -30,14 +30,17 @@ async def list_registered_users(callback: types.CallbackQuery, state: FSMContext
     try:
         with get_db() as db:
             users = db.query(User).order_by(asc(User.first_name), asc(User.last_name)).all()
+            if not users:
+                await callback.message.answer("Нет пользователей для отображения.")
+                return
 
-        if not users:
-            await callback.message.answer("Нет пользователей для отображения.")
-            return
+            user_lines = []
+            for index, user in enumerate(users, 1):
+                user_lines.append(
+                    f"{index}. ID: <code>{user.id}</code>, {user.username or ''} {user.first_name or ''} {user.last_name or ''}"
+                )
 
-        user_info = "Список пользователей:\n"
-        for index, user in enumerate(users, 1):
-            user_info += f"{index}. ID: <code>{user.id}</code>, {user.username} {user.first_name} {user.last_name}\n"
+        user_info = "Список пользователей:\n" + "\n".join(user_lines)
 
         for chunk in split_message(user_info):
             await callback.message.answer(chunk)

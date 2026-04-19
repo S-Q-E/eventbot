@@ -107,14 +107,15 @@ async def broadcast_choose_type(cb: types.CallbackQuery, state: FSMContext):
     if cb.data == "broadcast_by_category":
         with get_db() as db:
             cats = db.query(Category).order_by(Category.name).all()
+            cat_items = [(cat.id, cat.name) for cat in cats]
 
-        if not cats:
+        if not cat_items:
             await cb.message.answer("Категорий нет, добавьте минимум одну.")
             return
 
         kb = InlineKeyboardBuilder()
-        for category in cats:
-            kb.button(text=category.name, callback_data=f"broadcast_cat_{category.id}")
+        for category_id, category_name in cat_items:
+            kb.button(text=category_name, callback_data=f"broadcast_cat_{category_id}")
         kb.adjust(2)
         await cb.message.answer("Выберите категорию для рассылки:", reply_markup=kb.as_markup())
         await state.set_state(AdminBroadcast.waiting_for_category)
@@ -218,15 +219,14 @@ async def start_send_message(callback: types.CallbackQuery, state: FSMContext):
     try:
         with get_db() as db:
             users = db.query(User).order_by(User.first_name.asc(), User.last_name.asc()).all()
+            user_lines = []
+            for user in users:
+                full_name = html.escape(f"{user.first_name or ''} {user.last_name or ''}".strip())
+                user_lines.append(f"{full_name} — <code>{user.id}</code>")
 
-        if not users:
+        if not user_lines:
             await callback.message.answer("Список пользователей пуст.")
             return
-
-        user_lines = []
-        for user in users:
-            full_name = html.escape(f"{user.first_name or ''} {user.last_name or ''}".strip())
-            user_lines.append(f"{full_name} — <code>{user.id}</code>")
 
         chunk_size = 50
         for i in range(0, len(user_lines), chunk_size):
